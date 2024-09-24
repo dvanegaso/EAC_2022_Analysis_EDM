@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Análisis de Correspondencias Múltiples</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Revisión del Sector Empresarial</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">Datos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./exploratorio.html"> 
+<span class="menu-text">Análisis Exploratorio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./componentes.html"> 
+<span class="menu-text">ACP</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./acs.html"> 
+<span class="menu-text">ACS</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./acm.html" aria-current="page"> 
+<span class="menu-text">ACM</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./agrupamiento.html"> 
+<span class="menu-text">Agrupamiento</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./talks.html"> 
+<span class="menu-text">Código</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#objetivos" id="toc-objetivos" class="nav-link active" data-scroll-target="#objetivos">Objetivos</a></li>
+  <li><a href="#previa-al-análisis" id="toc-previa-al-análisis" class="nav-link" data-scroll-target="#previa-al-análisis">Previa al Análisis</a></li>
+  <li><a href="#resultados" id="toc-resultados" class="nav-link" data-scroll-target="#resultados">Resultados</a></li>
+  <li><a href="#gráfico-de-acm" id="toc-gráfico-de-acm" class="nav-link" data-scroll-target="#gráfico-de-acm">Gráfico de ACM</a></li>
+  <li><a href="#grafico-categorias-iniciales" id="toc-grafico-categorias-iniciales" class="nav-link" data-scroll-target="#grafico-categorias-iniciales">Grafico categorias iniciales</a></li>
+  <li><a href="#categorías-ilustrativas" id="toc-categorías-ilustrativas" class="nav-link" data-scroll-target="#categorías-ilustrativas">Categorías Ilustrativas</a>
+  <ul class="collapse">
+  <li><a href="#variable-cuantitativa-bruta" id="toc-variable-cuantitativa-bruta" class="nav-link" data-scroll-target="#variable-cuantitativa-bruta">Variable cuantitativa (Bruta)</a></li>
+  </ul></li>
+  <li><a href="#conclusiones" id="toc-conclusiones" class="nav-link" data-scroll-target="#conclusiones">Conclusiones</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Análisis de Correspondencias Múltiples</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="objetivos" class="level2">
+<h2 class="anchored" data-anchor-id="objetivos">Objetivos</h2>
+<ul>
+<li>Hallar más relaciones entre categorías que no hayamos encontrado en los tres ACS realizados. Así evitamos el trabajo de invertir tiempo en analizar detenidamente gráficos donde no se puedan hallar tantas relaciones importantes. Esta búsqueda de asociaciones se hará de manera gráfica.</li>
+<li>Con la proyección de individuos, hallar posibles patrones de agrupamiento para la siguiente sección.</li>
+</ul>
+<p>Este análisis toma en cuenta <strong>Tipo de Empresa</strong>, <strong>Edad</strong>, <strong>Socios Mujeres</strong>, <strong>Socios Hombres</strong>, <strong>Personal Permanente Mujeres</strong>, <strong>Personal Permanente Hombres</strong>, <strong>Personal Temporal Mujeres</strong>, <strong>Personal Temporal Hombres</strong>, <strong>Contratación por Agencia</strong>, <strong>Aprendices dentro de la Empresa</strong>, y <strong>Publicidad</strong>. Las demás han sido tomadas como ilustrativas, esto por ser unas combinaciones lineales de otras.</p>
+</section>
+<section id="previa-al-análisis" class="level2">
+<h2 class="anchored" data-anchor-id="previa-al-análisis">Previa al Análisis</h2>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tabla de Burt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">CORRELA_16.Comercio vehiculos</th>
+<th style="text-align: right;">CORRELA_16.Comercio al por mayor</th>
+<th style="text-align: right;">CORRELA_16.Comercio al por menor</th>
+<th style="text-align: right;">IDAIO.Mas de 30</th>
+<th style="text-align: right;">IDAIO.Entre 30 y 20</th>
+<th style="text-align: right;">IDAIO.Entre 20 y 10</th>
+<th style="text-align: right;">IDAIO.Menos de 10</th>
+<th style="text-align: right;">PROMUJ.SisociosM</th>
+<th style="text-align: right;">PROMUJ.NosociosM</th>
+<th style="text-align: right;">PROHOM.SisociosH</th>
+<th style="text-align: right;">PROHOM.NosociosH</th>
+<th style="text-align: right;">PERMUJ.(0)PerM</th>
+<th style="text-align: right;">PERMUJ.(1-10)PerM</th>
+<th style="text-align: right;">PERMUJ.(&gt;10)PerM</th>
+<th style="text-align: right;">PERHOM.(0)PerH</th>
+<th style="text-align: right;">PERHOM.(1-10)PerH</th>
+<th style="text-align: right;">PERHOM.(&gt;10)PerH</th>
+<th style="text-align: right;">DIRMUJ.(0)tempM</th>
+<th style="text-align: right;">DIRMUJ.(1-10)tempM</th>
+<th style="text-align: right;">DIRMUJ.(&gt;10)tempM</th>
+<th style="text-align: right;">DIRHOM.(0)tempH</th>
+<th style="text-align: right;">DIRHOM.(1-10)tempH</th>
+<th style="text-align: right;">DIRHOM.(&gt;10)tempH</th>
+<th style="text-align: right;">AGENCIA.(0)PTAgenc</th>
+<th style="text-align: right;">AGENCIA.(1-10)PTAgenc</th>
+<th style="text-align: right;">AGENCIA.(&gt;10)PTAgenc</th>
+<th style="text-align: right;">APRENDIZ.(0)Apren</th>
+<th style="text-align: right;">APRENDIZ.(1-10)Apren</th>
+<th style="text-align: right;">APRENDIZ.(&gt;10)Apren</th>
+<th style="text-align: right;">PUBLICI.Nopub</th>
+<th style="text-align: right;">PUBLICI.Pubbaja</th>
+<th style="text-align: right;">PUBLICI.Pubmod</th>
+<th style="text-align: right;">PUBLICI.Pubalta</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CORRELA_16.Comercio vehiculos</td>
+<td style="text-align: right;">854</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">263</td>
+<td style="text-align: right;">197</td>
+<td style="text-align: right;">261</td>
+<td style="text-align: right;">133</td>
+<td style="text-align: right;">755</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">736</td>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: right;">405</td>
+<td style="text-align: right;">336</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">456</td>
+<td style="text-align: right;">610</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">120</td>
+<td style="text-align: right;">602</td>
+<td style="text-align: right;">92</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">712</td>
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">355</td>
+<td style="text-align: right;">472</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">615</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CORRELA_16.Comercio al por mayor</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5509</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1282</td>
+<td style="text-align: right;">1491</td>
+<td style="text-align: right;">1772</td>
+<td style="text-align: right;">964</td>
+<td style="text-align: right;">4845</td>
+<td style="text-align: right;">664</td>
+<td style="text-align: right;">4548</td>
+<td style="text-align: right;">961</td>
+<td style="text-align: right;">585</td>
+<td style="text-align: right;">2621</td>
+<td style="text-align: right;">2303</td>
+<td style="text-align: right;">559</td>
+<td style="text-align: right;">2281</td>
+<td style="text-align: right;">2669</td>
+<td style="text-align: right;">4212</td>
+<td style="text-align: right;">797</td>
+<td style="text-align: right;">500</td>
+<td style="text-align: right;">4189</td>
+<td style="text-align: right;">682</td>
+<td style="text-align: right;">638</td>
+<td style="text-align: right;">4494</td>
+<td style="text-align: right;">524</td>
+<td style="text-align: right;">491</td>
+<td style="text-align: right;">2765</td>
+<td style="text-align: right;">2636</td>
+<td style="text-align: right;">108</td>
+<td style="text-align: right;">1866</td>
+<td style="text-align: right;">3296</td>
+<td style="text-align: right;">155</td>
+<td style="text-align: right;">192</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CORRELA_16.Comercio al por menor</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3323</td>
+<td style="text-align: right;">614</td>
+<td style="text-align: right;">781</td>
+<td style="text-align: right;">1215</td>
+<td style="text-align: right;">713</td>
+<td style="text-align: right;">2769</td>
+<td style="text-align: right;">554</td>
+<td style="text-align: right;">2589</td>
+<td style="text-align: right;">734</td>
+<td style="text-align: right;">664</td>
+<td style="text-align: right;">1643</td>
+<td style="text-align: right;">1016</td>
+<td style="text-align: right;">685</td>
+<td style="text-align: right;">1578</td>
+<td style="text-align: right;">1060</td>
+<td style="text-align: right;">2221</td>
+<td style="text-align: right;">549</td>
+<td style="text-align: right;">553</td>
+<td style="text-align: right;">2234</td>
+<td style="text-align: right;">598</td>
+<td style="text-align: right;">491</td>
+<td style="text-align: right;">2915</td>
+<td style="text-align: right;">141</td>
+<td style="text-align: right;">267</td>
+<td style="text-align: right;">1994</td>
+<td style="text-align: right;">1234</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">1138</td>
+<td style="text-align: right;">2037</td>
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">43</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IDAIO.Mas de 30</td>
+<td style="text-align: right;">263</td>
+<td style="text-align: right;">1282</td>
+<td style="text-align: right;">614</td>
+<td style="text-align: right;">2159</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1879</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">1775</td>
+<td style="text-align: right;">384</td>
+<td style="text-align: right;">254</td>
+<td style="text-align: right;">998</td>
+<td style="text-align: right;">907</td>
+<td style="text-align: right;">228</td>
+<td style="text-align: right;">894</td>
+<td style="text-align: right;">1037</td>
+<td style="text-align: right;">1510</td>
+<td style="text-align: right;">333</td>
+<td style="text-align: right;">316</td>
+<td style="text-align: right;">1519</td>
+<td style="text-align: right;">306</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">1712</td>
+<td style="text-align: right;">218</td>
+<td style="text-align: right;">229</td>
+<td style="text-align: right;">986</td>
+<td style="text-align: right;">1077</td>
+<td style="text-align: right;">96</td>
+<td style="text-align: right;">544</td>
+<td style="text-align: right;">1491</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">48</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IDAIO.Entre 30 y 20</td>
+<td style="text-align: right;">197</td>
+<td style="text-align: right;">1491</td>
+<td style="text-align: right;">781</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2469</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2122</td>
+<td style="text-align: right;">347</td>
+<td style="text-align: right;">2003</td>
+<td style="text-align: right;">466</td>
+<td style="text-align: right;">345</td>
+<td style="text-align: right;">1184</td>
+<td style="text-align: right;">940</td>
+<td style="text-align: right;">345</td>
+<td style="text-align: right;">1029</td>
+<td style="text-align: right;">1095</td>
+<td style="text-align: right;">1803</td>
+<td style="text-align: right;">362</td>
+<td style="text-align: right;">304</td>
+<td style="text-align: right;">1791</td>
+<td style="text-align: right;">332</td>
+<td style="text-align: right;">346</td>
+<td style="text-align: right;">2057</td>
+<td style="text-align: right;">181</td>
+<td style="text-align: right;">231</td>
+<td style="text-align: right;">1269</td>
+<td style="text-align: right;">1151</td>
+<td style="text-align: right;">49</td>
+<td style="text-align: right;">772</td>
+<td style="text-align: right;">1556</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">61</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IDAIO.Entre 20 y 10</td>
+<td style="text-align: right;">261</td>
+<td style="text-align: right;">1772</td>
+<td style="text-align: right;">1215</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3248</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2795</td>
+<td style="text-align: right;">453</td>
+<td style="text-align: right;">2638</td>
+<td style="text-align: right;">610</td>
+<td style="text-align: right;">464</td>
+<td style="text-align: right;">1597</td>
+<td style="text-align: right;">1187</td>
+<td style="text-align: right;">481</td>
+<td style="text-align: right;">1420</td>
+<td style="text-align: right;">1347</td>
+<td style="text-align: right;">2382</td>
+<td style="text-align: right;">483</td>
+<td style="text-align: right;">383</td>
+<td style="text-align: right;">2372</td>
+<td style="text-align: right;">463</td>
+<td style="text-align: right;">413</td>
+<td style="text-align: right;">2774</td>
+<td style="text-align: right;">230</td>
+<td style="text-align: right;">244</td>
+<td style="text-align: right;">1724</td>
+<td style="text-align: right;">1470</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">1144</td>
+<td style="text-align: right;">1924</td>
+<td style="text-align: right;">106</td>
+<td style="text-align: right;">74</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IDAIO.Menos de 10</td>
+<td style="text-align: right;">133</td>
+<td style="text-align: right;">964</td>
+<td style="text-align: right;">713</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1810</td>
+<td style="text-align: right;">1573</td>
+<td style="text-align: right;">237</td>
+<td style="text-align: right;">1457</td>
+<td style="text-align: right;">353</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">890</td>
+<td style="text-align: right;">621</td>
+<td style="text-align: right;">289</td>
+<td style="text-align: right;">815</td>
+<td style="text-align: right;">706</td>
+<td style="text-align: right;">1348</td>
+<td style="text-align: right;">292</td>
+<td style="text-align: right;">170</td>
+<td style="text-align: right;">1343</td>
+<td style="text-align: right;">271</td>
+<td style="text-align: right;">196</td>
+<td style="text-align: right;">1578</td>
+<td style="text-align: right;">114</td>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">1135</td>
+<td style="text-align: right;">644</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">704</td>
+<td style="text-align: right;">977</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">70</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PROMUJ.SisociosM</td>
+<td style="text-align: right;">755</td>
+<td style="text-align: right;">4845</td>
+<td style="text-align: right;">2769</td>
+<td style="text-align: right;">1879</td>
+<td style="text-align: right;">2122</td>
+<td style="text-align: right;">2795</td>
+<td style="text-align: right;">1573</td>
+<td style="text-align: right;">8369</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7349</td>
+<td style="text-align: right;">1020</td>
+<td style="text-align: right;">1132</td>
+<td style="text-align: right;">3974</td>
+<td style="text-align: right;">3263</td>
+<td style="text-align: right;">1098</td>
+<td style="text-align: right;">3539</td>
+<td style="text-align: right;">3732</td>
+<td style="text-align: right;">6043</td>
+<td style="text-align: right;">1274</td>
+<td style="text-align: right;">1052</td>
+<td style="text-align: right;">6016</td>
+<td style="text-align: right;">1188</td>
+<td style="text-align: right;">1165</td>
+<td style="text-align: right;">6946</td>
+<td style="text-align: right;">676</td>
+<td style="text-align: right;">747</td>
+<td style="text-align: right;">4308</td>
+<td style="text-align: right;">3839</td>
+<td style="text-align: right;">222</td>
+<td style="text-align: right;">2652</td>
+<td style="text-align: right;">5176</td>
+<td style="text-align: right;">298</td>
+<td style="text-align: right;">243</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PROMUJ.NosociosM</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">664</td>
+<td style="text-align: right;">554</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">347</td>
+<td style="text-align: right;">453</td>
+<td style="text-align: right;">237</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1317</td>
+<td style="text-align: right;">524</td>
+<td style="text-align: right;">793</td>
+<td style="text-align: right;">230</td>
+<td style="text-align: right;">695</td>
+<td style="text-align: right;">392</td>
+<td style="text-align: right;">245</td>
+<td style="text-align: right;">619</td>
+<td style="text-align: right;">453</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">196</td>
+<td style="text-align: right;">121</td>
+<td style="text-align: right;">1009</td>
+<td style="text-align: right;">184</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">1175</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">806</td>
+<td style="text-align: right;">503</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">512</td>
+<td style="text-align: right;">772</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PROHOM.SisociosH</td>
+<td style="text-align: right;">736</td>
+<td style="text-align: right;">4548</td>
+<td style="text-align: right;">2589</td>
+<td style="text-align: right;">1775</td>
+<td style="text-align: right;">2003</td>
+<td style="text-align: right;">2638</td>
+<td style="text-align: right;">1457</td>
+<td style="text-align: right;">7349</td>
+<td style="text-align: right;">524</td>
+<td style="text-align: right;">7873</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1047</td>
+<td style="text-align: right;">3709</td>
+<td style="text-align: right;">3117</td>
+<td style="text-align: right;">1044</td>
+<td style="text-align: right;">3279</td>
+<td style="text-align: right;">3550</td>
+<td style="text-align: right;">5632</td>
+<td style="text-align: right;">1220</td>
+<td style="text-align: right;">1021</td>
+<td style="text-align: right;">5616</td>
+<td style="text-align: right;">1125</td>
+<td style="text-align: right;">1132</td>
+<td style="text-align: right;">6485</td>
+<td style="text-align: right;">660</td>
+<td style="text-align: right;">728</td>
+<td style="text-align: right;">3993</td>
+<td style="text-align: right;">3657</td>
+<td style="text-align: right;">223</td>
+<td style="text-align: right;">2412</td>
+<td style="text-align: right;">4946</td>
+<td style="text-align: right;">284</td>
+<td style="text-align: right;">231</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PROHOM.NosociosH</td>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">961</td>
+<td style="text-align: right;">734</td>
+<td style="text-align: right;">384</td>
+<td style="text-align: right;">466</td>
+<td style="text-align: right;">610</td>
+<td style="text-align: right;">353</td>
+<td style="text-align: right;">1020</td>
+<td style="text-align: right;">793</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1813</td>
+<td style="text-align: right;">315</td>
+<td style="text-align: right;">960</td>
+<td style="text-align: right;">538</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">879</td>
+<td style="text-align: right;">635</td>
+<td style="text-align: right;">1411</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">152</td>
+<td style="text-align: right;">1409</td>
+<td style="text-align: right;">247</td>
+<td style="text-align: right;">157</td>
+<td style="text-align: right;">1636</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">1121</td>
+<td style="text-align: right;">685</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">752</td>
+<td style="text-align: right;">1002</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">22</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PERMUJ.(0)PerM</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: right;">585</td>
+<td style="text-align: right;">664</td>
+<td style="text-align: right;">254</td>
+<td style="text-align: right;">345</td>
+<td style="text-align: right;">464</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">1132</td>
+<td style="text-align: right;">230</td>
+<td style="text-align: right;">1047</td>
+<td style="text-align: right;">315</td>
+<td style="text-align: right;">1362</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1103</td>
+<td style="text-align: right;">215</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">275</td>
+<td style="text-align: right;">600</td>
+<td style="text-align: right;">487</td>
+<td style="text-align: right;">262</td>
+<td style="text-align: right;">538</td>
+<td style="text-align: right;">562</td>
+<td style="text-align: right;">1179</td>
+<td style="text-align: right;">73</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">874</td>
+<td style="text-align: right;">478</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">552</td>
+<td style="text-align: right;">769</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PERMUJ.(1-10)PerM</td>
+<td style="text-align: right;">405</td>
+<td style="text-align: right;">2621</td>
+<td style="text-align: right;">1643</td>
+<td style="text-align: right;">998</td>
+<td style="text-align: right;">1184</td>
+<td style="text-align: right;">1597</td>
+<td style="text-align: right;">890</td>
+<td style="text-align: right;">3974</td>
+<td style="text-align: right;">695</td>
+<td style="text-align: right;">3709</td>
+<td style="text-align: right;">960</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4669</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">3268</td>
+<td style="text-align: right;">1211</td>
+<td style="text-align: right;">3785</td>
+<td style="text-align: right;">539</td>
+<td style="text-align: right;">345</td>
+<td style="text-align: right;">3765</td>
+<td style="text-align: right;">514</td>
+<td style="text-align: right;">390</td>
+<td style="text-align: right;">4197</td>
+<td style="text-align: right;">277</td>
+<td style="text-align: right;">195</td>
+<td style="text-align: right;">3463</td>
+<td style="text-align: right;">1198</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">1974</td>
+<td style="text-align: right;">2546</td>
+<td style="text-align: right;">91</td>
+<td style="text-align: right;">58</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PERMUJ.(&gt;10)PerM</td>
+<td style="text-align: right;">336</td>
+<td style="text-align: right;">2303</td>
+<td style="text-align: right;">1016</td>
+<td style="text-align: right;">907</td>
+<td style="text-align: right;">940</td>
+<td style="text-align: right;">1187</td>
+<td style="text-align: right;">621</td>
+<td style="text-align: right;">3263</td>
+<td style="text-align: right;">392</td>
+<td style="text-align: right;">3117</td>
+<td style="text-align: right;">538</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3655</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">675</td>
+<td style="text-align: right;">2930</td>
+<td style="text-align: right;">2983</td>
+<td style="text-align: right;">331</td>
+<td style="text-align: right;">341</td>
+<td style="text-align: right;">2998</td>
+<td style="text-align: right;">320</td>
+<td style="text-align: right;">337</td>
+<td style="text-align: right;">2745</td>
+<td style="text-align: right;">393</td>
+<td style="text-align: right;">517</td>
+<td style="text-align: right;">777</td>
+<td style="text-align: right;">2666</td>
+<td style="text-align: right;">212</td>
+<td style="text-align: right;">638</td>
+<td style="text-align: right;">2633</td>
+<td style="text-align: right;">209</td>
+<td style="text-align: right;">175</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PERHOM.(0)PerH</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">559</td>
+<td style="text-align: right;">685</td>
+<td style="text-align: right;">228</td>
+<td style="text-align: right;">345</td>
+<td style="text-align: right;">481</td>
+<td style="text-align: right;">289</td>
+<td style="text-align: right;">1098</td>
+<td style="text-align: right;">245</td>
+<td style="text-align: right;">1044</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">1103</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">1343</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">251</td>
+<td style="text-align: right;">606</td>
+<td style="text-align: right;">486</td>
+<td style="text-align: right;">264</td>
+<td style="text-align: right;">539</td>
+<td style="text-align: right;">540</td>
+<td style="text-align: right;">1161</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">858</td>
+<td style="text-align: right;">477</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">524</td>
+<td style="text-align: right;">776</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">22</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PERHOM.(1-10)PerH</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">2281</td>
+<td style="text-align: right;">1578</td>
+<td style="text-align: right;">894</td>
+<td style="text-align: right;">1029</td>
+<td style="text-align: right;">1420</td>
+<td style="text-align: right;">815</td>
+<td style="text-align: right;">3539</td>
+<td style="text-align: right;">619</td>
+<td style="text-align: right;">3279</td>
+<td style="text-align: right;">879</td>
+<td style="text-align: right;">215</td>
+<td style="text-align: right;">3268</td>
+<td style="text-align: right;">675</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4158</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3266</td>
+<td style="text-align: right;">511</td>
+<td style="text-align: right;">381</td>
+<td style="text-align: right;">3249</td>
+<td style="text-align: right;">509</td>
+<td style="text-align: right;">400</td>
+<td style="text-align: right;">3687</td>
+<td style="text-align: right;">261</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: right;">3144</td>
+<td style="text-align: right;">1005</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">1724</td>
+<td style="text-align: right;">2259</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">65</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PERHOM.(&gt;10)PerH</td>
+<td style="text-align: right;">456</td>
+<td style="text-align: right;">2669</td>
+<td style="text-align: right;">1060</td>
+<td style="text-align: right;">1037</td>
+<td style="text-align: right;">1095</td>
+<td style="text-align: right;">1347</td>
+<td style="text-align: right;">706</td>
+<td style="text-align: right;">3732</td>
+<td style="text-align: right;">453</td>
+<td style="text-align: right;">3550</td>
+<td style="text-align: right;">635</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">1211</td>
+<td style="text-align: right;">2930</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4185</td>
+<td style="text-align: right;">3526</td>
+<td style="text-align: right;">353</td>
+<td style="text-align: right;">306</td>
+<td style="text-align: right;">3512</td>
+<td style="text-align: right;">324</td>
+<td style="text-align: right;">349</td>
+<td style="text-align: right;">3273</td>
+<td style="text-align: right;">410</td>
+<td style="text-align: right;">502</td>
+<td style="text-align: right;">1112</td>
+<td style="text-align: right;">2860</td>
+<td style="text-align: right;">213</td>
+<td style="text-align: right;">916</td>
+<td style="text-align: right;">2913</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">166</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DIRMUJ.(0)tempM</td>
+<td style="text-align: right;">610</td>
+<td style="text-align: right;">4212</td>
+<td style="text-align: right;">2221</td>
+<td style="text-align: right;">1510</td>
+<td style="text-align: right;">1803</td>
+<td style="text-align: right;">2382</td>
+<td style="text-align: right;">1348</td>
+<td style="text-align: right;">6043</td>
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">5632</td>
+<td style="text-align: right;">1411</td>
+<td style="text-align: right;">275</td>
+<td style="text-align: right;">3785</td>
+<td style="text-align: right;">2983</td>
+<td style="text-align: right;">251</td>
+<td style="text-align: right;">3266</td>
+<td style="text-align: right;">3526</td>
+<td style="text-align: right;">7043</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6843</td>
+<td style="text-align: right;">169</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">5984</td>
+<td style="text-align: right;">538</td>
+<td style="text-align: right;">521</td>
+<td style="text-align: right;">4052</td>
+<td style="text-align: right;">2904</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">2488</td>
+<td style="text-align: right;">4166</td>
+<td style="text-align: right;">212</td>
+<td style="text-align: right;">177</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DIRMUJ.(1-10)tempM</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">797</td>
+<td style="text-align: right;">549</td>
+<td style="text-align: right;">333</td>
+<td style="text-align: right;">362</td>
+<td style="text-align: right;">483</td>
+<td style="text-align: right;">292</td>
+<td style="text-align: right;">1274</td>
+<td style="text-align: right;">196</td>
+<td style="text-align: right;">1220</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">600</td>
+<td style="text-align: right;">539</td>
+<td style="text-align: right;">331</td>
+<td style="text-align: right;">606</td>
+<td style="text-align: right;">511</td>
+<td style="text-align: right;">353</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1470</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">154</td>
+<td style="text-align: right;">959</td>
+<td style="text-align: right;">357</td>
+<td style="text-align: right;">1237</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">862</td>
+<td style="text-align: right;">574</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">501</td>
+<td style="text-align: right;">883</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">42</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DIRMUJ.(&gt;10)tempM</td>
+<td style="text-align: right;">120</td>
+<td style="text-align: right;">500</td>
+<td style="text-align: right;">553</td>
+<td style="text-align: right;">316</td>
+<td style="text-align: right;">304</td>
+<td style="text-align: right;">383</td>
+<td style="text-align: right;">170</td>
+<td style="text-align: right;">1052</td>
+<td style="text-align: right;">121</td>
+<td style="text-align: right;">1021</td>
+<td style="text-align: right;">152</td>
+<td style="text-align: right;">487</td>
+<td style="text-align: right;">345</td>
+<td style="text-align: right;">341</td>
+<td style="text-align: right;">486</td>
+<td style="text-align: right;">381</td>
+<td style="text-align: right;">306</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1173</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">244</td>
+<td style="text-align: right;">901</td>
+<td style="text-align: right;">900</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">192</td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">864</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">899</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">34</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DIRHOM.(0)tempH</td>
+<td style="text-align: right;">602</td>
+<td style="text-align: right;">4189</td>
+<td style="text-align: right;">2234</td>
+<td style="text-align: right;">1519</td>
+<td style="text-align: right;">1791</td>
+<td style="text-align: right;">2372</td>
+<td style="text-align: right;">1343</td>
+<td style="text-align: right;">6016</td>
+<td style="text-align: right;">1009</td>
+<td style="text-align: right;">5616</td>
+<td style="text-align: right;">1409</td>
+<td style="text-align: right;">262</td>
+<td style="text-align: right;">3765</td>
+<td style="text-align: right;">2998</td>
+<td style="text-align: right;">264</td>
+<td style="text-align: right;">3249</td>
+<td style="text-align: right;">3512</td>
+<td style="text-align: right;">6843</td>
+<td style="text-align: right;">154</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">7025</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5950</td>
+<td style="text-align: right;">545</td>
+<td style="text-align: right;">530</td>
+<td style="text-align: right;">4025</td>
+<td style="text-align: right;">2906</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">2477</td>
+<td style="text-align: right;">4144</td>
+<td style="text-align: right;">222</td>
+<td style="text-align: right;">182</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DIRHOM.(1-10)tempH</td>
+<td style="text-align: right;">92</td>
+<td style="text-align: right;">682</td>
+<td style="text-align: right;">598</td>
+<td style="text-align: right;">306</td>
+<td style="text-align: right;">332</td>
+<td style="text-align: right;">463</td>
+<td style="text-align: right;">271</td>
+<td style="text-align: right;">1188</td>
+<td style="text-align: right;">184</td>
+<td style="text-align: right;">1125</td>
+<td style="text-align: right;">247</td>
+<td style="text-align: right;">538</td>
+<td style="text-align: right;">514</td>
+<td style="text-align: right;">320</td>
+<td style="text-align: right;">539</td>
+<td style="text-align: right;">509</td>
+<td style="text-align: right;">324</td>
+<td style="text-align: right;">169</td>
+<td style="text-align: right;">959</td>
+<td style="text-align: right;">244</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1372</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1161</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">830</td>
+<td style="text-align: right;">515</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">444</td>
+<td style="text-align: right;">847</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">40</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DIRHOM.(&gt;10)tempH</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">638</td>
+<td style="text-align: right;">491</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">346</td>
+<td style="text-align: right;">413</td>
+<td style="text-align: right;">196</td>
+<td style="text-align: right;">1165</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">1132</td>
+<td style="text-align: right;">157</td>
+<td style="text-align: right;">562</td>
+<td style="text-align: right;">390</td>
+<td style="text-align: right;">337</td>
+<td style="text-align: right;">540</td>
+<td style="text-align: right;">400</td>
+<td style="text-align: right;">349</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">357</td>
+<td style="text-align: right;">901</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1289</td>
+<td style="text-align: right;">1010</td>
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">259</td>
+<td style="text-align: right;">921</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">243</td>
+<td style="text-align: right;">957</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">31</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AGENCIA.(0)PTAgenc</td>
+<td style="text-align: right;">712</td>
+<td style="text-align: right;">4494</td>
+<td style="text-align: right;">2915</td>
+<td style="text-align: right;">1712</td>
+<td style="text-align: right;">2057</td>
+<td style="text-align: right;">2774</td>
+<td style="text-align: right;">1578</td>
+<td style="text-align: right;">6946</td>
+<td style="text-align: right;">1175</td>
+<td style="text-align: right;">6485</td>
+<td style="text-align: right;">1636</td>
+<td style="text-align: right;">1179</td>
+<td style="text-align: right;">4197</td>
+<td style="text-align: right;">2745</td>
+<td style="text-align: right;">1161</td>
+<td style="text-align: right;">3687</td>
+<td style="text-align: right;">3273</td>
+<td style="text-align: right;">5984</td>
+<td style="text-align: right;">1237</td>
+<td style="text-align: right;">900</td>
+<td style="text-align: right;">5950</td>
+<td style="text-align: right;">1161</td>
+<td style="text-align: right;">1010</td>
+<td style="text-align: right;">8121</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4585</td>
+<td style="text-align: right;">3448</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">2901</td>
+<td style="text-align: right;">4871</td>
+<td style="text-align: right;">213</td>
+<td style="text-align: right;">136</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AGENCIA.(1-10)PTAgenc</td>
+<td style="text-align: right;">78</td>
+<td style="text-align: right;">524</td>
+<td style="text-align: right;">141</td>
+<td style="text-align: right;">218</td>
+<td style="text-align: right;">181</td>
+<td style="text-align: right;">230</td>
+<td style="text-align: right;">114</td>
+<td style="text-align: right;">676</td>
+<td style="text-align: right;">67</td>
+<td style="text-align: right;">660</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">73</td>
+<td style="text-align: right;">277</td>
+<td style="text-align: right;">393</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">261</td>
+<td style="text-align: right;">410</td>
+<td style="text-align: right;">538</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">545</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">743</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">294</td>
+<td style="text-align: right;">417</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">153</td>
+<td style="text-align: right;">499</td>
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">44</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AGENCIA.(&gt;10)PTAgenc</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">491</td>
+<td style="text-align: right;">267</td>
+<td style="text-align: right;">229</td>
+<td style="text-align: right;">231</td>
+<td style="text-align: right;">244</td>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">747</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">728</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">195</td>
+<td style="text-align: right;">517</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: right;">502</td>
+<td style="text-align: right;">521</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">192</td>
+<td style="text-align: right;">530</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">822</td>
+<td style="text-align: right;">235</td>
+<td style="text-align: right;">477</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">578</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">73</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">APRENDIZ.(0)Apren</td>
+<td style="text-align: right;">355</td>
+<td style="text-align: right;">2765</td>
+<td style="text-align: right;">1994</td>
+<td style="text-align: right;">986</td>
+<td style="text-align: right;">1269</td>
+<td style="text-align: right;">1724</td>
+<td style="text-align: right;">1135</td>
+<td style="text-align: right;">4308</td>
+<td style="text-align: right;">806</td>
+<td style="text-align: right;">3993</td>
+<td style="text-align: right;">1121</td>
+<td style="text-align: right;">874</td>
+<td style="text-align: right;">3463</td>
+<td style="text-align: right;">777</td>
+<td style="text-align: right;">858</td>
+<td style="text-align: right;">3144</td>
+<td style="text-align: right;">1112</td>
+<td style="text-align: right;">4052</td>
+<td style="text-align: right;">862</td>
+<td style="text-align: right;">200</td>
+<td style="text-align: right;">4025</td>
+<td style="text-align: right;">830</td>
+<td style="text-align: right;">259</td>
+<td style="text-align: right;">4585</td>
+<td style="text-align: right;">294</td>
+<td style="text-align: right;">235</td>
+<td style="text-align: right;">5114</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2328</td>
+<td style="text-align: right;">2609</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">APRENDIZ.(1-10)Apren</td>
+<td style="text-align: right;">472</td>
+<td style="text-align: right;">2636</td>
+<td style="text-align: right;">1234</td>
+<td style="text-align: right;">1077</td>
+<td style="text-align: right;">1151</td>
+<td style="text-align: right;">1470</td>
+<td style="text-align: right;">644</td>
+<td style="text-align: right;">3839</td>
+<td style="text-align: right;">503</td>
+<td style="text-align: right;">3657</td>
+<td style="text-align: right;">685</td>
+<td style="text-align: right;">478</td>
+<td style="text-align: right;">1198</td>
+<td style="text-align: right;">2666</td>
+<td style="text-align: right;">477</td>
+<td style="text-align: right;">1005</td>
+<td style="text-align: right;">2860</td>
+<td style="text-align: right;">2904</td>
+<td style="text-align: right;">574</td>
+<td style="text-align: right;">864</td>
+<td style="text-align: right;">2906</td>
+<td style="text-align: right;">515</td>
+<td style="text-align: right;">921</td>
+<td style="text-align: right;">3448</td>
+<td style="text-align: right;">417</td>
+<td style="text-align: right;">477</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4342</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">830</td>
+<td style="text-align: right;">3171</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">151</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">APRENDIZ.(&gt;10)Apren</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">108</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">96</td>
+<td style="text-align: right;">49</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">222</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">223</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">212</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">213</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">230</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">168</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">27</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PUBLICI.Nopub</td>
+<td style="text-align: right;">160</td>
+<td style="text-align: right;">1866</td>
+<td style="text-align: right;">1138</td>
+<td style="text-align: right;">544</td>
+<td style="text-align: right;">772</td>
+<td style="text-align: right;">1144</td>
+<td style="text-align: right;">704</td>
+<td style="text-align: right;">2652</td>
+<td style="text-align: right;">512</td>
+<td style="text-align: right;">2412</td>
+<td style="text-align: right;">752</td>
+<td style="text-align: right;">552</td>
+<td style="text-align: right;">1974</td>
+<td style="text-align: right;">638</td>
+<td style="text-align: right;">524</td>
+<td style="text-align: right;">1724</td>
+<td style="text-align: right;">916</td>
+<td style="text-align: right;">2488</td>
+<td style="text-align: right;">501</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">2477</td>
+<td style="text-align: right;">444</td>
+<td style="text-align: right;">243</td>
+<td style="text-align: right;">2901</td>
+<td style="text-align: right;">153</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">2328</td>
+<td style="text-align: right;">830</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">3164</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PUBLICI.Pubbaja</td>
+<td style="text-align: right;">615</td>
+<td style="text-align: right;">3296</td>
+<td style="text-align: right;">2037</td>
+<td style="text-align: right;">1491</td>
+<td style="text-align: right;">1556</td>
+<td style="text-align: right;">1924</td>
+<td style="text-align: right;">977</td>
+<td style="text-align: right;">5176</td>
+<td style="text-align: right;">772</td>
+<td style="text-align: right;">4946</td>
+<td style="text-align: right;">1002</td>
+<td style="text-align: right;">769</td>
+<td style="text-align: right;">2546</td>
+<td style="text-align: right;">2633</td>
+<td style="text-align: right;">776</td>
+<td style="text-align: right;">2259</td>
+<td style="text-align: right;">2913</td>
+<td style="text-align: right;">4166</td>
+<td style="text-align: right;">883</td>
+<td style="text-align: right;">899</td>
+<td style="text-align: right;">4144</td>
+<td style="text-align: right;">847</td>
+<td style="text-align: right;">957</td>
+<td style="text-align: right;">4871</td>
+<td style="text-align: right;">499</td>
+<td style="text-align: right;">578</td>
+<td style="text-align: right;">2609</td>
+<td style="text-align: right;">3171</td>
+<td style="text-align: right;">168</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5948</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PUBLICI.Pubmod</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">155</td>
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">106</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">298</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">284</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">91</td>
+<td style="text-align: right;">209</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">110</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">212</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">222</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">213</td>
+<td style="text-align: right;">47</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">190</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">321</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PUBLICI.Pubalta</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">192</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">243</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">231</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">166</td>
+<td style="text-align: right;">177</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">182</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">136</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">73</td>
+<td style="text-align: right;">75</td>
+<td style="text-align: right;">151</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">253</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Gráfico de Inercias Originales
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acm_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Gráfico de Inercias bajo Critero de Benzécri
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acm_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Así se puede ver que para recabar la grán cantidad de información, se necesitarán solamente los dos primeros ejes.</p>
+</section>
+<section id="resultados" class="level2">
+<h2 class="anchored" data-anchor-id="resultados">Resultados</h2>
+<p>Previo a mostrar las gráficas, dejamos las ayudas a la interpretación:</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Contribución a la dimensión 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acm_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Contribución a la dimensión 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acm_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>De esta manera se muestra la proyección de ambos ejes:</p>
+</section>
+<section id="gráfico-de-acm" class="level2">
+<h2 class="anchored" data-anchor-id="gráfico-de-acm">Gráfico de ACM</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acm_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Que a pesar de verse muy saturado, logra dar varias relaciones:</p>
+<ul>
+<li>En general todas las categorías que se separen entre hombres y mujeres se muestran correlacionadas de manera similar a los ejes factoriales.</li>
+<li>La inversion alta y moderada en publicidad se ven tambien proyectadas de manera similar entre ambos ejes.</li>
+</ul>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Gráfico de Proyección con Individuos
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acm_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Este gráfico muestra varias agrupaciones claras en los individuos; estas serán abordadas en su respectiva sección.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="grafico-categorias-iniciales" class="level2">
+<h2 class="anchored" data-anchor-id="grafico-categorias-iniciales">Grafico categorias iniciales</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acm_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="categorías-ilustrativas" class="level2">
+<h2 class="anchored" data-anchor-id="categorías-ilustrativas">Categorías Ilustrativas</h2>
+<p>Se toma tamaño de la empresa y la variable continua <strong>BRUTA</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acm_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>A pesar del bajo conteo, se puede asumir una similitud en el comportamiento entre la cantidad de aprendices, la contratación por agencia, las inversiones en publicidad y el tamaño de la empresa. Nótese la dirección en la que apuntan todas estas variables en su categoría de mayor orden y hacia donde señalan las empresas que no sean micro.</li>
+<li>Se puede apreciar que las Microempresas no invierten en publicidad, no tienen socios comunmente, y tampoco tienen aprendices.</li>
+</ul>
+<section id="variable-cuantitativa-bruta" class="level3">
+<h3 class="anchored" data-anchor-id="variable-cuantitativa-bruta">Variable cuantitativa (Bruta)</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acm_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Se podría concluir que, a pesar de que <strong>BRUTA</strong> haya demostrado ser una variable muy correlacionada para variables cuantitativas, esta no resulta siendo tan buena en ese aspecto para variables cualitativas.</p>
+</section>
+</section>
+<section id="conclusiones" class="level2">
+<h2 class="anchored" data-anchor-id="conclusiones">Conclusiones</h2>
+<ul>
+<li>Se podría decir que existe una correlación en el conteo de hombres y mujeres según la categoría a la que pertenezcan en todas las empresas. Esto porque claramente todas las proyecciones en los ejes factoriales eran similares, lo que puede ser indicio de que son variables que van de la mano, así el conteo en general de hombres y mujeres o su salario respectivo sí tengan por lo general una diferencia notable.</li>
+<li>Se podría tambien concluir que la inversión alta o media en publicidad no son categorías muy distintas la una de la otra; dado a que tienen el mismo ángulo de proyección. Tomando en cuenta su conteo y cercanía al centro, se puede asumir entonces que estas categorías no van muy de la mano con el tamaño de la empresa.</li>
+<li>Empresas de todo tipo menos microempresa parecen tender a realizar contrataciones por agencia, hacer inversiones en publicidad, o tener aprendices. La cantidad de cada una parece regirse según el tamaño de la empresa exceptuando en publicidad.</li>
+<li>Las microempresas por lo general, ya sea por sus ingresos o el mercado al que van orientadas (en su mayoría al por menor) no se muestran comúnmente interesadas en inversiones de publicidad, así lleguen a ser bajas. Tal vez por su tamaño, tampoco suelen tener socios y no reportan la contratación de aprendices.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Análisis de Correspondencias Simples</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Revisión del Sector Empresarial</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">Datos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./exploratorio.html"> 
+<span class="menu-text">Análisis Exploratorio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./componentes.html"> 
+<span class="menu-text">ACP</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./acs.html" aria-current="page"> 
+<span class="menu-text">ACS</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./acm.html"> 
+<span class="menu-text">ACM</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./agrupamiento.html"> 
+<span class="menu-text">Agrupamiento</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./talks.html"> 
+<span class="menu-text">Código</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#tamaño-con-tipo-de-empresa" id="toc-tamaño-con-tipo-de-empresa" class="nav-link active" data-scroll-target="#tamaño-con-tipo-de-empresa">Tamaño con Tipo de Empresa</a>
+  <ul class="collapse">
+  <li><a href="#objetivos" id="toc-objetivos" class="nav-link" data-scroll-target="#objetivos">Objetivos</a></li>
+  <li><a href="#perfiles-fila-y-columna" id="toc-perfiles-fila-y-columna" class="nav-link" data-scroll-target="#perfiles-fila-y-columna">Perfiles Fila y Columna</a></li>
+  <li><a href="#resultados" id="toc-resultados" class="nav-link" data-scroll-target="#resultados">Resultados</a></li>
+  <li><a href="#conclusiones" id="toc-conclusiones" class="nav-link" data-scroll-target="#conclusiones">Conclusiones</a></li>
+  </ul></li>
+  <li><a href="#tamaño-con-edad" id="toc-tamaño-con-edad" class="nav-link" data-scroll-target="#tamaño-con-edad">Tamaño con Edad</a>
+  <ul class="collapse">
+  <li><a href="#objetivo" id="toc-objetivo" class="nav-link" data-scroll-target="#objetivo">Objetivo</a></li>
+  <li><a href="#perfiles-fila-y-columna-1" id="toc-perfiles-fila-y-columna-1" class="nav-link" data-scroll-target="#perfiles-fila-y-columna-1">Perfiles Fila y Columna</a></li>
+  <li><a href="#resultados-1" id="toc-resultados-1" class="nav-link" data-scroll-target="#resultados-1">Resultados</a></li>
+  <li><a href="#conclusiones-1" id="toc-conclusiones-1" class="nav-link" data-scroll-target="#conclusiones-1">Conclusiones</a></li>
+  </ul></li>
+  <li><a href="#edad-con-tipo-de-empresa" id="toc-edad-con-tipo-de-empresa" class="nav-link" data-scroll-target="#edad-con-tipo-de-empresa">Edad con Tipo de Empresa</a>
+  <ul class="collapse">
+  <li><a href="#objetivos-1" id="toc-objetivos-1" class="nav-link" data-scroll-target="#objetivos-1">Objetivos</a></li>
+  <li><a href="#perfiles-fila-y-columna-2" id="toc-perfiles-fila-y-columna-2" class="nav-link" data-scroll-target="#perfiles-fila-y-columna-2">Perfiles Fila y Columna</a></li>
+  <li><a href="#resultados-2" id="toc-resultados-2" class="nav-link" data-scroll-target="#resultados-2">Resultados</a></li>
+  <li><a href="#conclusiones-2" id="toc-conclusiones-2" class="nav-link" data-scroll-target="#conclusiones-2">Conclusiones</a></li>
+  </ul></li>
+  <li><a href="#conclusiones-generales" id="toc-conclusiones-generales" class="nav-link" data-scroll-target="#conclusiones-generales">Conclusiones Generales</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Análisis de Correspondencias Simples</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Dado que la variable <strong>BRUTA</strong> demostró ser la más importante en el ACP, decicimos dos hacer comparaciones entre esta, usando la clasificación de <strong>Tamaño</strong> por empresas según sus ingresos brutos. Las variables que elegimos son las siguientes. - <strong>Tipo de Empresa</strong> - <strong>Edad de la Empresa</strong></p>
+<p>Tambien, para complementar la segunda realizamos una comparación entre <strong>Edad de la Empresa</strong> y <strong>Tipo de Empresa</strong>.</p>
+<div id="tip-example" class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip&nbsp;1: ¿Por qué no combinar categorías empresas grandes y medianas?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En los siguientes tres análisis se notará que no pegamos empresas grandes y medianas así el conteo relativo tan bajo de empresas de gran tamaño pueda afectar los ACS. Esto con el motivo de que en Colombia ambos grupos suelen ser tratados por separado; es común ver en el debate político, en informes económicos, y demás el uso del término PYMEs (Pequeñas y Medianas Empresas). Además al estar soportándonos de ayudas de interpretación y revisando constantemente que el conteo relativo no sea menor al 0.1%, consideramos que podemos mantener la calidad de los análisis sin hacer mayores cambios.</p>
+</div>
+</div>
+<section id="tamaño-con-tipo-de-empresa" class="level2">
+<h2 class="anchored" data-anchor-id="tamaño-con-tipo-de-empresa">Tamaño con Tipo de Empresa</h2>
+<p>ACS entre las variables <strong>Tamaño</strong> (cuatro categorías) y <strong>CIIU</strong> (tres categorías).</p>
+<section id="objetivos" class="level3">
+<h3 class="anchored" data-anchor-id="objetivos">Objetivos</h3>
+<p>Queremos analizar la pertenencia a un sector comercial con el tamaño de las empresas. Al ser CIIU cuantitativa esto no sería posible en ACP. Además vemos útil poder conocer la composición de cada mercado censado en la EAC.</p>
+<p>De esta manera, primero notemos que no va a ser posible usar la clasificación completa de CIIU debido al bajo conteo de frecuencias relativas que podrán dañar el ACS:</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 7%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 8%">
+<col style="width: 4%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 4%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">451</th>
+<th style="text-align: right;">453</th>
+<th style="text-align: right;">454</th>
+<th style="text-align: right;">462</th>
+<th style="text-align: right;">464</th>
+<th style="text-align: right;">465</th>
+<th style="text-align: right;">466</th>
+<th style="text-align: right;">4711-472</th>
+<th style="text-align: right;">4719</th>
+<th style="text-align: right;">473</th>
+<th style="text-align: right;">4741-4742</th>
+<th style="text-align: right;">4752</th>
+<th style="text-align: right;">4759-4761</th>
+<th style="text-align: right;">4771-4751</th>
+<th style="text-align: right;">4772</th>
+<th style="text-align: right;">4773</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MIcroe</td>
+<td style="text-align: right;">0.145</td>
+<td style="text-align: right;">1.827</td>
+<td style="text-align: right;">0.723</td>
+<td style="text-align: right;">5.162</td>
+<td style="text-align: right;">4.264</td>
+<td style="text-align: right;">2.746</td>
+<td style="text-align: right;">5.895</td>
+<td style="text-align: right;">5.018</td>
+<td style="text-align: right;">0.145</td>
+<td style="text-align: right;">5.843</td>
+<td style="text-align: right;">1.414</td>
+<td style="text-align: right;">2.013</td>
+<td style="text-align: right;">1.910</td>
+<td style="text-align: right;">1.817</td>
+<td style="text-align: right;">0.640</td>
+<td style="text-align: right;">1.528</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PQempr</td>
+<td style="text-align: right;">0.878</td>
+<td style="text-align: right;">2.633</td>
+<td style="text-align: right;">1.125</td>
+<td style="text-align: right;">7.753</td>
+<td style="text-align: right;">7.227</td>
+<td style="text-align: right;">6.628</td>
+<td style="text-align: right;">9.911</td>
+<td style="text-align: right;">2.839</td>
+<td style="text-align: right;">0.062</td>
+<td style="text-align: right;">3.324</td>
+<td style="text-align: right;">1.043</td>
+<td style="text-align: right;">0.630</td>
+<td style="text-align: right;">1.001</td>
+<td style="text-align: right;">1.311</td>
+<td style="text-align: right;">0.723</td>
+<td style="text-align: right;">0.981</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MEdempr</td>
+<td style="text-align: right;">0.785</td>
+<td style="text-align: right;">0.361</td>
+<td style="text-align: right;">0.103</td>
+<td style="text-align: right;">1.105</td>
+<td style="text-align: right;">1.652</td>
+<td style="text-align: right;">1.476</td>
+<td style="text-align: right;">1.838</td>
+<td style="text-align: right;">0.289</td>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">0.124</td>
+<td style="text-align: right;">0.206</td>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">0.145</td>
+<td style="text-align: right;">0.289</td>
+<td style="text-align: right;">0.134</td>
+<td style="text-align: right;">0.206</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EmprGran</td>
+<td style="text-align: right;">0.206</td>
+<td style="text-align: right;">0.031</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.227</td>
+<td style="text-align: right;">0.527</td>
+<td style="text-align: right;">0.176</td>
+<td style="text-align: right;">0.289</td>
+<td style="text-align: right;">0.165</td>
+<td style="text-align: right;">0.093</td>
+<td style="text-align: right;">0.041</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">0.062</td>
+<td style="text-align: right;">0.083</td>
+<td style="text-align: right;">0.072</td>
+<td style="text-align: right;">0.072</td>
+<td style="text-align: right;">0.062</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Así, decidimos aplicar la siguiente reclasificación:</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Reclasificación
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Comercio de Vehículos</li>
+<li>Comercio al por Mayor</li>
+<li>Comercio al por Menor</li>
+</ul>
+</div>
+</div>
+</div>
+<p>Nos quedan la siguientes tablas:</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Freq Absolutas
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 26%">
+<col style="width: 30%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Comercio vehiculos</th>
+<th style="text-align: right;">Comercio al por mayor</th>
+<th style="text-align: right;">Comercio al por menor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MIcroe</td>
+<td style="text-align: right;">261</td>
+<td style="text-align: right;">1750</td>
+<td style="text-align: right;">1969</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PQempr</td>
+<td style="text-align: right;">449</td>
+<td style="text-align: right;">3053</td>
+<td style="text-align: right;">1154</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MEdempr</td>
+<td style="text-align: right;">121</td>
+<td style="text-align: right;">588</td>
+<td style="text-align: right;">137</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EmprGran</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">118</td>
+<td style="text-align: right;">63</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Freq Relativas
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 26%">
+<col style="width: 30%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Comercio vehiculos</th>
+<th style="text-align: right;">Comercio al por mayor</th>
+<th style="text-align: right;">Comercio al por menor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MIcroe</td>
+<td style="text-align: right;">2.695</td>
+<td style="text-align: right;">18.07</td>
+<td style="text-align: right;">20.33</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PQempr</td>
+<td style="text-align: right;">4.636</td>
+<td style="text-align: right;">31.52</td>
+<td style="text-align: right;">11.91</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MEdempr</td>
+<td style="text-align: right;">1.249</td>
+<td style="text-align: right;">6.07</td>
+<td style="text-align: right;">1.41</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EmprGran</td>
+<td style="text-align: right;">0.237</td>
+<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">0.65</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Así se muestre una categoría de conteo bajo en empresas grandes, se mantiene coherente realizar el análisis.</p>
+</section>
+<section id="perfiles-fila-y-columna" class="level3">
+<h3 class="anchored" data-anchor-id="perfiles-fila-y-columna">Perfiles Fila y Columna</h3>
+<p>Como ayudas a la futura interpretación mostramos ambas tablas de perfiles:</p>
+<div class="columns">
+<div class="column" style="width:49%;">
+<section id="perfil-fila-tamaño" class="level4">
+<h4 class="anchored" data-anchor-id="perfil-fila-tamaño">Perfil Fila (Tamaño)</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 24%">
+<col style="width: 28%">
+<col style="width: 28%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Comercio vehiculos</th>
+<th style="text-align: right;">Comercio al por mayor</th>
+<th style="text-align: right;">Comercio al por menor</th>
+<th style="text-align: right;">marg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MIcroe</td>
+<td style="text-align: right;">30.6</td>
+<td style="text-align: right;">31.8</td>
+<td style="text-align: right;">59.3</td>
+<td style="text-align: right;">41.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PQempr</td>
+<td style="text-align: right;">52.6</td>
+<td style="text-align: right;">55.4</td>
+<td style="text-align: right;">34.7</td>
+<td style="text-align: right;">48.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MEdempr</td>
+<td style="text-align: right;">14.2</td>
+<td style="text-align: right;">10.7</td>
+<td style="text-align: right;">4.1</td>
+<td style="text-align: right;">8.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EmprGran</td>
+<td style="text-align: right;">2.7</td>
+<td style="text-align: right;">2.1</td>
+<td style="text-align: right;">1.9</td>
+<td style="text-align: right;">2.1</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acs_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div><div class="column" style="width:2%;">
+
+</div><div class="column" style="width:49%;">
+<section id="perfil-columna-tipo" class="level4">
+<h4 class="anchored" data-anchor-id="perfil-columna-tipo">Perfil Columna (Tipo)</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 26%">
+<col style="width: 30%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Comercio vehiculos</th>
+<th style="text-align: right;">Comercio al por mayor</th>
+<th style="text-align: right;">Comercio al por menor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MIcroe</td>
+<td style="text-align: right;">6.6</td>
+<td style="text-align: right;">44.0</td>
+<td style="text-align: right;">49.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PQempr</td>
+<td style="text-align: right;">9.6</td>
+<td style="text-align: right;">65.6</td>
+<td style="text-align: right;">24.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MEdempr</td>
+<td style="text-align: right;">14.3</td>
+<td style="text-align: right;">69.5</td>
+<td style="text-align: right;">16.2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EmprGran</td>
+<td style="text-align: right;">11.3</td>
+<td style="text-align: right;">57.8</td>
+<td style="text-align: right;">30.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">marg</td>
+<td style="text-align: right;">8.8</td>
+<td style="text-align: right;">56.9</td>
+<td style="text-align: right;">34.3</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acs_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</section>
+<section id="resultados" class="level3">
+<h3 class="anchored" data-anchor-id="resultados">Resultados</h3>
+<p>Ahora se realiza el ACS tomando en cuenta todas las categorías (así sea riesgoso tomar <em>EmprGran</em>: Empresas Grandes, se mostró en un ACS previo que no hay grandes diferencias en los resultados al tomarla o no):</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acs_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Así se pueden encontrar relaciones cuasi-baricéntricas entre la distribucion que siguen los comercios.</p>
+</section>
+<section id="conclusiones" class="level3">
+<h3 class="anchored" data-anchor-id="conclusiones">Conclusiones</h3>
+<p>Analizando el gráfico y las ayudas de interpretación, se llega a las siguientes conclusiones:</p>
+<ul>
+<li><p>El comercio al por menor, según el ACS, está muy ligado a la microempresa; se puede ver en el gráfico de columnas es el que más se diferencia a la distribución marginal. Nótese que va mucho más relacionado al área de la microempresa, donde esta es más de la mitad.</p></li>
+<li><p>EL ACS tambien señala relación entre pequeña empresa y comercio al por mayor, pero nótese que en el gráfico marginal columnas no hay una marcada diferencia entre la cantidad marginal de pequeña empresa con la cantidad al por mayor, cuando en cambio si hay una diferencia mas marcada en la microempresa.</p></li>
+<li><p>A su vez, el ACS señala una relación, menos marcada, entre comercio de vehiculos y empresas grandes o medianas. Si analizamos el gráfico marginal de filas, se notará que ambos tamaños de empresas son mayores al “promedio”, pero es con la mediana empresa que se muestra una relación marcada; en cambio con la empresa grande esta relación no se diferencia particularmente de la marginal y es similar a la distribución de empresas pequeñas orientadas al comercio de vehículos.</p></li>
+<li><p>Se podría concluir a partir de la discribución de la microempresa, al ser de por sí conocida por no tener comúnmente los recursos para hacer inversiones de alto calibre, que el mercado vehicular implica tener una cantidad de activos considerable.</p></li>
+<li><p>Tambien hay que resaltar la baja tendencia de empresas medianas y pequeñas a enfocarse en mercados al por menor; aunque es entendible, dado que comúnmente en colombia no encontramos un intermedio entre grandes cadenas de víveres al por menor, con tiendas de barrio enfocadas en el mismo mercado.</p></li>
+</ul>
+</section>
+</section>
+<section id="tamaño-con-edad" class="level2">
+<h2 class="anchored" data-anchor-id="tamaño-con-edad">Tamaño con Edad</h2>
+<p>ACS entre las variables <strong>Tamaño</strong> (cuatro categorías) y <strong>Edad</strong> (seis categorías).</p>
+<section id="objetivo" class="level3">
+<h3 class="anchored" data-anchor-id="objetivo">Objetivo</h3>
+<p>Verificar si el tamaño de las de empresas va relacionado con su edad. Este es particularmente importante dado que no consideramos que fuera viable tomar la edad como variable continua. Tambien queremos darnos una idea de qué forma se encuentran agrupadas las edades segun el tamaño de las empresas; así verificar si existen indicios de relaciones o no. A la vez queremos complementar este análisis con el siguiente, donde se comparan <strong>Edad</strong> y <strong>Tipo de Empresa</strong>; así para darnos una idea de qué sectores pueden darle a sus empresas la posibilidad de crecer según el tiempo.</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Freq Absolutas
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Mas de 30</th>
+<th style="text-align: right;">Entre 30 y 20</th>
+<th style="text-align: right;">Entre 20 y 10</th>
+<th style="text-align: right;">Menos de 10</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MIcroe</td>
+<td style="text-align: right;">784</td>
+<td style="text-align: right;">963</td>
+<td style="text-align: right;">1415</td>
+<td style="text-align: right;">818</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PQempr</td>
+<td style="text-align: right;">1029</td>
+<td style="text-align: right;">1236</td>
+<td style="text-align: right;">1569</td>
+<td style="text-align: right;">822</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MEdempr</td>
+<td style="text-align: right;">260</td>
+<td style="text-align: right;">227</td>
+<td style="text-align: right;">228</td>
+<td style="text-align: right;">131</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EmprGran</td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">39</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Freq Relativas
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Mas de 30</th>
+<th style="text-align: right;">Entre 30 y 20</th>
+<th style="text-align: right;">Entre 20 y 10</th>
+<th style="text-align: right;">Menos de 10</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MIcroe</td>
+<td style="text-align: right;">8.094</td>
+<td style="text-align: right;">9.942</td>
+<td style="text-align: right;">14.609</td>
+<td style="text-align: right;">8.445</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PQempr</td>
+<td style="text-align: right;">10.624</td>
+<td style="text-align: right;">12.761</td>
+<td style="text-align: right;">16.199</td>
+<td style="text-align: right;">8.486</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MEdempr</td>
+<td style="text-align: right;">2.684</td>
+<td style="text-align: right;">2.344</td>
+<td style="text-align: right;">2.354</td>
+<td style="text-align: right;">1.352</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EmprGran</td>
+<td style="text-align: right;">0.888</td>
+<td style="text-align: right;">0.444</td>
+<td style="text-align: right;">0.372</td>
+<td style="text-align: right;">0.403</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Se ve que nuevamente hay un muy bajo conteo de empresas grandes. Lo que seguramente será un problema dada la importancia que tendrán los datos, de todas formas al tenerse las ayudas de interpretación y los conteos no ser tan lejanos de un 1%, se tendrá en cuenta la variable.</p>
+</section>
+<section id="perfiles-fila-y-columna-1" class="level3">
+<h3 class="anchored" data-anchor-id="perfiles-fila-y-columna-1">Perfiles Fila y Columna</h3>
+<p>Como ayudas a la futura interpretación mostramos ambas tablas de perfiles:</p>
+<div class="columns">
+<div class="column" style="width:49%;">
+<section id="perfil-fila-tamaño-1" class="level4">
+<h4 class="anchored" data-anchor-id="perfil-fila-tamaño-1">Perfil Fila (Tamaño)</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Mas de 30</th>
+<th style="text-align: right;">Entre 30 y 20</th>
+<th style="text-align: right;">Entre 20 y 10</th>
+<th style="text-align: right;">Menos de 10</th>
+<th style="text-align: right;">marg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MIcroe</td>
+<td style="text-align: right;">36.3</td>
+<td style="text-align: right;">39.0</td>
+<td style="text-align: right;">43.6</td>
+<td style="text-align: right;">45.2</td>
+<td style="text-align: right;">41.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PQempr</td>
+<td style="text-align: right;">47.7</td>
+<td style="text-align: right;">50.1</td>
+<td style="text-align: right;">48.3</td>
+<td style="text-align: right;">45.4</td>
+<td style="text-align: right;">48.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MEdempr</td>
+<td style="text-align: right;">12.0</td>
+<td style="text-align: right;">9.2</td>
+<td style="text-align: right;">7.0</td>
+<td style="text-align: right;">7.2</td>
+<td style="text-align: right;">8.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EmprGran</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: right;">1.7</td>
+<td style="text-align: right;">1.1</td>
+<td style="text-align: right;">2.2</td>
+<td style="text-align: right;">2.1</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acs_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div><div class="column" style="width:2%;">
+
+</div><div class="column" style="width:49%;">
+<section id="perfil-columna-edad" class="level4">
+<h4 class="anchored" data-anchor-id="perfil-columna-edad">Perfil Columna (Edad)</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Mas de 30</th>
+<th style="text-align: right;">Entre 30 y 20</th>
+<th style="text-align: right;">Entre 20 y 10</th>
+<th style="text-align: right;">Menos de 10</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MIcroe</td>
+<td style="text-align: right;">19.7</td>
+<td style="text-align: right;">24.2</td>
+<td style="text-align: right;">35.6</td>
+<td style="text-align: right;">20.6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PQempr</td>
+<td style="text-align: right;">22.1</td>
+<td style="text-align: right;">26.5</td>
+<td style="text-align: right;">33.7</td>
+<td style="text-align: right;">17.7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MEdempr</td>
+<td style="text-align: right;">30.7</td>
+<td style="text-align: right;">26.8</td>
+<td style="text-align: right;">27.0</td>
+<td style="text-align: right;">15.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EmprGran</td>
+<td style="text-align: right;">42.2</td>
+<td style="text-align: right;">21.1</td>
+<td style="text-align: right;">17.6</td>
+<td style="text-align: right;">19.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">marg</td>
+<td style="text-align: right;">22.3</td>
+<td style="text-align: right;">25.5</td>
+<td style="text-align: right;">33.5</td>
+<td style="text-align: right;">18.7</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acs_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</section>
+<section id="resultados-1" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-1">Resultados</h3>
+<p>Ahora se realiza el ACS tomando en cuenta todas las categorías. A pesar del bajo conteo de empresas grandes, consideramos que varias relaciones se podrán ver, como en el ACS anterior, medante el gráfico de proyecciones y una revisión sobre las ayudas de interpretación. El gráfico contiene más del 99% de la inercia.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acs_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="conclusiones-1" class="level3">
+<h3 class="anchored" data-anchor-id="conclusiones-1">Conclusiones</h3>
+<ul>
+<li><p>Se puede ver una relación entre microempresas o empresas pequeñas y edades menores o iguales a 20 años. Nótese que si tomamos en cuenta ambas, en el conteo de microempresas, efectivamente en el gráfico marginal se divisa esta distribución; aunque cabe a resaltar que este tamaño de empresa es casi igual al promedio. Es entendible dado a que el conteo de microempresas y empresas pequeñas corresponde a aproximadamente el 90% de todas las empresas censadas.</p></li>
+<li><p>Las empresas grandes en el gráfico de proyecciones se muestran con una longitud alta; esto es entendible dado el bajo conteo de las empresas. De todas formas están en una dirección parecida a las empresas de 30 o más años de existencia; revisando el gráfico de filas, se puede comprender este comportamiento; debido a que las empresas grandes se diferencian de la distribución marginal particularmente en la categoría de 30 años.</p></li>
+<li><p>Se puede apreciar en el ACS que la distancia entre empresas de 10 a 20 años aumenta según eñ tamaño que tengan. Este comportamiento se confirma en la tabla de filas; tambien se muestra un comportamiento similar según las empresas con 30 o más años. Es interesante que este comportamiento no lo siguen las clasificaciones de “Menos de 10” y “Entre 20 y 30”. De esta manera, se podría suponer una relación a revisar entre las primeras dos clasificaciones de edades.</p></li>
+</ul>
+</section>
+</section>
+<section id="edad-con-tipo-de-empresa" class="level2">
+<h2 class="anchored" data-anchor-id="edad-con-tipo-de-empresa">Edad con Tipo de Empresa</h2>
+<p>ACS entre las variables <strong>Edad de la Empresa</strong> (cuatro categorías) y <strong>Tipo de Empresa</strong> (tres categorías).</p>
+<section id="objetivos-1" class="level3">
+<h3 class="anchored" data-anchor-id="objetivos-1">Objetivos</h3>
+<p>Para complementar el análisis anterior, realizaremos la comparación entre estas dos variables; para así dar comentarios complementarios con los hallazgos encontrados; particularmente buscamos encontrar información sobre las categorías de edad “Más de 30 años” y “Entre 10 y 20 años”.</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Freq Absolutas
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 24%">
+<col style="width: 28%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Comercio vehiculos</th>
+<th style="text-align: right;">Comercio al por mayor</th>
+<th style="text-align: right;">Comercio al por menor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mas de 30</td>
+<td style="text-align: right;">263</td>
+<td style="text-align: right;">1282</td>
+<td style="text-align: right;">614</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Entre 30 y 20</td>
+<td style="text-align: right;">197</td>
+<td style="text-align: right;">1491</td>
+<td style="text-align: right;">781</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Entre 20 y 10</td>
+<td style="text-align: right;">261</td>
+<td style="text-align: right;">1772</td>
+<td style="text-align: right;">1215</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Menos de 10</td>
+<td style="text-align: right;">133</td>
+<td style="text-align: right;">964</td>
+<td style="text-align: right;">713</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Freq Relativas
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 24%">
+<col style="width: 28%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Comercio vehiculos</th>
+<th style="text-align: right;">Comercio al por mayor</th>
+<th style="text-align: right;">Comercio al por menor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mas de 30</td>
+<td style="text-align: right;">2.71</td>
+<td style="text-align: right;">13.24</td>
+<td style="text-align: right;">6.34</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Entre 30 y 20</td>
+<td style="text-align: right;">2.03</td>
+<td style="text-align: right;">15.39</td>
+<td style="text-align: right;">8.06</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Entre 20 y 10</td>
+<td style="text-align: right;">2.69</td>
+<td style="text-align: right;">18.29</td>
+<td style="text-align: right;">12.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Menos de 10</td>
+<td style="text-align: right;">1.37</td>
+<td style="text-align: right;">9.95</td>
+<td style="text-align: right;">7.36</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Nótese</p>
+</section>
+<section id="perfiles-fila-y-columna-2" class="level3">
+<h3 class="anchored" data-anchor-id="perfiles-fila-y-columna-2">Perfiles Fila y Columna</h3>
+<p>Como ayudas a la futura interpretación mostramos ambas tablas de perfiles:</p>
+<div class="columns">
+<div class="column" style="width:49%;">
+<section id="perfil-fila-tamaño-2" class="level4">
+<h4 class="anchored" data-anchor-id="perfil-fila-tamaño-2">Perfil Fila (Tamaño)</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 23%">
+<col style="width: 26%">
+<col style="width: 26%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Comercio vehiculos</th>
+<th style="text-align: right;">Comercio al por mayor</th>
+<th style="text-align: right;">Comercio al por menor</th>
+<th style="text-align: right;">marg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mas de 30</td>
+<td style="text-align: right;">30.8</td>
+<td style="text-align: right;">23.3</td>
+<td style="text-align: right;">18.5</td>
+<td style="text-align: right;">22.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Entre 30 y 20</td>
+<td style="text-align: right;">23.1</td>
+<td style="text-align: right;">27.1</td>
+<td style="text-align: right;">23.5</td>
+<td style="text-align: right;">25.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Entre 20 y 10</td>
+<td style="text-align: right;">30.6</td>
+<td style="text-align: right;">32.2</td>
+<td style="text-align: right;">36.6</td>
+<td style="text-align: right;">33.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Menos de 10</td>
+<td style="text-align: right;">15.6</td>
+<td style="text-align: right;">17.5</td>
+<td style="text-align: right;">21.5</td>
+<td style="text-align: right;">18.7</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acs_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div><div class="column" style="width:2%;">
+
+</div><div class="column" style="width:49%;">
+<section id="perfil-columna-edad-1" class="level4">
+<h4 class="anchored" data-anchor-id="perfil-columna-edad-1">Perfil Columna (Edad)</h4>
+<div class="cell">
+<div class="cell-output-display">
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 24%">
+<col style="width: 28%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Comercio vehiculos</th>
+<th style="text-align: right;">Comercio al por mayor</th>
+<th style="text-align: right;">Comercio al por menor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mas de 30</td>
+<td style="text-align: right;">12.2</td>
+<td style="text-align: right;">59.4</td>
+<td style="text-align: right;">28.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Entre 30 y 20</td>
+<td style="text-align: right;">8.0</td>
+<td style="text-align: right;">60.4</td>
+<td style="text-align: right;">31.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Entre 20 y 10</td>
+<td style="text-align: right;">8.0</td>
+<td style="text-align: right;">54.6</td>
+<td style="text-align: right;">37.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Menos de 10</td>
+<td style="text-align: right;">7.3</td>
+<td style="text-align: right;">53.3</td>
+<td style="text-align: right;">39.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">marg</td>
+<td style="text-align: right;">8.8</td>
+<td style="text-align: right;">56.9</td>
+<td style="text-align: right;">34.3</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acs_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</section>
+<section id="resultados-2" class="level3">
+<h3 class="anchored" data-anchor-id="resultados-2">Resultados</h3>
+<p>Mostradas las gráficas, a continuación mostramos el gráfico de ACS; que contiene más del 99% de la información.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="acs_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="conclusiones-2" class="level3">
+<h3 class="anchored" data-anchor-id="conclusiones-2">Conclusiones</h3>
+<ul>
+<li><p>Se muestra que en la dirección de comercio al por menor se arrastran particularmente las categorías de empresas con menos de 10 años; seguidas de las de entre 20 y 10 años que se ven menos relacionadas y pueden estar mas distribuidas al comercio al por mayor; este último poco correlacionado al Eje 1. Se puede confirmar en la gráfica de columnas que las empresas de menos de 10 años se diferencian ligeramente de la media.</p></li>
+<li><p>Tambien se puede notar, que el comercio al por menor se aleja según la categoría jerárquica de edad; esto se confirma en la gráfica de filas donde se muestra que las empresas, mientras mayor edad tengan, menos tienden a manejarse en mercados al por menor. De todas formas este comportamiento parece ser difícil de confirmar debido a la reducción de conteo de empresas según su edad.</p></li>
+<li><p>Se podría decir que estas tres clasificaciones se muestran bastante homogéneas segun la edad (no hay relación entre la edad de una empresa y el mercado donde se desarrolle) debido a que, así las empresas al por menor se distribuyan principalmente entre “Menos de 10” y “Entre 20 y 10”, es de notarse la longitud de la proyección y particularmente que este comportamiento no se presenta tan fuerte en demás secciones del gráfico. Tambien revisando la gráfica de columnas se ve que no se diferencian tanto como se esperaría al verse una relación entre ambas.</p></li>
+</ul>
+</section>
+</section>
+<section id="conclusiones-generales" class="level2">
+<h2 class="anchored" data-anchor-id="conclusiones-generales">Conclusiones Generales</h2>
+<ul>
+<li><p>Se podría decir que en Colombia todos los comercios tienen una gran variedad de inversiones en creación de empresa, donde las de gran tamaño no suelen irse a empresas de comercio al por menor; esto en cierta forma podría explicarse con que ya de por sí en el país contamos con una gran variedad de empresas grandes de este tipo, así podría ser considerado en estudios de mercado como un tipo de comercio al que es bastante complicado de adentrarse con inversiones grandes, tal vez al punto de declarársele monopolio.</p></li>
+<li><p>Las empresas más jóvenes (menos de 10 años) se inclinan hacia el comercio al por menor, mientras que las más antiguas (más de 20 años) tienden hacia el comercio al por mayor. Sin embargo, las diferencias en la distribución de empresas según su edad no son tan pronunciadas.</p></li>
+<li><p>Las microempresas tienen una fuerte relación con el comercio al por menor, destacándose en la distribución marginal, mientras que las pequeñas empresas no muestran una variación significativa en este aspecto.</p></li>
+<li><p>El comercio de vehículos está más vinculado a empresas medianas que a grandes, y estas últimas no se diferencian notablemente de la distribución promedio en este sector.</p></li>
+<li><p>El mercado vehicular requiere recursos considerables, lo que explica la baja participación de microempresas en este mercado.</p></li>
+<li><p>Existe una relación entre empresas de entre 10 y 20 años y su tamaño, especialmente en las microempresas y pequeñas empresas, que representan alrededor del 90% de todas las empresas censadas.</p></li>
+<li><p>Las empresas medianas y pequeñas muestran una baja tendencia a operar en mercados al por menor, lo cual refleja una estructura empresarial en Colombia donde predominan grandes cadenas y tiendas de barrio.</p></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
