@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Introducción</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Revisión del Sector Empresarial</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">Datos</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./exploratorio.html"> 
+<span class="menu-text">Análisis Exploratorio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./componentes.html"> 
+<span class="menu-text">ACP</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./acs.html"> 
+<span class="menu-text">ACS</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./acm.html"> 
+<span class="menu-text">ACM</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./agrupamiento.html"> 
+<span class="menu-text">Agrupamiento</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./talks.html"> 
+<span class="menu-text">Código</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#section" id="toc-section" class="nav-link active" data-scroll-target="#section"></a>
+  <ul class="collapse">
+  <li><a href="#objetivo-principal" id="toc-objetivo-principal" class="nav-link" data-scroll-target="#objetivo-principal">Objetivo Principal</a></li>
+  <li><a href="#justificación" id="toc-justificación" class="nav-link" data-scroll-target="#justificación">Justificación</a></li>
+  <li><a href="#planteamiento" id="toc-planteamiento" class="nav-link" data-scroll-target="#planteamiento">Planteamiento</a></li>
+  <li><a href="#marco-teórico" id="toc-marco-teórico" class="nav-link" data-scroll-target="#marco-teórico">Marco Teórico</a></li>
+  <li><a href="#metodología" id="toc-metodología" class="nav-link" data-scroll-target="#metodología">Metodología</a></li>
+  <li><a href="#palabras-clave" id="toc-palabras-clave" class="nav-link" data-scroll-target="#palabras-clave">Palabras Clave</a>
+  <ul class="collapse">
+  <li><a href="#filtrado-o-modificación-de-datos" id="toc-filtrado-o-modificación-de-datos" class="nav-link" data-scroll-target="#filtrado-o-modificación-de-datos">Filtrado o modificación de datos</a></li>
+  </ul></li>
+  <li><a href="#referencias" id="toc-referencias" class="nav-link" data-scroll-target="#referencias">Referencias</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Introducción</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="section" class="level1">
+<h1></h1>
+<p>El sector comercial de Colombia es uno de los pilares mas importantes de la economía nacional. Con tal de suplir carencias de información, desde el año 1996 se lleva realizando por parte del DANE la <em>Encuesta Anual de Comercio</em>, buscando el objetivo de brindarle información sobre la evolución y estructura del sector a toda persona que busque realizar análisis mediante las variables medidas. Será, mediante los datos medidos en la <em>EAC</em> del año 2022, como se buscarán relaciones, conclusiones o demás.</p>
+<p>Trabajo hecho por Jorge Andrés Sanchez Duarte y Daniel Mauricio Vanegas Oliveros.</p>
+<section id="objetivo-principal" class="level2">
+<h2 class="anchored" data-anchor-id="objetivo-principal">Objetivo Principal</h2>
+<p>Identificar y analizar, a partir de datos proporcionados por el DANE, características o patrones particulares entre las empresas colombianas que, a través de las técnicas enseñadas en el curso, se llegue a conclusiones generales sobre el sector empresarial de la nación. Ya sean simples correlaciones como especulaciones o hipótesis más elaboradas sobre por qué las empresas del país siguen distintos comportamientos que, previamente, buscarán ser hallados mediante este estudio.</p>
+<section id="objetivos-secundarios" class="level4">
+<h4 class="anchored" data-anchor-id="objetivos-secundarios">Objetivos secundarios:</h4>
+<ul>
+<li>Identificar cuáles sectores están relacionados a variables como tamaño o ingresos brutos.</li>
+<li>Estudiar relaciones entre cualidades del personal, gastos de distintos tipos (energía, gas, embalajes), sueldos, consumo de setivicios, y tipo de actividades económicas.</li>
+<li>Plantear cuáles son los sectores económicos con mejores condiciones para sus trabajadores en Colombia.</li>
+<li>Estudiar la relación entre el crecimiento de una empresa con su respectivo sector económico a partir de la cantidad de años que tenga en el mercado.</li>
+<li>Caracterizar cada sector económico con el tipo de gastos que realiza.</li>
+<li>Plantear relaciones entre las variables observadas y variables que puedan ser obtenidas a partir de análisis de literatura previo.</li>
+</ul>
+</section>
+</section>
+<section id="justificación" class="level2">
+<h2 class="anchored" data-anchor-id="justificación">Justificación</h2>
+<p>El sector empresarial en Colombia juega un papel crucial en el desarrollo económico y social del país. Sin embargo, a pesar de su importancia, existe una falta de comprensión detallada de las características y el comportamiento de las empresas a nivel micro y macro. Esta falta de información puede obstaculizar la toma de decisiones informadas por parte de los responsables de la formulación de políticas, los inversores y otros actores clave.</p>
+<p>Este estudio tiene como objetivo llenar este vacío de conocimiento al analizar un conjunto de datos que recopila información detallada sobre las empresas en Colombia. Al proporcionar una visión más clara de la estructura y el rendimiento del sector empresarial, este estudio puede ayudar a informar las estrategias de desarrollo económico, mejorar la eficiencia del mercado y fomentar el crecimiento&nbsp;sostenible.</p>
+</section>
+<section id="planteamiento" class="level2">
+<h2 class="anchored" data-anchor-id="planteamiento">Planteamiento</h2>
+<p>Dentro de la economía colombiana existen diversos sectores económicos que, en menor o mayor medida, aportan al complejo sistema de comercio estructurado a través de los años.</p>
+<p>Particularmente en un país con diversos recursos naturales, dichos sectores llegan a ser muy variados, tanto en ingresos como en importancia; con el objetivo de nuestro análisis de estos datos, buscamos dar cabida a que el lector se pueda dar una idea del panorama actual del país en cuanto a su comercio: Desde los sectores que más activos mueven, hasta los que mayor consumo pueden generar.</p>
+</section>
+<section id="marco-teórico" class="level2">
+<h2 class="anchored" data-anchor-id="marco-teórico">Marco Teórico</h2>
+<p>La Encuesta Anual de Comercio (EAC) se originó como una extensión del Censo Económico Multisectorial de 1990, debido a la importancia del sector comercial en el país y la necesidad de información sectorial. La primera encuesta se realizó en 1994 a la vez de funcionar como una prueba piloto; y desde 1996 se ha desarrollado de manera continua. Además, desde el año 2014 la EAC pasó de ser una encuesta muestral a un censo.</p>
+<p>La EAC ha permitido generar información que nos permite conocer la estructura y el desarrollo del comercio nacional, algo que no se hacía antes de su creación. En los últimos años la EAC sigue las recomendaciones de organismos internacionales como la Organización de Naciones Unidas (ONU) y la UNCTAD en materia de Tecnologías de Información y Telecomunicaciones (TIC). El tipo de dato utilizado en la EAC se basa en las recomendaciones internacionales y en las necesidades específicas de la investigación. Se hace un uso cuidadoso de los datos para garantizar la confidencialidad de las empresas que proporcionan&nbsp;información.</p>
+</section>
+<section id="metodología" class="level2">
+<h2 class="anchored" data-anchor-id="metodología">Metodología</h2>
+<p>La poblacion de estudio, segun (DIMPE, 2024) “se aplica a todas las unidades económicas formalmente establecidas ubicadas en el territorio nacional que ocupan 10 o más personas o tienen ingresos por ventas anuales iguales o superiores a $2.030 millones del año 2022 cuya actividad principal es el comercio (al por mayor, al por menor y de vehículos automotores)”. Ademas de esto, cabe aclarar, que los datos, para velar por la privacidad de las empresas encuestadas, fueron modificados con dos métodos de anonimizado.</p>
+<p>Teniendo definida la pobacion, y utlizando los datos oficiales descargados la pagina (DIMPE, 2024). Eliminaremos de nuestro estudio, aquellas empresas inactivas (Produccion bruta = 0), pues, no son variables de nuestro interes, ni tienen alguna relacion con nuestro objetivos.</p>
+<p>De esta manera, ya con los datos reclasificados, vamos a buscar conclusiones o análisis que se puedan hacer a partir de las técnicas del curso. No solamente para el análisis bivariado; sino tambien para dar con variables que muestren agrupamiento o correlaciones fuertes, independientemende de ser categóricas o cuantitativas.</p>
+<p>Una vez halladas estas relaciones, se va a buscar, a partir de una revisión exhaustiva de la bibliografía, explicaciones al por qué de los fenómenos observados, a la vez de proponer el uso de distintos indicadores que puedan ser observados dentro de este conjunto de datos.</p>
+</section>
+<section id="palabras-clave" class="level2">
+<h2 class="anchored" data-anchor-id="palabras-clave">Palabras Clave</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Comercio.</li>
+<li>Sector Económico.</li>
+<li>Gastos.</li>
+<li>Personal (Empresarial).</li>
+<li>Activos.</li>
+<li>Actividades.</li>
+<li>Sueldo.</li>
+<li>CIIU.</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<ul>
+<li>Servicios.</li>
+<li>Inventario.</li>
+<li>Producción.</li>
+<li>Ganancias.</li>
+<li>Publicidad.</li>
+<li>Mantenimiento.</li>
+<li>Outsourcing.</li>
+</ul>
+</div>
+</div>
+<section id="filtrado-o-modificación-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="filtrado-o-modificación-de-datos">Filtrado o modificación de datos</h3>
+<p>Removimos del estudio el análisis a empresas que no se mostraran activas, tomando como criterio su producción bruta. El porcentaje de estas empresas “no activas” es de aproximadamente el 3% de los datos.El motivo de su eliminación es que ya sea para un análisis de componentes principales o análisis de correspondencias, la existencia de estas generaría problemas a la hora de computar sus respectivas operaciones.</p>
+<p>Otro problema recurrente en las variables fue el exceso de ceros, que, siguiendo la recomendación del profesor, han sido tomadas como variables categóricas.</p>
+</section>
+</section>
+<section id="referencias" class="level2">
+<h2 class="anchored" data-anchor-id="referencias">Referencias</h2>
+<ul>
+<li>(DANE), D. A. (1 de 12 de 2022). Clasificancion industrial internacional uniforme de todas las actividades economicas. Obtenido de <a href="https://www.dane.gov.co/files/sen/nomenclatura/ciiu/CIIU_Rev_4_AC2022.pdf" class="uri">https://www.dane.gov.co/files/sen/nomenclatura/ciiu/CIIU_Rev_4_AC2022.pdf</a></li>
+<li>DIMPE, D. d.&nbsp;(6 de 06 de 2022). Encuesta Anual de Comercio - EAC . DANE. Obtenido de <a href="https://microdatos.dane.gov.co/index.php/catalog/798/study-description" class="uri">https://microdatos.dane.gov.co/index.php/catalog/798/study-description</a></li>
+<li>Pardo, C. (2020). Estadística descriptiva multivariada. Universidad Nacional&nbsp;de&nbsp;Colombia.</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
