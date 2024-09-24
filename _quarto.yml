@@ -1,0 +1,32 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  navbar:
+    background: primary
+    left:
+      - text: "Revisión del Sector Empresarial"
+        href: index.qmd
+      - text: "Datos"
+        href: about.qmd
+      - text: "Análisis Exploratorio"
+        href: exploratorio.qmd
+      - text: "ACP"
+        href: componentes.qmd
+      - text: "ACS"
+        href: acs.qmd
+      - text: "ACM"
+        href: acm.qmd
+      - text: "Agrupamiento"
+        href: agrupamiento.qmd
+        
+    right: 
+      - text: "Código"
+        href: talks.qmd
+ 
+format:
+  html:
+    theme: flatly
+
+    toc: true

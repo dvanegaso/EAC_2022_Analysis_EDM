@@ -1,0 +1,94 @@
+---
+title: "Introducción"
+format: html
+editor: visual
+theme: lux
+execute: 
+  echo: false
+---
+
+# 
+
+El sector comercial de Colombia es uno de los pilares mas importantes de la economía nacional. Con tal de suplir carencias de información, desde el año 1996 se lleva realizando por parte del DANE la *Encuesta Anual de Comercio*, buscando el objetivo de brindarle información sobre la evolución y estructura del sector a toda persona que busque realizar análisis mediante las variables medidas. Será, mediante los datos medidos en la *EAC* del año 2022, como se buscarán relaciones, conclusiones o demás.
+
+Trabajo hecho por Jorge Andrés Sanchez Duarte y Daniel Mauricio Vanegas Oliveros.
+
+## Objetivo Principal
+
+Identificar y analizar, a partir de datos proporcionados por el DANE, características o patrones particulares entre las empresas colombianas que, a través de las técnicas enseñadas en el curso, se llegue a conclusiones generales sobre el sector empresarial de la nación. Ya sean simples correlaciones como especulaciones o hipótesis más elaboradas sobre por qué las empresas del país siguen distintos comportamientos que, previamente, buscarán ser hallados mediante este estudio.
+
+#### Objetivos secundarios:
+
+-   Identificar cuáles sectores están relacionados a variables como tamaño o ingresos brutos.
+-   Estudiar relaciones entre cualidades del personal, gastos de distintos tipos (energía, gas, embalajes), sueldos, consumo de setivicios, y tipo de actividades económicas.
+-   Plantear cuáles son los sectores económicos con mejores condiciones para sus trabajadores en Colombia.
+-   Estudiar la relación entre el crecimiento de una empresa con su respectivo sector económico a partir de la cantidad de años que tenga en el mercado.
+-   Caracterizar cada sector económico con el tipo de gastos que realiza.
+-   Plantear relaciones entre las variables observadas y variables que puedan ser obtenidas a partir de análisis de literatura previo.
+
+## Justificación
+
+El sector empresarial en Colombia juega un papel crucial en el desarrollo económico y social del país. Sin embargo, a pesar de su importancia, existe una falta de comprensión detallada de las características y el comportamiento de las empresas a nivel micro y macro. Esta falta de información puede obstaculizar la toma de decisiones informadas por parte de los responsables de la formulación de políticas, los inversores y otros actores clave.
+
+Este estudio tiene como objetivo llenar este vacío de conocimiento al analizar un conjunto de datos que recopila información detallada sobre las empresas en Colombia. Al proporcionar una visión más clara de la estructura y el rendimiento del sector empresarial, este estudio puede ayudar a informar las estrategias de desarrollo económico, mejorar la eficiencia del mercado y fomentar el crecimiento sostenible.
+
+## Planteamiento
+
+Dentro de la economía colombiana existen diversos sectores económicos que, en menor o mayor medida, aportan al complejo sistema de comercio estructurado a través de los años.
+
+Particularmente en un país con diversos recursos naturales, dichos sectores llegan a ser muy variados, tanto en ingresos como en importancia; con el objetivo de nuestro análisis de estos datos, buscamos dar cabida a que el lector se pueda dar una idea del panorama actual del país en cuanto a su comercio: Desde los sectores que más activos mueven, hasta los que mayor consumo pueden generar.
+
+## Marco Teórico
+
+La Encuesta Anual de Comercio (EAC) se originó como una extensión del Censo Económico Multisectorial de 1990, debido a la importancia del sector comercial en el país y la necesidad de información sectorial. La primera encuesta se realizó en 1994 a la vez de funcionar como una prueba piloto; y desde 1996 se ha desarrollado de manera continua. Además, desde el año 2014 la EAC pasó de ser una encuesta muestral a un censo.
+
+La EAC ha permitido generar información que nos permite conocer la estructura y el desarrollo del comercio nacional, algo que no se hacía antes de su creación. En los últimos años la EAC sigue las recomendaciones de organismos internacionales como la Organización de Naciones Unidas (ONU) y la UNCTAD en materia de Tecnologías de Información y Telecomunicaciones (TIC). El tipo de dato utilizado en la EAC se basa en las recomendaciones internacionales y en las necesidades específicas de la investigación. Se hace un uso cuidadoso de los datos para garantizar la confidencialidad de las empresas que proporcionan información.
+
+## Metodología
+
+La poblacion de estudio, segun (DIMPE, 2024) "se aplica a todas las unidades económicas formalmente establecidas ubicadas en el territorio nacional que ocupan 10 o más personas o tienen ingresos por ventas anuales iguales o superiores a \$2.030 millones del año 2022 cuya actividad principal es el comercio (al por mayor, al por menor y de vehículos automotores)". Ademas de esto, cabe aclarar, que los datos, para velar por la privacidad de las empresas encuestadas, fueron modificados con dos métodos de anonimizado.
+
+Teniendo definida la pobacion, y utlizando los datos oficiales descargados la pagina (DIMPE, 2024). Eliminaremos de nuestro estudio, aquellas empresas inactivas (Produccion bruta = 0), pues, no son variables de nuestro interes, ni tienen alguna relacion con nuestro objetivos.
+
+De esta manera, ya con los datos reclasificados, vamos a buscar conclusiones o análisis que se puedan hacer a partir de las técnicas del curso. No solamente para el análisis bivariado; sino tambien para dar con variables que muestren agrupamiento o correlaciones fuertes, independientemende de ser categóricas o cuantitativas.
+
+Una vez halladas estas relaciones, se va a buscar, a partir de una revisión exhaustiva de la bibliografía, explicaciones al por qué de los fenómenos observados, a la vez de proponer el uso de distintos indicadores que puedan ser observados dentro de este conjunto de datos.
+
+## Palabras Clave
+
+::: columns
+::: {.column width="50%"}
+-   Comercio.
+-   Sector Económico.
+-   Gastos.
+-   Personal (Empresarial).
+-   Activos.
+-   Actividades.
+-   Sueldo.
+-   CIIU.
+:::
+
+::: {.column width="50%"}
+-   Servicios.
+-   Inventario.
+-   Producción.
+-   Ganancias.
+-   Publicidad.
+-   Mantenimiento.
+-   Outsourcing.
+:::
+:::
+
+
+### Filtrado o modificación de datos
+
+Removimos del estudio el análisis a empresas que no se mostraran activas, tomando como criterio su producción bruta. El porcentaje de estas empresas "no activas" es de aproximadamente el 3% de los datos.El motivo de su eliminación es que ya sea para un análisis de componentes principales o análisis de correspondencias, la existencia de estas generaría problemas a la hora de computar sus respectivas operaciones.
+
+Otro problema recurrente en las variables fue el exceso de ceros, que, siguiendo la recomendación del profesor, han sido tomadas como variables categóricas.
+
+## Referencias
+
+-   (DANE), D. A. (1 de 12 de 2022). Clasificancion industrial internacional uniforme de todas las actividades economicas. Obtenido de <https://www.dane.gov.co/files/sen/nomenclatura/ciiu/CIIU_Rev_4_AC2022.pdf>
+-   DIMPE, D. d. (6 de 06 de 2022). Encuesta Anual de Comercio - EAC . DANE. Obtenido de <https://microdatos.dane.gov.co/index.php/catalog/798/study-description>
+-   Pardo, C. (2020). Estadística descriptiva multivariada. Universidad Nacional de Colombia.
+

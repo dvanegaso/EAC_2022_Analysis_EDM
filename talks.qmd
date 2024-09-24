@@ -1,0 +1,938 @@
+---
+title: "Código"
+format: html
+editor: visual
+theme: lux
+echo: false
+---
+
+Acá colocamos todo el código utilizado con sus respectivos usos:
+
+::: {.callout collapse="true"}
+## Limpieza de Datos
+
+En este código se sigue el proceso de reclasificación de distintas variables, tal cual como ha sido especificado en la página de datos.
+
+```{{r}}
+
+#Importamos Librerias
+library(readxl)
+library(FactoClass)
+library(plotly)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+
+#Importamos la base de datos
+setwd("C:/Users/thetr/OneDrive/Documentos/R/Proyecto EDM")
+ruta_del_archivo <- "EAC_CIFRAS_2022_ANONIMIZADA_FINAL.csv"
+datos_orig <- read.csv(ruta_del_archivo, sep = ";", dec = ",")
+
+#En nuestro estudio, tomaremos aquellas empresas Activas. POr lo que, no tomaremos encienta a empresas con produccion bruta = 0. 
+#Asi que, eliminaremos aquellos datos que tengan produccion bruta =0 (Son alrededor de 200 datos).
+datos <- datos_orig[!is.na(as.numeric(datos_orig$BRUTA)) & as.numeric(datos_orig$BRUTA) != 0, ]
+
+#usaremos la Libreria dplyr crear dos nuevas bases de datos, en este caso, para las variables discretas y continuas de nuestro interes.
+discretas <- select(datos, CORRELA_16, IDOJ1, IDAIO, PROMUJ, PROHOM, PERMUJ, PERHOM, DIRMUJ, DIRHOM, AGENCIA, APRENMUJ, APRENHOM, PUBLICI)
+continuas <- select(datos, BRUTA, CONSUI, SUELDOS, PRESTAC, VENTA, AGREGA, SUEPLAN, PREPLAN, COTIZA, TOTREM, ROTACION, INVPRO, CTO, CTOINS, GASTOS, GASTOSNOP)
+
+# convertimos los datos a tipo numerico. 
+continuas <- data.frame(lapply(continuas, function(x) as.numeric(as.character(x))))
+# convertimos a sus respectivos valores en pesos colombianos
+continuas <-1000*continuas
+# Ahora, clasificamos los datos de tipo discreto.
+
+#Años empresa
+años <- as.integer(discretas$IDAIO)
+años[años < 1973] <- 1
+años[años >= 1973 & años < 2003] <- 2
+años[años >= 2003 & años < 2013] <- 3
+años[años >= 2013 & años < 2024] <- 4
+años <- factor(años, labels=c(">30 ", "20-30", "10-20", "<10 "))
+discretas$IDAIO <- años
+
+#Socios Mujeres
+smujeres <- as.integer(discretas$PROMUJ)
+smujeres[smujeres >= 1 ] <- 1
+smujeres <- factor(smujeres, labels=c("SisociosM", "NosociosM"))
+discretas$PROMUJ<- smujeres
+
+#Socios Hombres
+shombres <- as.integer(discretas$PROHOM)
+shombres[shombres >= 1 ] <- 1
+shombres <- factor(shombres, labels=c("SisociosH", "NosociosH"))
+discretas$PROHOM<- shombres
+
+#personal permanete mujeres
+pmujeres <- as.integer(discretas$PERMUJ)
+pmujeres[pmujeres >= 1 & pmujeres < 10 ] <- 1
+pmujeres[pmujeres >= 10 ] <- 2
+pmujeres <- factor(pmujeres, labels=c("(0)PerM", "(1-10)PerM", "(>10)PerM"))
+discretas$PERMUJ <- pmujeres
+
+# Personal permanente Hombres
+phombres <- as.integer(discretas$PERHOM)
+phombres[phombres >= 1 & phombres<= 10 ] <- 1
+phombres[phombres  > 10 ] <- 2
+phombres <- factor(phombres, labels=c("(0)PerH", "(1-10)PerH", "(>10)PerH"))
+discretas$PERHOM <- phombres
+
+# Personal Temporal Mujeres
+tmujeres <- as.integer(discretas$DIRMUJ)
+tmujeres[tmujeres >= 1 & tmujeres < 10 ] <- 1
+tmujeres[tmujeres >= 10 ] <- 2
+tmujeres <- factor(tmujeres, labels=c("(0)tempM", "(1-10)tempM", "(>10)tempM"))
+discretas$DIRMUJ <- tmujeres
+
+# Personal Temporal Hombres
+thombres <- as.integer(discretas$DIRHOM)
+thombres[thombres >= 1 & thombres<= 10 ] <- 1
+thombres[thombres  > 10 ] <- 2
+thombres <- factor(thombres, labels=c("(0)tempH", "(1-10)tempH", "(>10)tempH"))
+discretas$DIRHOM <- thombres
+
+# Personal temporal cont a través de agencias - Mujeres
+ptagenc <- as.integer(discretas$AGENCIA)
+ptagenc[ptagenc >= 1 & ptagenc < 10 ] <- 1
+ptagenc[ptagenc >= 10 ] <- 2
+ptagenc <- factor(ptagenc, labels=c("(0)PTAgenc", "(1-10)PTAgenc", "(>10)PTAgenc"))
+discretas$AGENCIA <- ptagenc
+
+# Aprendices Mujeres
+amujeres <- as.integer(discretas$APRENMUJ)
+amujeres[amujeres >= 1 & amujeres < 10 ] <- 1
+amujeres[amujeres >= 10 ] <- 2
+amujeres <- factor(amujeres, labels=c("(0)AprenM", "(1-10)AprenM", "(>10)AprenpM"))
+discretas$APRENMUJ <- amujeres
+
+# Aprendices Hombres
+ahombres <- as.integer(discretas$APRENHOM)
+ahombres[ahombres >= 1 & ahombres<= 10 ] <- 1
+ahombres[ahombres  > 10 ] <- 2
+ahombres <- factor(ahombres, labels=c("(0)AprenH", "(1-10)AprenH", "(>10)AprenH"))
+discretas$APRENHOM <- ahombres
+
+#clasificamos las empresas segun su tamañó. Es este caso, basaremos la clasificaion "Decreto 957 de 2019".
+pbruta <- as.numeric(continuas$BRUTA)
+#precio uvt añó 2022
+uvt22 = 38004
+TMÑEMP <- unlist(pbruta/uvt22)
+TMÑEMP[TMÑEMP <= 44769 ] <- 1
+TMÑEMP[TMÑEMP > 44769 & TMÑEMP <= 431196] <- 2
+TMÑEMP[TMÑEMP > 431196 & TMÑEMP <= 2160692] <- 3
+TMÑEMP[TMÑEMP > 2160692] <- 4
+TMÑEMP <- factor(TMÑEMP, labels=c("MIcroe", "PQempr", "MEdempr", "EmprGran"))
+discretas <- cbind(discretas, TMÑEMP)
+#Clasificamos publicidad, basandonos en el porcentaje gastado respecto a la produccion bruta.
+
+pbruta <- abs(pbruta/1000)
+publicidad <- as.numeric(discretas$PUBLICI)
+contador = as.integer(1)
+
+for(i in publicidad){
+  if (i/pbruta[contador] > 0 & i/pbruta[contador] <= 0.05){
+    publicidad[contador] <- 1 
+  }else if (i/pbruta[contador] > 0.05 & i/pbruta[contador] <= 0.1) {
+    publicidad[contador] <- 2 
+  }else if (i/pbruta[contador] > 0.1) {
+    publicidad[contador] <- 3
+  }
+  contador <- contador+1
+  
+}
+
+publicidad <- factor(publicidad, labels=c("Nopub", "Pubbaja", "Pubmod", "Pubalta"))
+discretas$PUBLICI <- publicidad
+
+```
+:::
+
+::: {.callout collapse="true"}
+## Representación en 3D del ACP
+
+Código tomado directamente de la página web del curso. Su fin es presentar de manera más didáctica los ejes principales para realizar un análisis sobre los mismos.
+
+Ha sido recortado en varios pedazos con tal de brindarle simplicidad.
+
+```{{r}}
+# cargar librerías: 
+library(plotly) # para gráficos interactivos
+library(knitr) # para función kable (tablas estáticas)
+n <- nrow(continuas) # n: número de individuos
+Y <- continuas[1:9686 ,2:4]
+n <- nrow(Y) 
+p <- ncol(Y)
+g <- colMeans(Y) # centro de gravedad
+par(las = 1)
+unos <- rep(1, n) # vector de n unos
+Yc <- Y - unos %*% t(g)
+
+d <- round(dist(Y), 1)
+
+V <- t(Yc) %*% as.matrix(Yc)/n
+Dsigma <- diag(sqrt(diag(V))) 
+X <- as.matrix(Yc) %*% solve(Dsigma)
+colnames(X) <- colnames(Y)
+d <- round(dist(X),1)
+
+V <- ( t(X) %*% X )/n 
+X <- as.data.frame(X)
+des <- eigen(V)
+lambda <- des$values
+names(lambda) <- paste("lambda_", 1:p)
+U <- des$vectors
+rownames(U) <- rownames(V)
+colnames(U) <- c("Eje1","Eje2","Eje3")
+F <- as.matrix(X) %*% U
+tpos <- rep(c("top","bottom"), length.out = n)[rank(F[,1])]
+d2 <- rowSums(F^2) # distancias
+cont <- 1/n*F^2 %*% diag(1/lambda)*100 # contribuciones
+cos2 <- F^2/d2*100 # cosenos cuadrados
+G <- U %*% diag(sqrt(lambda))
+colnames(G)<-c("G1","G2","G3");
+G_df = as.data.frame(G)
+fig <- plot_ly(G_df, x = ~G1, y = ~G3, z = ~G2)
+fig <- fig %>% add_markers() 
+fig <- fig %>% add_text(text = rownames(G_df))
+fig <- fig %>% add_markers(x = 0, y = 0, z = 0)
+
+sphere <- function(n = 100){
+  theta <- seq(0, pi, length.out = n)
+  phi <- seq(0, 2 * pi, length.out = n)
+  r <- 1
+  x <- r * outer(sin(theta), cos(phi))
+  y <- r * outer(sin(theta), sin(phi))
+  z <- r * outer(cos(theta), rep(1, length(phi)))
+  return(list(x = x, y = y, z = z))
+}
+s_c <- sphere()
+fig <- fig %>% add_trace(x = s_c$x, y = s_c$y, z = s_c$z, 
+                         type = 'surface', opacity = 0.2, 
+                         colorscale = "Greys", # cambiar por valor fijo
+                         showscale = FALSE)
+
+fig <- fig %>% layout(title = "vectores columna\n(variables)",
+                      scene = list(xaxis = list(range = c(-1,1)),
+                                   yaxis = list(range = c(-1,1)),
+                                   zaxis = list(range = c(-1,1)),
+                                   aspectratio = list(x=1,y=1,z=1),
+                                   camera = list(eye = list(x=1,y=1,z=1))),
+                      showlegend = FALSE)
+fig
+```
+:::
+
+::: {.callout collapse="true"}
+## Graficación de pastel con plotly
+
+```{{r}}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+[nombre variable]cont<-as.data.frame(table([dataframe]][,[número columna]]))
+#categorías de la variable
+catp[nombre variable] <- attributes([nombre variable]cont[,1])$levels
+
+data[nombre variable] <- data.frame(table([dataframe][,[número columna]]))
+
+perp[nombre variable] <- data[nombre variable][,2]/nrow(data[nombre variable])*100
+
+dataAGENCIA<-data.frame(catpAGENCIA,perpAGENCIA)
+fig <- plot_ly(data, labels=~catp[nombre variable], values=~perp[nombre variable], type='pie')
+fig <- fig %>% layout(title = "[Nombre del gráfico]")
+fig
+
+```
+:::
+
+::: {.callout collapse="true"}
+## Aplicación de Escala LOG
+
+```{{r}}
+# Asumimos los NA's como si la empresa encuestada no hubiese registrado algún valor. 
+suppressWarnings({
+
+continuas<- data.frame(lapply(continuas, function(x) { x[is.na(x)] <- 1; return(x) }))
+# pasamos a escala logarítmica
+logcontinuas<-log(continuas[,2:17])
+# interpretamos los -inf como ceros
+for(i in seq_along(logcontinuas)) {logcontinuas[is.infinite(logcontinuas[, i]), i] <- 0}
+logcontinuas<- data.frame(lapply(logcontinuas, function(x) { x[is.na(x)] <- 1; return(x) }))
+})
+```
+:::
+
+::: {.callout collapse="true"}
+## Código ACP
+
+```{{r}}
+Y <- continuas[, 2:17]
+# correlacion entre variables
+#kable(cor(Y), digits = 3)
+
+# inercia usando  ade4 y FactoClass
+acp <- dudi.pca(Y, scannf = FALSE, nf = 4)
+valp <- t(inertia(acp)$tot.inertia) # valores propios
+#kable(valp, digits = 3)
+
+# Grafico de inercia
+fviz_screeplot(acp, addlabels = TRUE, ylim = c(0, 50))
+
+#Coordenadas de las varibles en 4  dimenciones
+#kable(acp$co, digits = 3)
+
+var <- get_pca_var(acp)
+# tabla de inercia
+fviz_screeplot(acp, addlabels = TRUE, ylim = c(0, 50))
+# grafica donde los valores concatenados son los ejes a elección
+#Grafica cos
+fviz_pca_var(acp, axes=c(1,2), col.var="cos2",
+             gradient.cols = c("darkred", 
+                               "darkorange", 
+                               "darkgreen"))
+```
+:::
+
+::: {.callout collapse="true"}
+## Código de ACP para gráficos suplementarios
+
+```{{r}}
+options(digits = 4, scipen = 999) 
+# cargar librerías: 
+library(FactoClass)
+library(factoextra)
+library(knitr) # para función kable (tablas estáticas)
+library(DT) # para tablas interactivas
+library(plotly) # para gráficos interactivos
+
+# Descripcion general de las variables
+summary(continuas)
+# datos
+Y <- continuas[, 2:17]
+# correlacion entre variables
+kable(cor(Y), digits = 3)
+
+# inercia usando  ade4 y FactoClass
+acp <- dudi.pca(Y, scannf = FALSE, nf = 4)
+valp <- t(inertia(acp)$tot.inertia) # valores propios
+kable(valp, digits = 3)
+
+# Grafico de inercia
+fviz_screeplot(acp, addlabels = TRUE, ylim = c(0, 50))
+
+#Coordenadas de las varibles en 4  dimenciones
+kable(acp$co, digits = 3)
+
+# Plano con los ejes  1 y 3
+s.corcircle(acp$co)
+title(main = "Plano con los ejes 1 y 2")
+# Plano con los ejes 2 y 3
+s.corcircle(acp$co, xax = 2, yax = 3)
+title(main = "Plano con los ejes 2 y 3")
+#plano con los ejes 1 y 3
+s.corcircle(acp$co, xax = 1, yax = 3)
+title(main = "Plano con los ejes 1 y 3")
+
+
+# grafico en 3d
+G_df = as.data.frame(acp$co)
+fig <- plot_ly(G_df, x = ~Comp1, y = ~Comp2, z = ~Comp3)
+# Graficare como puntos pero sería mejor como flechas
+fig <- fig %>% add_markers() 
+fig <- fig %>% add_text(text = rownames(G_df))
+fig <- fig %>% add_markers(x = 0, y = 0, z = 0)
+
+sphere <- function(n = 100){
+  theta <- seq(0, pi, length.out = n)
+  phi <- seq(0, 2 * pi, length.out = n)
+  r <- 1
+  x <- r * outer(sin(theta), cos(phi))
+  y <- r * outer(sin(theta), sin(phi))
+  z <- r * outer(cos(theta), rep(1, length(phi)))
+  return(list(x = x, y = y, z = z))
+}
+s_c <- sphere()
+fig <- fig %>% add_trace(x = s_c$x, y = s_c$y, z = s_c$z, 
+                         type = 'surface', opacity = 0.2, 
+                         colorscale = "Greys", # cambiar por valor fijo
+                         showscale = FALSE)
+
+fig <- fig %>% layout(title = "vectores columna\n(variables)",
+                      scene = list(xaxis = list(range = c(-1,1)),
+                                   yaxis = list(range = c(-1,1)),
+                                   zaxis = list(range = c(-1,1)),
+                                   aspectratio = list(x=1,y=1,z=1),
+                                   camera = list(eye = list(x=1,y=1,z=1))),
+                      showlegend = FALSE)
+fig
+
+
+var <- get_pca_var(acp)
+var
+#contribucion de las varibales a las diferentes dimensiones
+# dim 1
+fviz_contrib(acp, choice = "var", axes = 1)
+#dim 2
+fviz_contrib(acp, choice = "var", axes = 2)
+#dim 3
+fviz_contrib(acp, choice = "var", axes = 3)
+
+#Grafica cos
+fviz_pca_var(acp, axes=c(1,2), col.var="cos2",
+             gradient.cols = c("darkred", 
+                               "darkorange", 
+                               "darkgreen"))
+
+
+#Variables suplementarias
+Ysupcat <- discretas
+#convertimos las variables en fatores
+Ysupcat[] <- lapply(Ysupcat, as.factor)
+sup <- supqual(acp, Ysupcat)
+kable(cbind(wcat = sup$wcat, d2 = sup$dis2, sup$coor), 
+      digits = 3)
+#
+kable(cbind(sup$tv, sup$cos2), digits = 3)
+
+#Grafico 1
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-3.2, 0.5), ylim = c(-1.2,1.2))
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+title(main = "Nube de individuos")
+
+#Grafico 2 tipo empresa
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1.6, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#tipos de empresas
+points(sup$coor[1:16,], col = 2, pch = 16)
+text(sup$coor[1:16,], labels = rownames(sup$coor[1:16,]),
+     col = 2, pos = 1, font = 4)
+title(main = "Tipo de empresa")
+
+#Grafico 3 edad
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1.6, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#edad
+points(sup$coor[28:33,], col = 3, pch = 16)
+text(sup$coor[28:33,], labels = rownames(sup$coor[28:33,]),
+     col = 3, pos = 1, font = 2)
+title(main = "Edad")
+
+
+#Grafico 3
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1.2, 0.6), ylim = c(-0.5, 0.5), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#socios hombres
+points(sup$coor[34:35,], col = 5, pch = 16)
+text(sup$coor[34:35,], labels = rownames(sup$coor[34:35,]),
+     col = 3, pos = 1, font = 4)
+#socios hombres
+points(sup$coor[36:37,], col = 4, pch = 16)
+text(sup$coor[36:37,], labels = rownames(sup$coor[36:37,]),
+     col = 4, pos = 1, font = 4)
+title(main = "Socios H y M")
+
+#grafico 4
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1, 0.6), ylim = c(-0.5,0.5), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#indefinidos mujeres
+points(sup$coor[38:40,], col = 5, pch = 16)
+text(sup$coor[38:40,], labels = rownames(sup$coor[38:40,]),
+     col = 5, pos = 1, font = 4)
+#indefinidos hombres
+points(sup$coor[41:43,], col = 4, pch = 16)
+text(sup$coor[41:43,], labels = rownames(sup$coor[41:43,]),
+     col = 6, pos = 1, font = 4)
+title(main = "Contrato indefinidos H y M")
+
+#grafico 5
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1.3, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#temporal muejeres
+points(sup$coor[44:46,], col = 5, pch = 16)
+text(sup$coor[44:46,], labels = rownames(sup$coor[44:46,]),
+     col = 5, pos = 1, font = 4)
+#temporal hombres
+points(sup$coor[47:49,], col = 4, pch = 16)
+text(sup$coor[47:49,], labels = rownames(sup$coor[47:49,]),
+     col = 6, pos = 1, font = 4)
+title(main = "Contrato temporal H y M")
+
+#grafico 6
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-23, 0.6), ylim = c(-0.5, 0.5), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#Contrato agencia
+points(sup$coor[50:52,], col = 7, pch = 16)
+text(sup$coor[50:52,], labels = rownames(sup$coor[50:52,]),
+     col = 7, pos = 1, font = 4)
+#tAprendices mujeres
+points(sup$coor[53:55,], col = 10, pch = 16)
+text(sup$coor[53:55,], labels = rownames(sup$coor[53:55,]),
+     col = 10, pos = 1, font = 4)
+#Aprendices hombres
+points(sup$coor[56:58,], col = 9, pch = 16)
+text(sup$coor[56:58,], labels = rownames(sup$coor[56:58,]),
+     col = 9, pos = 1, font = 4)
+title(main = "Contrato Agencias y Aprendices H y M")
+
+#grafico 7
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-2, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#publicidad
+points(sup$coor[59:62,], col = 11, pch = 16)
+text(sup$coor[59:62,], labels = rownames(sup$coor[59:62,]),
+     col = 11, pos = 1, font = 4)
+title(main = "Publicidad")
+
+#grafico 8
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-13.5, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#publicidad
+points(sup$coor[63:66,], col = 12, pch = 16)
+text(sup$coor[63:66,], labels = rownames(sup$coor[63:66,]),
+     col = 12, pos = 1, font = 4)
+title(main = "Tamaño empresa")
+sup$coor
+
+```
+:::
+
+::: {.callout collapse="true"}
+## Clasificación de Datos para ACS y ACM
+
+Código para hacer la clasificación previa a los datos.
+
+```{{r}}
+
+# cambia idioma de la consola de R a español:
+Sys.setenv(LANG="es")
+
+#Sin notacion cientifica y con 3 decimales
+options(digits = 3, scipen = 999) 
+#Importamos Librerias
+library(readxl)
+library(FactoClass)
+library(factoextra)
+library(plotly)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(Factoshiny)
+library(DT) # para tablas interactivas
+library(plotly) # para gráficos interactivos
+
+#Importamos la base de datos
+setwd("C:/Users/thetr/OneDrive/Documentos/R/Proyecto EDM")
+ruta_del_archivo <- "EAC_CIFRAS_2022_ANONIMIZADA_FINAL.csv"
+datos_orig <- read.csv(ruta_del_archivo, sep = ";", dec = ",")
+
+#En nuestro estudio, tomaremos aquellas empresas Activas. POr lo que, no tomaremos encienta a empresas con produccion bruta = 0. 
+#Asi que, eliminaremos aquellos datos que tengan produccion bruta =0 (Son alrededor de 200 datos).
+datos <- datos_orig[!is.na(as.numeric(datos_orig$BRUTA)) & as.numeric(datos_orig$BRUTA) != 0, ]
+
+#Crearemos dos nuevas bases de datos, en este caso, para las variables discretas y continuas de nuestro interes.
+#IDOJ1
+discretas <- select(datos, CORRELA_16, IDAIO, SOCIOS, PERSONOM, DIRECTO, TOTMUJ, TOTHOM, PUBLICI)
+continuas <- select(datos, BRUTA, CONSUI, SUELDOS, PRESTAC, VENTA, AGREGA, SUEPLAN, PREPLAN, COTIZA, TOTREM, ROTACION, INVPRO, CTO, CTOINS, GASTOS, GASTOSNOP)
+                                                                    
+# convertimos los datos a tipo numerico. 
+continuas <- data.frame(lapply(continuas, function(x) as.numeric(as.character(x))))
+# convertimos a sus respectivos valores en pesos colombianos
+continuas <-1000*continuas
+
+#Ahora agregamos nuevas variables a continuas
+Clasifemp <-discretas$CORRELA_16
+continuas <- cbind(Clasifemp, continuas)
+
+#asignamos a los NA el valor de cero
+continuas[is.na(continuas)] <- 0 
+
+# Ahora, clasificamos los datos de tipo discret
+
+#Años empresa
+años <- as.integer(discretas$IDAIO)
+años[años < 1972] <- 1
+años[años >= 1972 & años < 1982] <- 2
+años[años >= 1982 & años < 1992] <- 3
+años[años >= 1992 & años < 2002] <- 4
+años[años >= 2002 & años < 2012] <- 5
+años[años >= 2012 & años < 2024] <- 6
+
+años <- factor(años, labels=c( "Mas de 50","Entre 40 y 50", "Entre 30 y 40", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
+discretas$IDAIO <- años
+#personal permanete
+permanente <- as.integer(discretas$PERSONOM)
+permanente [permanente >= 1 & permanente < 10 ] <- 1
+permanente [permanente >= 10 ] <- 2
+permanente <- factor(permanente, labels=c("(0)PERM", "(1-10)PERM", "(>10)PERM"))
+discretas$PERSONOM <- permanente 
+
+# Personal DIRECTO
+directo <- as.integer(discretas$DIRECTO)
+directo[directo >= 1 & directo<= 10 ] <- 1
+directo[directo  > 10 ] <- 2
+directo <- factor(directo, labels=c("(0)DIREC", "(1-10)DIREC", "(>10)DIREC"))
+discretas$DIRECTO <- directo
+
+#Total hombres
+thombres <- as.integer(discretas$TOTHOM)
+thombres[thombres >= 1 & thombres<= 10 ] <- 1
+thombres[thombres  > 10 ] <- 2
+thombres <- factor(thombres, labels=c("(0)HOMBRES", "(1-10)HOMBRES", "(>10)HOMBRES"))
+discretas$TOTHOM <- thombres
+
+#Total Mujeres
+tmujeres <- as.integer(discretas$TOTMUJ)
+tmujeres[tmujeres >= 1 & tmujeres < 10 ] <- 1
+tmujeres[tmujeres >= 10 ] <- 2
+tmujeres <- factor(tmujeres, labels=c("(0)MUJERES", "(1-10)MUJERES", "(>10)MUJERES"))
+discretas$TOTMUJ <- tmujeres
+
+# numero de socios
+n_socios <- as.numeric(datos$SOCIOS)
+n_socios[n_socios == 0 ] <- 0
+n_socios[n_socios > 0 & n_socios < 4] <- 1
+n_socios[n_socios >= 4 & n_socios<100] <- 2
+n_socios <- factor(n_socios, labels=c("No Registra","Pocos Socios", "Bastantes Socios"))
+discretas$SOCIOS <- n_socios
+
+#clasificamos las empresas segun su tamañó. Es este caso, basaremos la clasificaion "Decreto 957 de 2019".
+pbruta <- 1000*as.numeric(datos$BRUTA)
+#precio uvt añó 2022
+uvt22 = 38004
+TMÑEMP <- unlist(pbruta/uvt22)
+TMÑEMP[TMÑEMP <= 44769 ] <- 1
+TMÑEMP[TMÑEMP > 44769 & TMÑEMP <= 431196] <- 2
+TMÑEMP[TMÑEMP > 431196 & TMÑEMP <= 2160692] <- 3
+TMÑEMP[TMÑEMP > 2160692] <- 4
+TMÑEMP <- factor(TMÑEMP, labels=c("MIcroe", "PQempr", "MEdempr", "EmprGran"))
+discretas <- cbind(discretas, TMÑEMP)
+
+#Clasificamos publicidad, basandonos en el porcentaje gastado respecto a la produccion bruta.
+pbruta <- abs(pbruta/1000)
+publicidad <- as.numeric(discretas$PUBLICI)
+contador = as.integer(1)
+
+for(i in publicidad){
+  if (i/pbruta[contador] > 0 & i/pbruta[contador] <= 0.05){
+    publicidad[contador] <- 1 
+  }else if (i/pbruta[contador] > 0.05 & i/pbruta[contador] <= 0.1) {
+    publicidad[contador] <- 2 
+  }else if (i/pbruta[contador] > 0.1) {
+    publicidad[contador] <- 3
+  }
+  contador <- contador+1
+  
+}
+
+publicidad <- factor(publicidad, labels=c("Nopub", "Pubbaja", "Pubmod", "Pubalta"))
+discretas$PUBLICI <- publicidad
+
+```
+:::
+
+::: {.callout collapse="true"}
+## Código para todas las tablas de ACS posibles con el conjunto de datos.
+
+```{{r}}
+
+
+# #Visualisar todos los posibles graficos
+# n = ncol(discretas)
+# for (i in 1:n){
+#   for (j in 1:n){
+#     if (j !=i){
+#       k <- unclass(table(discretas[[i]], discretas[[j]]))
+#       acs <- dudi.coa(k, scannf=FALSE, nf=3)
+#       print(plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE))
+#       }
+#     }
+# }
+
+
+#Acp para el tamaño de la emresa y el tipo de empresa
+k <- unclass(table(discretas[[9]], discretas[[1]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Tipo de empresa")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Tipo de empresa")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Tipo de empresa")
+
+
+
+#Acp para el tamaño de la emresa y edad
+k <- unclass(table(discretas[[9]], discretas[[2]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Edad")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Edad")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Edad")
+
+
+
+#Acp para el tamaño de la emresa y Socios
+k <- unclass(table(discretas[[9]], discretas[[3]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Socios")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Socios")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Socios")
+
+
+
+#Acp para el tamaño de la emresa y indefinido
+k <- unclass(table(discretas[[9]], discretas[[4]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Personal indefinido")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Personal indefinido")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Personal indefinido")
+
+
+
+#Acp para el tamaño de la emresa y prestacion de servicios
+k <- unclass(table(discretas[[9]], discretas[[5]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Prestacion de Servicios")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Prestacion de Servicios")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Prestacion de Servicios")
+
+
+
+#Acp para el tamaño de la emresa y Total hombres
+k <- unclass(table(discretas[[9]], discretas[[6]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Total Hombres")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Total Hombres")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Total Hombres")
+
+
+
+#Acp para el tamaño de la emresa y Total mujeres
+k <- unclass(table(discretas[[9]], discretas[[7]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Total Mujeres")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Total Mujeres")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Total Mujeres")
+
+
+
+
+#Acp para el tamaño de la emresa y publicidad
+k <- unclass(table(discretas[[9]], discretas[[8]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Publicidad")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Publicidad")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Publicidad")
+
+
+
+
+#Acp para el publicidad y edad
+k <- unclass(table(discretas[[8]], discretas[[2]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Publicidad - Edad")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Publicidad - Edad")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Publicidad - Edad")
+
+
+
+#Acp para el publicidad y Tipo empresa
+k <- unclass(table(discretas[[8]], discretas[[1]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Publicidad - Tipo empresa")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Publicidad - Tipo empresa")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Publicidad - Tipo empresa")
+
+
+
+#Acp para tipo de empresa y contrato indefinido
+k <- unclass(table(discretas[[1]], discretas[[4]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tipo empresa - Personal indefinido")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tipo empresa - Personal indefinido")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tipo empresa - Personal indefinido")
+
+
+#Acp para tipo de empresa y contrato indefinido
+k <- unclass(table(discretas[[1]], discretas[[5]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tipo empresa - Prestacion de Servicios")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tipo empresa - Prestacion de Servicios")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tipo empresa - Prestacion de Servicios")
+
+
+```
+:::
+
+::: {.callout collapse="true"}
+## Código ACM
+
+```{{r}}
+
+#Reclasificamos algunas variables para poder tener categorias uniformes
+
+#Reclasificamos edad
+
+años <- as.integer(datos$IDAIO)
+años[años < 1992] <- 1
+años[años >= 1992 & años < 2002] <- 2
+años[años >= 2002 & años < 2012] <- 3
+años[años >= 2012 & años < 2024] <- 4
+
+años <- factor(años, labels=c( "Mas de 30", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
+discretas$IDAIO <- años
+
+#Reclasificamos al tipo de empresas
+
+Tipempr <- discretas$CORRELA_16
+tipo1 <- list(454, 451, 453)
+tipo2 <- list(462, 464, 465, 466)
+tipo3 <- list("4711-472", 4719, 473, "4741-4742", 4752, "4759-4761", "4771-4751", 4772, 4773)
+
+Tipempr[Tipempr %in% tipo1] <- 1
+Tipempr[Tipempr %in% tipo2] <- 2
+Tipempr[Tipempr %in% tipo3] <- 3
+
+Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos", "Comercio al por mayor", "Comercio al por menor"))
+discretas$CORRELA_16 <- Tipempr
+
+# discretas$TOTMUJ[is.na(discretas$TOTMUJ)] <- 0 
+# datos$TOTHOM[is.na(datos$TOTHOM)] <- 0
+
+#TDC
+Y = discretas
+Z <- acm.disjonctif(Y) # función de ade4
+
+#Tabla de Burt
+Z <- as.matrix(Z)
+#tabla de burt
+(B <- t(Z) %*% Z)
+
+acm <- MCA(Y, graph=FALSE)
+
+#mca
+fviz_mca_biplot(acm, axes=c(1,2), repel = TRUE, label = "var", ggtheme=theme_minimal())
+
+#inercia
+fviz_screeplot(acm, addlabels = TRUE, ylim = c(0, 20))
+
+#Contribucion a la dimension
+fviz_contrib(acm, choice = "var", axes = 1, ylim = c(0, 15))
+
+#mca sin individuos
+fviz_mca_var(acm, col.var = "cos2", repel = TRUE, 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+             ggtheme = theme_minimal())
+
+#solo las categorias iniciales (solo funciona para la dimesion 1 y 2)
+fviz_mca_var(acm, axes = c(1, 2),
+             choice = "mca.cor", repel = TRUE, 
+             ggtheme = theme_minimal())
+#para las demas dimensiones
+ggplot(data = acm$var$eta2, aes(x = `Dim 3`, y = `Dim 2`)) +
+  geom_point(colour = "red") + xlim(0,0.7) + ylim(0,0.7) + 
+  geom_text(label=rownames(acm$var$eta2), colour = "red", hjust=1) + 
+  theme_minimal()
+
+# para proyectar variables continuas, elegir las variables de interes(maximo 2, o si no se estalla)
+Ys <- cbind(continuas[, c(3, 2)], Y)
+res.mca <- MCA(Ys, graph=FALSE, quali.sup = 1, quanti.sup = 2)
+
+fviz_mca_var(res.mca, repel = TRUE, 
+             ggtheme= theme_minimal())
+
+#creo que da falllos, solo funciona en dimension 1 y 2
+fviz_mca_var(res.mca, axes=c(1,3), 
+             choice="quanti.sup",
+             ggtheme=theme_minimal())
+
+
+```
+:::

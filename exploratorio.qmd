@@ -1,0 +1,1075 @@
+---
+title: "Análisis Exploratorio"
+format: html
+editor: visual
+theme: lux
+echo: false
+engine: knitr
+---
+
+```{r}
+suppressMessages({
+
+
+#Importamos Librerias
+library(readxl)
+library(FactoClass)
+library(plotly)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+  
+data("admi")
+#Importamos la base de datos
+setwd("C:/Users/thetr/OneDrive/Documentos/R/Proyecto EDM")
+ruta_del_archivo <- "EAC_CIFRAS_2022_ANONIMIZADA_FINAL.csv"
+datos_orig <- read.csv(ruta_del_archivo, sep = ";", dec = ",")
+
+#En nuestro estudio, tomaremos aquellas empresas Activas. POr lo que, no tomaremos encienta a empresas con produccion bruta = 0. 
+#Asi que, eliminaremos aquellos datos que tengan produccion bruta =0 (Son alrededor de 200 datos).
+datos <- datos_orig[!is.na(as.numeric(datos_orig$BRUTA)) & as.numeric(datos_orig$BRUTA) != 0, ]
+
+#usaremos la Libreria dplyr crear dos nuevas bases de datos, en este caso, para las variables discretas y continuas de nuestro interes.
+discretas <- select(datos, CORRELA_16, IDOJ1, IDAIO, PROMUJ, PROHOM, PERMUJ, PERHOM, DIRMUJ, DIRHOM, AGENCIA, APRENMUJ, APRENHOM, PUBLICI)
+continuas <- select(datos, BRUTA, CONSUI, SUELDOS, PRESTAC, VENTA, AGREGA, SUEPLAN, PREPLAN, COTIZA, TOTREM, ROTACION, INVPRO, CTO, CTOINS, GASTOS, GASTOSNOP)
+
+# convertimos los datos a tipo numerico. 
+continuas <- data.frame(lapply(continuas, function(x) as.numeric(as.character(x))))
+# convertimos a sus respectivos valores en pesos colombianos
+continuas <-1000*continuas
+# Ahora, clasificamos los datos de tipo discreto.
+
+#Años empresa
+años <- as.integer(discretas$IDAIO)
+años[años < 1972] <- 1
+años[años >= 1972 & años < 1982] <- 2
+años[años >= 1982 & años < 1992] <- 3
+años[años >= 1992 & años < 2002] <- 4
+años[años >= 2002 & años < 2012] <- 5
+años[años >= 2012 & años < 2024] <- 6
+
+años <- factor(años, labels=c("Más de 50", "Entre 40 y 50", "Entre 40 y 30", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
+discretas$IDAIO <- años
+
+#Socios Mujeres
+smujeres <- as.integer(discretas$PROMUJ)
+smujeres[smujeres >= 1 ] <- 1
+smujeres <- factor(smujeres, labels=c("Tiene socios mujeres", "No tiene socios mujeres"))
+discretas$PROMUJ<- smujeres
+
+#Socios Hombres
+shombres <- as.integer(discretas$PROHOM)
+shombres[shombres >= 1 ] <- 1
+shombres <- factor(shombres, labels=c("Tiene socios hombres", "Tiene socios hombres"))
+discretas$PROHOM<- shombres
+
+#personal permanete mujeres
+pmujeres <- as.integer(discretas$PERMUJ)
+pmujeres[pmujeres >= 1 & pmujeres < 10 ] <- 1
+pmujeres[pmujeres >= 10 ] <- 2
+pmujeres <- factor(pmujeres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$PERMUJ <- pmujeres
+
+# Personal permanente Hombres
+phombres <- as.integer(discretas$PERHOM)
+phombres[phombres >= 1 & phombres<= 10 ] <- 1
+phombres[phombres  > 10 ] <- 2
+phombres <- factor(phombres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$PERHOM <- phombres
+
+# Personal Temporal Mujeres
+tmujeres <- as.integer(discretas$DIRMUJ)
+tmujeres[tmujeres >= 1 & tmujeres < 10 ] <- 1
+tmujeres[tmujeres >= 10 ] <- 2
+tmujeres <- factor(tmujeres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$DIRMUJ <- tmujeres
+
+# Personal Temporal Hombres
+thombres <- as.integer(discretas$DIRHOM)
+thombres[thombres >= 1 & thombres<= 10 ] <- 1
+thombres[thombres  > 10 ] <- 2
+thombres <- factor(thombres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$DIRHOM <- thombres
+
+# Personal temporal cont a través de agencias - Mujeres
+ptagenc <- as.integer(discretas$AGENCIA)
+ptagenc[ptagenc >= 1 & ptagenc < 10 ] <- 1
+ptagenc[ptagenc >= 10 ] <- 2
+ptagenc <- factor(ptagenc, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$AGENCIA <- ptagenc
+
+# Aprendices Mujeres
+amujeres <- as.integer(discretas$APRENMUJ)
+amujeres[amujeres >= 1 & amujeres < 10 ] <- 1
+amujeres[amujeres >= 10 ] <- 2
+amujeres <- factor(amujeres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$APRENMUJ <- amujeres
+
+# Aprendices Hombres
+ahombres <- as.integer(discretas$APRENHOM)
+ahombres[ahombres >= 1 & ahombres<= 10 ] <- 1
+ahombres[ahombres  > 10 ] <- 2
+ahombres <- factor(ahombres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$APRENHOM <- ahombres
+
+#clasificamos las empresas segun su tamañó. Es este caso, basaremos la clasificaion "Decreto 957 de 2019".
+pbruta <- as.numeric(continuas$BRUTA)
+#precio uvt añó 2022
+uvt22 = 38004
+TMÑEMP <- unlist(pbruta/uvt22)
+TMÑEMP[TMÑEMP <= 44769 ] <- 1
+TMÑEMP[TMÑEMP > 44769 & TMÑEMP <= 431196] <- 2
+TMÑEMP[TMÑEMP > 431196 & TMÑEMP <= 2160692] <- 3
+TMÑEMP[TMÑEMP > 2160692] <- 4
+TMÑEMP <- factor(TMÑEMP, labels=c("Microempresa", "Empresa Pequeña", "Empresa Mediana", "Empresa Grande"))
+discretas <- cbind(discretas, TMÑEMP)
+#Clasificamos publicidad, basandonos en el porcentaje gastado respecto a la produccion bruta.
+
+pbruta <- abs(pbruta/1000)
+publicidad <- as.numeric(discretas$PUBLICI)
+contador = as.integer(1)
+
+for(i in publicidad){
+  if (i/pbruta[contador] > 0 & i/pbruta[contador] <= 0.05){
+    publicidad[contador] <- 1 
+  }else if (i/pbruta[contador] > 0.05 & i/pbruta[contador] <= 0.1) {
+    publicidad[contador] <- 2 
+  }else if (i/pbruta[contador] > 0.1) {
+    publicidad[contador] <- 3
+  }
+  contador <- contador+1
+  
+}
+
+publicidad <- factor(publicidad, labels=c("Nulo", "Bajo", "Moderado", "Alto"))
+discretas$PUBLICI <- publicidad
+continuas<-cbind(discretas$CORRELA_16,continuas)
+
+discretas$CORRELA_16<-factor(discretas$CORRELA_16)
+
+})
+
+```
+
+A continuación se muestran análisis exploratorios de las variables que serán tomadas en el estudio.
+
+## Empresas
+
+A continuación mostramos las clasificaciones de cada empresa censada.
+
+::: panel-tabset
+### Distribución
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+
+#convertir en dataframe el conteo de cada variable
+CIIUcontados<-as.data.frame(table(discretas[,1]))
+#categorías de la variable
+catp <- attributes(CIIUcontados[,1])$levels
+
+data <- data.frame(table(discretas[,1]))
+
+perp <- (data[,2]/nrow(data))*100
+#histograma
+fig <- plot_ly(discretas, x=~CORRELA_16, type='histogram')
+fig <- fig %>% layout(title = "Clasificación CIIU",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+
+En la pestaña identificadores se encuentran las descripciones de cada una de las variables. En caso de una revisión exhaustiva recomendamos ingresar al [documento CIIU 2021](https://www.dane.gov.co/files/sen/nomenclatura/ciiu/CIIU_Rev_4_AC2021.pdf) proporcionado por el DANE. *Las utilizadas se encuentran desde la página 490*.
+
+### Identificadores
+
+| **Identificador** | **Significado**                                                                                                            |
+|---------------|---------------------------------------------------------|
+| 451               | Vehículos automotores                                                                                                      |
+| 453               | Partes, piezas y accesorios para vehículos automotores.                                                                    |
+| 454               | Mantenimiento y reparación de motocicletas y de sus partes, piezas y accesorios.                                           |
+| 462               | Al por mayor de materias primas agropecuarias o animales vivos.                                                            |
+| 464               | Al por mayor de alimentos, bebidas y tabaco.                                                                               |
+| 465               | Al por mayor de maquinaria y equipo.                                                                                       |
+| 466               | Al por mayor especializado de combustibles no convencionales, productos de construcción, químicos, metales y desperdicios. |
+| 4711-472          | Al por menor en establecimientos no especializados (excepto 4719).)                                                        |
+| 4719              | Al por menor de surtido en diferentes alimentos, bebidas alcohólicas y tabaco.                                             |
+| 473               | Al por menor de productos para automotores.                                                                                |
+| 4741-4742         | Al por menor de software y hardware de computadores y dispositivos audiovisuales.                                          |
+| 4752              | Al por menor de artículos de ferretería, pintura y productos de vidrio.                                                    |
+| 4759-4761         | Al por menor de artículos domésticos de limpieza, papelería, cocina o emergencia.                                          |
+| 4771-4751         | Al por menor de ropa o textiles.                                                                                           |
+| 4772              | Al por menor de calzado.                                                                                                   |
+| 4773              | Al por menor de productos farmacéuticos.                                                                                   |
+
+Explicaciones mas precisas de cada identificador se encuentran en el [documento CIIU 2021](https://www.dane.gov.co/files/sen/nomenclatura/ciiu/CIIU_Rev_4_AC2021.pdf). *Las utilizadas se encuentran desde la página 490*.
+:::
+
+## Análisis Univariado
+
+### Variables Cualitativas
+
+::: panel-tabset
+### Clasificación
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+
+#convertir en dataframe el conteo de cada variable
+CIIUcontados<-as.data.frame(table(discretas[,1]))
+#categorías de la variable
+catp <- attributes(CIIUcontados[,1])$levels
+
+data <- data.frame(table(discretas[,1]))
+
+perp <- (data[,2]/nrow(data))*100
+#histograma
+fig <- plot_ly(discretas, x=~CORRELA_16, type='histogram')
+fig <- fig %>% layout(title = "Clasificación CIIU",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+
+### Edad (2022)
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+IDAIOcont<-as.data.frame(table(discretas[,3]))
+#categorías de la variable
+catpIDAIO <- attributes(IDAIOcont[,1])$levels
+
+dataIDAIO <- data.frame(table(discretas[,3]))
+
+perpIDAIO <- dataIDAIO[,2]/nrow(dataIDAIO)*100
+
+dataIDAIO<-data.frame(catpIDAIO,perpIDAIO)
+fig <- plot_ly(data, labels=~catpIDAIO, values=~perpIDAIO, type='pie')
+fig <- fig %>% layout(title = "Edad de la empresa (en años)")
+fig
+
+```
+
+Nótese que parece haberse reducido la creación de empresa en los últimos 10 años.
+
+Proponemos tambien hacer una clasificación de este tipo, pero en vez de intervalos de décadas, hacerla según mandatos presidenciales.
+
+### Propietarias M
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+PROMUJcont<-as.data.frame(table(discretas[,4]))
+#categorías de la variable
+catpPROMUJ <- attributes(PROMUJcont[,1])$levels
+
+dataPROMUJ <- data.frame(table(discretas[,4]))
+
+perpPROMUJ <- dataPROMUJ[,2]/nrow(dataPROMUJ)*100
+
+dataPROMUJ<-data.frame(catpPROMUJ,perpPROMUJ)
+fig <- plot_ly(data, labels=~catpPROMUJ, values=~perpPROMUJ, type='pie')
+fig <- fig %>% layout(title = "¿La empresa cuenta con mujeres propietarias y socias?")
+fig
+
+```
+
+### C. Permanente M
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+PERMUJcont<-as.data.frame(table(discretas[,6]))
+#categorías de la variable
+catpPERMUJ <- attributes(PERMUJcont[,1])$levels
+
+dataPERMUJ <- data.frame(table(discretas[,6]))
+
+perpPERMUJ <- dataPERMUJ[,2]/nrow(dataPERMUJ)*100
+
+dataPERMUJ<-data.frame(catpPERMUJ,perpPERMUJ)
+fig <- plot_ly(data, labels=~catpPERMUJ, values=~perpPERMUJ, type='pie')
+fig <- fig %>% layout(title = "Porcentaje de mujeres como personal permanente")
+fig
+
+```
+
+### C. Permanente H
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+PERHOMcont<-as.data.frame(table(discretas[,7]))
+#categorías de la variable
+catpPERHOM <- attributes(PERHOMcont[,1])$levels
+
+dataPERHOM <- data.frame(table(discretas[,7]))
+
+perpPERHOM <- dataPERHOM[,2]/nrow(dataPERHOM)*100
+
+dataPERHOM<-data.frame(catpPERHOM,perpPERHOM)
+fig <- plot_ly(data, labels=~catpPERHOM, values=~perpPERHOM, type='pie')
+fig <- fig %>% layout(title = "Porcentaje de hombres como personal permanente")
+fig
+
+```
+
+### C. Directa M
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+DIRMUJcont<-as.data.frame(table(discretas[,8]))
+#categorías de la variable
+catpDIRMUJ <- attributes(DIRMUJcont[,1])$levels
+
+dataDIRMUJ <- data.frame(table(discretas[,8]))
+
+perpDIRMUJ <- dataDIRMUJ[,2]/nrow(dataDIRMUJ)*100
+
+dataDIRMUJ<-data.frame(catpDIRMUJ,perpDIRMUJ)
+fig <- plot_ly(data, labels=~catpDIRMUJ, values=~perpDIRMUJ, type='pie')
+fig <- fig %>% layout(title = "Porcentaje de mujeres como personal contratado de manera directa")
+fig
+
+```
+
+### C.Directa H
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+DIRHOMcont<-as.data.frame(table(discretas[,9]))
+#categorías de la variable
+catpDIRHOM <- attributes(DIRHOMcont[,1])$levels
+
+dataDIRHOM <- data.frame(table(discretas[,9]))
+
+perpDIRHOM <- dataDIRHOM[,2]/nrow(dataDIRHOM)*100
+
+dataDIRHOM <- data.frame(catpDIRHOM,perpDIRHOM)
+fig <- plot_ly(data, labels=~catpDIRHOM, values=~perpDIRHOM, type='pie')
+fig <- fig %>% layout(title = "Porcentaje de hombres como personal contratado de manera directa")
+fig
+
+```
+
+### C. Agencia
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+AGENCIAcont<-as.data.frame(table(discretas[,10]))
+#categorías de la variable
+catpAGENCIA <- attributes(AGENCIAcont[,1])$levels
+
+dataAGENCIA <- data.frame(table(discretas[,10]))
+
+perpAGENCIA <- dataAGENCIA[,2]/nrow(dataAGENCIA)*100
+
+dataAGENCIA<-data.frame(catpAGENCIA,perpAGENCIA)
+fig <- plot_ly(data, labels=~catpAGENCIA, values=~perpAGENCIA, type='pie')
+fig <- fig %>% layout(title = "Porcentaje de mujeres y hombres contratados mediante agencia")
+fig
+
+```
+
+### Aprendices M
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+APRENMUJcont<-as.data.frame(table(discretas[,11]))
+#categorías de la variable
+catpAPRENMUJ <- attributes(APRENMUJcont[,1])$levels
+
+dataAPRENMUJ <- data.frame(table(discretas[,11]))
+
+perpAPRENMUJ <- dataAPRENMUJ[,2]/nrow(dataAPRENMUJ)*100
+
+dataAPRENMUJ<-data.frame(catpAPRENMUJ,perpAPRENMUJ)
+fig <- plot_ly(data, labels=~catpAPRENMUJ, values=~perpAPRENMUJ, type='pie')
+fig <- fig %>% layout(title = "Porcentaje de mujeres aprendices")
+fig
+
+```
+
+### Aprendices H
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+APRENHOMcont<-as.data.frame(table(discretas[,12]))
+#categorías de la variable
+catpAPRENHOM <- attributes(APRENHOMcont[,1])$levels
+
+dataAPRENHOM <- data.frame(table(discretas[,12]))
+
+perpAPRENHOM <- dataAPRENHOM[,2]/nrow(dataAPRENHOM)*100
+
+dataAPRENHOM<-data.frame(catpAPRENHOM,perpAPRENHOM)
+fig <- plot_ly(data, labels=~catpAPRENHOM, values=~perpAPRENHOM, type='pie')
+fig <- fig %>% layout(title = "Porcentaje de hombres aprendices")
+fig
+
+```
+
+### Publicidad
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+PUBLICIcont<-as.data.frame(table(discretas[,13]))
+#categorías de la variable
+catpPUBLICI <- attributes(PUBLICIcont[,1])$levels
+
+dataPUBLICI <- data.frame(table(discretas[,13]))
+
+perpPUBLICI <- dataPUBLICI[,2]/nrow(dataPUBLICI)*100
+
+dataPUBLICI <- data.frame(catpPUBLICI,perpPUBLICI)
+fig <- plot_ly(data, labels=~catpPUBLICI, values=~perpPUBLICI, type='pie')
+fig <- fig %>% layout(title = "% de inversión en publicidad según el tamaño de la empresa")
+fig
+
+```
+
+Clasificamos publicidad, basándonos en el porcentaje gastado respecto a la producción bruta.
+
+### Tamaño
+
+```{r}
+#antes de aplicar esta función, a cada variable discreta toca aplicarle la función "factor()"
+TMÑEMPcont<-as.data.frame(table(discretas[,14]))
+#categorías de la variable
+catpTMÑEMP <- attributes(TMÑEMPcont[,1])$levels
+
+dataTMÑEMP <- data.frame(table(discretas[,14]))
+
+perpTMÑEMP <- dataTMÑEMP[,2]/nrow(dataTMÑEMP)*100
+
+dataTMÑEMP <- data.frame(catpTMÑEMP,perpTMÑEMP)
+fig <- plot_ly(data, labels=~catpTMÑEMP, values=~perpTMÑEMP, type='pie')
+fig <- fig %>% layout(title = "Tamaño de la Empresa")
+fig
+
+```
+
+Es este caso, basamos la clasificación del tamaño de cada empresa según el [decreto presidencial 957 de 2019](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=94550).
+
+Nótese que la gran mayoría de empresas censadas (es decir, las conformantes del sector) son PYMEs.
+:::
+
+### Variables Cuantitativas
+
+Todas las variables cuentan con un fuerte sesgo a izquierda. Por ello, aplicamos escala LOG.
+
+```{r}
+# Asumimos los NA's como si la empresa encuestada no hubiese registrado algún valor. 
+suppressWarnings({
+
+continuas<- data.frame(lapply(continuas, function(x) { x[is.na(x)] <- 1; return(x) }))
+# pasamos a escala logarítmica
+logcontinuas<-log(continuas[,2:17])
+# interpretamos los -inf como ceros
+for(i in seq_along(logcontinuas)) {logcontinuas[is.infinite(logcontinuas[, i]), i] <- 0}
+logcontinuas<- data.frame(lapply(logcontinuas, function(x) { x[is.na(x)] <- 1; return(x) }))
+})
+```
+
+::: panel-tabset
+### Producción
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~BRUTA, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Producción bruta de la empresa", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~BRUTA, type="histogram")
+fig <- fig %>% layout(title = "Producción bruta de la empresa Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Consumo 1996-2006
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~CONSUI, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Consumo intermedio entre 1996 y 2006", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~CONSUI, type="histogram")
+fig <- fig %>% layout(title = "Consumo intermedio entre 1996 y 2006 log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Total Sueldos
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~SUELDOS, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Total de sueldos y salarios causados en el año", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~SUELDOS, type="histogram")
+fig <- fig %>% layout(title = "Total de sueldos y salarios causados en el año Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Prestaciones
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~PRESTAC, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Total en prestaciones sociales causadas en el año", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~PRESTAC, type="histogram")
+fig <- fig %>% layout(title = "Total en prestaciones sociales causadas en el año log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Ventas
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~VENTA, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Ventas causadas en el año", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~VENTA, type="histogram")
+fig <- fig %>% layout(title = "Ventas causadas en el año log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Valor Agregado
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~AGREGA, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Valor Agregado", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~AGREGA, type="histogram")
+fig <- fig %>% layout(title = "Valor Agregado Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Sueldos de planta
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~SUEPLAN, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Sueldos de planta", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~SUEPLAN, type="histogram")
+fig <- fig %>% layout(title = "Sueldos de planta Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Prestaciones de planta
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~PREPLAN, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Prestaciones de planta", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~PREPLAN, type="histogram")
+fig <- fig %>% layout(title = "Prestaciones de planta Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Seguridad Social
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~COTIZA, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Cotizaciones patronales obligatorias causadas en el año", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~COTIZA, type="histogram")
+fig <- fig %>% layout(title = "Cotizaciones patronales obligatorias causadas en el año Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+
+Se conoce a las *cotizaciones patronales* como todos los aportes monetarios que deben ser realizados por parte de los empleadores a la seguridad social.
+:::
+
+### Remuneración
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~TOTREM, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Total en Remuneración", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~TOTREM, type="histogram")
+fig <- fig %>% layout(title = "Total en Remuneración Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Rotación de Inventarios
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~ROTACION, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Rotación de Inventarios", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~ROTACION, type="histogram")
+fig <- fig %>% layout(title = "Rotación de Inventarios Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### IInventario Promedio
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~INVPRO, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Inventario Promedio", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~INVPRO, type="histogram")
+fig <- fig %>% layout(title = "Inventario Promedio Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Mercancía
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~CTO, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Costo de mercancia vendida", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~CTO, type="histogram")
+fig <- fig %>% layout(title = "Costo de mercancia vendida Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Mercancía y Costos
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~CTOINS, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Mercancía y Costos de Comercio", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~CTOINS, type="histogram")
+fig <- fig %>% layout(title = "Mercancía y Costos de Comercio Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Gastos y Costos
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~GASTOS, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Total costos y gastos operacionales", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~GASTOS, type="histogram")
+fig <- fig %>% layout(title = "Total costos y gastos operacionales Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+
+### Gastos no Operacionales
+
+::: columns
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(continuas, x=~GASTOSNOP, type='violin', 
+               box=list(visible=T),
+               meanline=list(visible=T))
+fig <- fig %>% layout(title = "Gastos no operacionales", 
+                      yaxis=list(title = "", zeroline=F))
+fig
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+fig <- plot_ly(logcontinuas, x=~GASTOSNOP, type="histogram")
+fig <- fig %>% layout(title = "Gastos no Operacionales Log",
+                      yaxis=list(title='Frec. abs.'))
+fig
+```
+:::
+:::
+:::
+
+## Análisis Bivariado
+
+Todos los Análisis bivariados que cuenten con variables continuas serán realizados en base a la base logarítmica. Esto para facilitar la exposición de los datos.
+
+### Cuantitativas vs Cuantitativas
+
+A continuación colocamos un plotpairs() de las cinco variables que más nos llamaron la atención para estudiar.
+
+```{r}
+plotpairs(logcontinuas[, c(1,3,5,12,16)])
+```
+
+En la propia tabla se alcanza a apreciar que en general todas las variables cuentan con correlaciones notables. Así distintas variables, particularmente ***GASTOSNOP*** muestren una distribución bimodal. Esto ocurre debido a que varias empresas registraron con cero esta variable en particular.
+
+### Cuantitativas vs Cualitativas
+
+La variable ***BRUTA*** nos pareció la variable más relevante de todas, dado a que esta es con la que se clasifica a las empresas según su tamaño. Veamos los siguientes boxplots:
+
+::: panel-tabset
+#### Clasificación CIIU
+
+Como vendría a suponerse, el tipo de comercio al que se dedique una empresa muestra estar correlacionado con su tamaño.
+
+```{r}
+dataframelog<-cbind.data.frame(discretas,logcontinuas)
+
+boxplot(dataframelog$BRUTA~dataframelog[, 1],las=1, xlab = "Clasificacion de las empresas", ylab = "Produccion bruta", border = "darkblue", col = "lightblue")
+
+```
+
+#### Edad Empresas
+
+Se logra apreciar que existe una correlación muy ligera, casi despreciable, entre la edad de una empresa y su tamaño.
+
+```{r}
+boxplot(dataframelog$BRUTA~dataframelog[, 3],las=1, xlab = "Edad", ylab = "Produccion bruta", border = "darkred", col="lightcoral")
+```
+
+#### Publicidad
+
+Se evidencia tambien que existe una correlacion, así sea ligera, entre el tamaño de la empresa y su gasto en publicadad. Hay que tomar en cuenta que esta clasificación según el gasto en publicidad se hace según el porcentaje de sus gastos respecto a su tamaño.
+
+```{r}
+boxplot(dataframelog$BRUTA~dataframelog[, 13],las=1, xlab = "Publicidad", ylab = "Produccion bruta", border = "darkgreen", col = "lightgreen")
+
+```
+
+#### Mujeres Propietarias
+
+En este cuadro se muestra que existe una correlación entre tener mujeres propietarias o socias, con el tamaño de la empresa.
+
+```{r}
+boxplot(dataframelog$BRUTA~dataframelog[, 4],las=1, xlab = "Mujeres Inversoras", ylab = "Tamaño Empresa", border = "deeppink", col="lightpink")
+```
+#### Gastos no Operacionales
+
+```{r}
+boxplot(dataframelog$GASTOSNOP~dataframelog[, 14],las=1, xlab = "Mujeres Inversoras", ylab = "Tamaño Empresa", border = "darkblue", col = "lightblue")
+```
+:::
+
+### Discretas vs Discretas
+
+En la siguiente figura comparamos la variable clasificación CIIU con las demás variables discretas. 
+
+En esta tabla se logran mostrar distintas distribuciones que tienen todas las variables respecto a la clasificación a la que pertenece cada empresa. De esta manera, se puede evidenciar que no todo el sector empresarial de colombia tiene comportamientos homogéneos respecto a, digamos, la edad de existencia de la empresa o gastos en publicidad.
+
+```{r}
+
+#discretas<-(discretas[,-2])
+#Importamos Librerias
+library(readxl)
+library(FactoClass)
+library(plotly)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+  
+data("admi")
+#Importamos la base de datos
+setwd("C:/Users/thetr/OneDrive/Documentos/R/Proyecto EDM")
+ruta_del_archivo <- "EAC_CIFRAS_2022_ANONIMIZADA_FINAL.csv"
+datos_orig <- read.csv(ruta_del_archivo, sep = ";", dec = ",")
+
+#En nuestro estudio, tomaremos aquellas empresas Activas. POr lo que, no tomaremos encienta a empresas con produccion bruta = 0. 
+#Asi que, eliminaremos aquellos datos que tengan produccion bruta =0 (Son alrededor de 200 datos).
+datos <- datos_orig[!is.na(as.numeric(datos_orig$BRUTA)) & as.numeric(datos_orig$BRUTA) != 0, ]
+
+#usaremos la Libreria dplyr crear dos nuevas bases de datos, en este caso, para las variables discretas y continuas de nuestro interes.
+discretas <- select(datos, CORRELA_16, IDOJ1, IDAIO, PROMUJ, PROHOM, PERMUJ, PERHOM, DIRMUJ, DIRHOM, AGENCIA, APRENMUJ, APRENHOM, PUBLICI)
+continuas <- select(datos, BRUTA, CONSUI, SUELDOS, PRESTAC, VENTA, AGREGA, SUEPLAN, PREPLAN, COTIZA, TOTREM, ROTACION, INVPRO, CTO, CTOINS, GASTOS, GASTOSNOP)
+
+# convertimos los datos a tipo numerico. 
+continuas <- data.frame(lapply(continuas, function(x) as.numeric(as.character(x))))
+# convertimos a sus respectivos valores en pesos colombianos
+continuas <-1000*continuas
+# Ahora, clasificamos los datos de tipo discreto.
+
+#Años empresa
+años <- as.integer(discretas$IDAIO)
+años[años < 1972] <- 1
+años[años >= 1972 & años < 1982] <- 2
+años[años >= 1982 & años < 1992] <- 3
+años[años >= 1992 & años < 2002] <- 4
+años[años >= 2002 & años < 2012] <- 5
+años[años >= 2012 & años < 2024] <- 6
+
+años <- factor(años, labels=c("Más de 50", "Entre 40 y 50", "Entre 40 y 30", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
+discretas$IDAIO <- años
+
+#Socios Mujeres
+smujeres <- as.integer(discretas$PROMUJ)
+smujeres[smujeres >= 1 ] <- 1
+smujeres <- factor(smujeres, labels=c("Tiene socios mujeres", "No tiene socios mujeres"))
+discretas$PROMUJ<- smujeres
+
+#Socios Hombres
+shombres <- as.integer(discretas$PROHOM)
+shombres[shombres >= 1 ] <- 1
+shombres <- factor(shombres, labels=c("Tiene socios hombres", "Tiene socios hombres"))
+discretas$PROHOM<- shombres
+
+#personal permanete mujeres
+pmujeres <- as.integer(discretas$PERMUJ)
+pmujeres[pmujeres >= 1 & pmujeres < 10 ] <- 1
+pmujeres[pmujeres >= 10 ] <- 2
+pmujeres <- factor(pmujeres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$PERMUJ <- pmujeres
+
+# Personal permanente Hombres
+phombres <- as.integer(discretas$PERHOM)
+phombres[phombres >= 1 & phombres<= 10 ] <- 1
+phombres[phombres  > 10 ] <- 2
+phombres <- factor(phombres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$PERHOM <- phombres
+
+# Personal Temporal Mujeres
+tmujeres <- as.integer(discretas$DIRMUJ)
+tmujeres[tmujeres >= 1 & tmujeres < 10 ] <- 1
+tmujeres[tmujeres >= 10 ] <- 2
+tmujeres <- factor(tmujeres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$DIRMUJ <- tmujeres
+
+# Personal Temporal Hombres
+thombres <- as.integer(discretas$DIRHOM)
+thombres[thombres >= 1 & thombres<= 10 ] <- 1
+thombres[thombres  > 10 ] <- 2
+thombres <- factor(thombres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$DIRHOM <- thombres
+
+# Personal temporal cont a través de agencias - Mujeres
+ptagenc <- as.integer(discretas$AGENCIA)
+ptagenc[ptagenc >= 1 & ptagenc < 10 ] <- 1
+ptagenc[ptagenc >= 10 ] <- 2
+ptagenc <- factor(ptagenc, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$AGENCIA <- ptagenc
+
+# Aprendices Mujeres
+amujeres <- as.integer(discretas$APRENMUJ)
+amujeres[amujeres >= 1 & amujeres < 10 ] <- 1
+amujeres[amujeres >= 10 ] <- 2
+amujeres <- factor(amujeres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$APRENMUJ <- amujeres
+
+# Aprendices Hombres
+ahombres <- as.integer(discretas$APRENHOM)
+ahombres[ahombres >= 1 & ahombres<= 10 ] <- 1
+ahombres[ahombres  > 10 ] <- 2
+ahombres <- factor(ahombres, labels=c("No tiene", "Entre 1% y 10%", "Más de 10%"))
+discretas$APRENHOM <- ahombres
+
+#clasificamos las empresas segun su tamañó. Es este caso, basaremos la clasificaion "Decreto 957 de 2019".
+pbruta <- as.numeric(continuas$BRUTA)
+#precio uvt añó 2022
+uvt22 = 38004
+TMÑEMP <- unlist(pbruta/uvt22)
+TMÑEMP[TMÑEMP <= 44769 ] <- 1
+TMÑEMP[TMÑEMP > 44769 & TMÑEMP <= 431196] <- 2
+TMÑEMP[TMÑEMP > 431196 & TMÑEMP <= 2160692] <- 3
+TMÑEMP[TMÑEMP > 2160692] <- 4
+TMÑEMP <- factor(TMÑEMP, labels=c("Microempresa", "Empresa Pequeña", "Empresa Mediana", "Empresa Grande"))
+discretas <- cbind(discretas, TMÑEMP)
+#Clasificamos publicidad, basandonos en el porcentaje gastado respecto a la produccion bruta.
+
+pbruta <- abs(pbruta/1000)
+publicidad <- as.numeric(discretas$PUBLICI)
+contador = as.integer(1)
+
+for(i in publicidad){
+  if (i/pbruta[contador] > 0 & i/pbruta[contador] <= 0.05){
+    publicidad[contador] <- 1 
+  }else if (i/pbruta[contador] > 0.05 & i/pbruta[contador] <= 0.1) {
+    publicidad[contador] <- 2 
+  }else if (i/pbruta[contador] > 0.1) {
+    publicidad[contador] <- 3
+  }
+  contador <- contador+1
+  
+}
+
+publicidad <- factor(publicidad, labels=c("Nulo", "Bajo", "Moderado", "Alto"))
+discretas$PUBLICI <- publicidad
+continuas<-cbind(discretas$CORRELA_16,continuas)
+
+discretas$CORRELA_16<-factor(discretas$CORRELA_16)
+
+discretas2<-discretas
+discretas2<-(discretas2[,c(-2,-5)])
+
+par(mfrow=c(3,2),mai=c(0.3,1,0.2,0.1),las=1,cex=0.7);
+for (i in 2:12){
+  tc<-unclass(table(discretas2$CORRELA_16, discretas2[,i]));
+  plotct(tc,"row");
+  title(main=names(discretas2)[i]);
+}
+```
+

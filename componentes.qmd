@@ -1,0 +1,630 @@
+---
+title: "Análisis de Componentes Principales"
+format: html
+editor: visual
+theme: lux
+echo: false
+engine: knitr
+---
+
+```{r}
+suppressMessages({
+  #Importamos Librerias
+library(readxl)
+library(FactoClass)
+library(factoextra)
+library(plotly)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(Factoshiny)
+options(digits = 4, scipen = 999) 
+library(DT) # para tablas interactivas
+library(plotly) # para gráficos interactivos
+
+#Importamos la base de datos
+setwd("C:/Users/thetr/OneDrive/Documentos/R/Proyecto EDM")
+ruta_del_archivo <- "EAC_CIFRAS_2022_ANONIMIZADA_FINAL.csv"
+datos_orig <- read.csv(ruta_del_archivo, sep = ";", dec = ",")
+
+#En nuestro estudio, tomaremos aquellas empresas Activas. POr lo que, no tomaremos encienta a empresas con produccion bruta = 0. 
+#Asi que, eliminaremos aquellos datos que tengan produccion bruta =0 (Son alrededor de 200 datos).
+datos <- datos_orig[!is.na(as.numeric(datos_orig$BRUTA)) & as.numeric(datos_orig$BRUTA) != 0, ]
+
+#usaremos la Libreria dplyr crear dos nuevas bases de datos, en este caso, para las variables discretas y continuas de nuestro interes.
+discretas <- select(datos, CORRELA_16, IDOJ1, IDAIO, PROMUJ, PROHOM, PERMUJ, PERHOM, DIRMUJ, DIRHOM, AGENCIA, APRENMUJ, APRENHOM, PUBLICI)
+continuas <- select(datos, BRUTA, CONSUI, SUELDOS, PRESTAC, VENTA, AGREGA, SUEPLAN, PREPLAN, COTIZA, TOTREM, ROTACION, INVPRO, CTO, CTOINS, GASTOS, GASTOSNOP)
+                                                                    
+# convertimos los datos a tipo numerico. 
+continuas <- data.frame(lapply(continuas, function(x) as.numeric(as.character(x))))
+# convertimos a sus respectivos valores en pesos colombianos
+continuas <-1000*continuas
+
+#Ahora agregamos nuevas variables a continuas
+Clasifemp <-discretas$CORRELA_16
+
+continuas <- cbind(Clasifemp, continuas)
+continuas[is.na(continuas)] <- 0 #asignamos a los NA el valor de cero
+
+# Ahora, clasificamos los datos de tipo discret
+
+#Años empresa
+años <- as.integer(discretas$IDAIO)
+años[años < 1972] <- 1
+años[años >= 1972 & años < 1982] <- 2
+años[años >= 1982 & años < 1992] <- 3
+años[años >= 1992 & años < 2002] <- 4
+años[años >= 2002 & años < 2012] <- 5
+años[años >= 2012 & años < 2024] <- 6
+
+años <- factor(años, labels=c("Más de 50", "Entre 40 y 50", "Entre 30 y 40", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
+discretas$IDAIO <- años
+
+#Socios Mujeres
+smujeres <- as.integer(discretas$PROMUJ)
+smujeres[smujeres >= 1 ] <- 1
+smujeres <- factor(smujeres, labels=c("SisociosM", "NosociosM"))
+discretas$PROMUJ<- smujeres
+
+#Socios Hombres
+shombres <- as.integer(discretas$PROHOM)
+shombres[shombres >= 1 ] <- 1
+shombres <- factor(shombres, labels=c("SisociosH", "NosociosH"))
+discretas$PROHOM<- shombres
+
+#personal permanete mujeres
+pmujeres <- as.integer(discretas$PERMUJ)
+pmujeres[pmujeres >= 1 & pmujeres < 10 ] <- 1
+pmujeres[pmujeres >= 10 ] <- 2
+pmujeres <- factor(pmujeres, labels=c("(0)PerM", "(1-10)PerM", "(>10)PerM"))
+discretas$PERMUJ <- pmujeres
+
+# Personal permanente Hombres
+phombres <- as.integer(discretas$PERHOM)
+phombres[phombres >= 1 & phombres<= 10 ] <- 1
+phombres[phombres  > 10 ] <- 2
+phombres <- factor(phombres, labels=c("(0)PerH", "(1-10)PerH", "(>10)PerH"))
+discretas$PERHOM <- phombres
+
+# Personal Temporal Mujeres
+tmujeres <- as.integer(discretas$DIRMUJ)
+tmujeres[tmujeres >= 1 & tmujeres < 10 ] <- 1
+tmujeres[tmujeres >= 10 ] <- 2
+tmujeres <- factor(tmujeres, labels=c("(0)tempM", "(1-10)tempM", "(>10)tempM"))
+discretas$DIRMUJ <- tmujeres
+
+# Personal Temporal Hombres
+thombres <- as.integer(discretas$DIRHOM)
+thombres[thombres >= 1 & thombres<= 10 ] <- 1
+thombres[thombres  > 10 ] <- 2
+thombres <- factor(thombres, labels=c("(0)tempH", "(1-10)tempH", "(>10)tempH"))
+discretas$DIRHOM <- thombres
+
+# Personal temporal cont a través de agencias - Mujeres
+ptagenc <- as.integer(discretas$AGENCIA)
+ptagenc[ptagenc >= 1 & ptagenc < 10 ] <- 1
+ptagenc[ptagenc >= 10 ] <- 2
+ptagenc <- factor(ptagenc, labels=c("(0)PTAgenc", "(1-10)PTAgenc", "(>10)PTAgenc"))
+discretas$AGENCIA <- ptagenc
+
+# Aprendices Mujeres
+amujeres <- as.integer(discretas$APRENMUJ)
+amujeres[amujeres >= 1 & amujeres < 10 ] <- 1
+amujeres[amujeres >= 10 ] <- 2
+amujeres <- factor(amujeres, labels=c("(0)AprenM", "(1-10)AprenM", "(>10)AprenpM"))
+discretas$APRENMUJ <- amujeres
+
+# Aprendices Hombres
+ahombres <- as.integer(discretas$APRENHOM)
+ahombres[ahombres >= 1 & ahombres<= 10 ] <- 1
+ahombres[ahombres  > 10 ] <- 2
+ahombres <- factor(ahombres, labels=c("(0)AprenH", "(1-10)AprenH", "(>10)AprenH"))
+discretas$APRENHOM <- ahombres
+
+#clasificamos las empresas segun su tamañó. Es este caso, basaremos la clasificaion "Decreto 957 de 2019".
+pbruta <- 1000*as.numeric(datos$BRUTA)
+#precio uvt añó 2022
+uvt22 = 38004
+TMÑEMP <- unlist(pbruta/uvt22)
+TMÑEMP[TMÑEMP <= 44769 ] <- 1
+TMÑEMP[TMÑEMP > 44769 & TMÑEMP <= 431196] <- 2
+TMÑEMP[TMÑEMP > 431196 & TMÑEMP <= 2160692] <- 3
+TMÑEMP[TMÑEMP > 2160692] <- 4
+TMÑEMP <- factor(TMÑEMP, labels=c("MIcroe", "PQempr", "MEdempr", "EmprGran"))
+discretas <- cbind(discretas, TMÑEMP)
+#Clasificamos publicidad, basandonos en el porcentaje gastado respecto a la produccion bruta.
+
+pbruta <- abs(pbruta/1000)
+publicidad <- as.numeric(discretas$PUBLICI)
+contador = as.integer(1)
+
+for(i in publicidad){
+  if (i/pbruta[contador] > 0 & i/pbruta[contador] <= 0.05){
+    publicidad[contador] <- 1 
+  }else if (i/pbruta[contador] > 0.05 & i/pbruta[contador] <= 0.1) {
+    publicidad[contador] <- 2 
+  }else if (i/pbruta[contador] > 0.1) {
+    publicidad[contador] <- 3
+  }
+  contador <- contador+1
+  
+}
+
+publicidad <- factor(publicidad, labels=c("Nopub", "Pubbaja", "Pubmod", "Pubalta"))
+discretas$PUBLICI <- publicidad
+options(digits = 4, scipen = 999) 
+
+suppressWarnings({
+
+  continuas<- data.frame(lapply(continuas, function(x) { x[is.na(x)] <- 1; return(x) }))
+  # pasamos a escala logarítmica
+  logcontinuas<-log(continuas[,2:17])
+  # interpretamos los -inf como ceros
+  for(i in seq_along(logcontinuas)) {logcontinuas[is.infinite(logcontinuas[, i]), i] <- 0}
+  logcontinuas<- data.frame(lapply(logcontinuas, function(x) { x[is.na(x)] <- 1; return(x) }))
+})
+
+dataframelog<-cbind.data.frame(discretas,logcontinuas)
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#--------------------------------------ACP-------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# Descripcion general de las variables
+#summary(continuas)
+# datos
+Y <- continuas[, 2:17]
+# correlacion entre variables
+#kable(cor(Y), digits = 3)
+
+# inercia usando  ade4 y FactoClass
+acp <- dudi.pca(Y, scannf = FALSE, nf = 4)
+valp <- t(inertia(acp)$tot.inertia) # valores propios
+#kable(valp, digits = 3)
+
+# Grafico de inercia
+fviz_screeplot(acp, addlabels = TRUE, ylim = c(0, 50))
+
+#Coordenadas de las varibles en 4  dimenciones
+#kable(acp$co, digits = 3)
+
+var <- get_pca_var(acp)
+
+#contribucion de las varibales a las diferentes dimensiones
+# dim 1
+#fviz_contrib(acp, choice = "var", axes = 1)
+#dim 2
+#fviz_contrib(acp, choice = "var", axes = 2)
+#dim 3
+#fviz_contrib(acp, choice = "var", axes = 3)
+})
+```
+
+# Introducción al ACP
+
+Todas las variables continuas que tenemos han sido tomadas en cuenta para el análisis. De esta manera los gráficos, si bien se mostrarán saturados, nos permitirán notar agrupamiento, correlación casi nula, e información guardada en distintos ejes de las variables.
+
+Debido a esta mencionada saturación, recomendamos el uso del gráfico en 3D para revisar los conjuntos de ejes expuestos, de esta manera se logran apreciar de mejor manera varias observaciones que haremos en el análisis.
+
+# Resumen de Variables
+
+::: {.callout collapse="true"}
+
+## Desplegar
+
+```{r}
+summary(continuas[,2:17])
+```
+:::
+
+# Tabla de Correlaciones
+
+::: {.callout collapse="true"}
+
+
+## Desplegar
+
+```{r}
+kable(cor(Y), digits = 3)
+```
+:::
+
+# Inercia
+
+A continuación se muestra el cuadro de inercia:
+
+```{r}
+fviz_screeplot(acp, addlabels = TRUE, ylim = c(0, 50))
+```
+
+Claramente no podríamos guiarnos según la técnica del "codo", por lo que preferimos tomar en cuenta los primeros cuatro ejes; dado que, si bien tienen muy poca información, parecen ser relativamente mucho mas importantes que los otros seis.
+
+## Tabla de Inercias
+
+::: {.callout collapse="true"}
+
+## Desplegar
+
+```{r}
+kable(valp, digits = 3)
+```
+:::
+
+# Comparaciones de Ejes
+
+## Eje 1 vs Eje 2
+
+```{r}
+#Grafica cos
+fviz_pca_var(acp, axes=c(1,2), col.var="cos2",
+             gradient.cols = c("darkred", 
+                               "darkorange", 
+                               "darkgreen"))
+```
+
+Acá se muestra que, además de que claramente *gastos no operacionales* **GASTOSNOP** no muestran una correlación fuerte (mas no nula), en este eje dos grupos de datos se ven agrupados; un grupo de ***VENTA, ROTACION, CTOINS*** y ***GASTOS***, junto con otro más amontonado de ***SUEPLAN, COTIZA, SUELDOS, PREPLAN, TOTREM*** y ***PRESTAC***.
+
+Tambien se puede destacar que ***INVPRO*** casi no aparece en esta proyección, pero, en caso de que el lector haya rotado el gráfico 3D, tal vez alcance a notar que esta variable es de las de menor correlación de toda la base de datos.
+
+## Ejes 2,1 vs Eje 3
+
+::: columns
+::: {.column width="50%"}
+```{r}
+# Plano con los ejes 2 y 3
+fviz_pca_var(acp, axes=c(2,3), col.var="cos2",
+             gradient.cols = c("darkred", 
+                               "darkorange", 
+                               "darkgreen"))
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#plano con los ejes 1 y 3
+fviz_pca_var(acp, axes=c(1,3), col.var="cos2",
+             gradient.cols = c("darkred", 
+                               "darkorange", 
+                               "darkgreen"))
+```
+:::
+:::
+
+En ambas proyecciones respecto al eje 3 es bien claro lo que se comentaba antes sobre la variable ***INVPRO***; es la que, según todas las proyecciones, menos relacionada está con las demás.
+
+La falta de longitud de la variable ***GASTOSPOP*** se explica porque en el eje cuatro parece haberse ido toda la información que la conformaba.
+
+### Gráfico Representativo en 3D (Ejes 1,2,3)
+
+```{r}
+# grafico en 3d
+G_df = as.data.frame(acp$co)
+fig <- plot_ly(G_df, x = ~Comp1, y = ~Comp2, z = ~Comp3)
+# Graficare como puntos pero sería mejor como flechas
+fig <- fig %>% add_markers() 
+fig <- fig %>% add_text(text = rownames(G_df))
+fig <- fig %>% add_markers(x = 0, y = 0, z = 0)
+
+sphere <- function(n = 100){
+  theta <- seq(0, pi, length.out = n)
+  phi <- seq(0, 2 * pi, length.out = n)
+  r <- 1
+  x <- r * outer(sin(theta), cos(phi))
+  y <- r * outer(sin(theta), sin(phi))
+  z <- r * outer(cos(theta), rep(1, length(phi)))
+  return(list(x = x, y = y, z = z))
+}
+s_c <- sphere()
+fig <- fig %>% add_trace(x = s_c$x, y = s_c$y, z = s_c$z, 
+                         type = 'surface', opacity = 0.2, 
+                         colorscale = "Greys", # cambiar por valor fijo
+                         showscale = FALSE)
+
+fig <- fig %>% layout(title = "Componentes 1,2 y 3",
+                      scene = list(xaxis = list(range = c(-1,1)),
+                                   yaxis = list(range = c(-1,1)),
+                                   zaxis = list(range = c(-1,1)),
+                                   aspectratio = list(x=1,y=1,z=1),
+                                   camera = list(eye = list(x=1,y=1,z=1))),
+                      showlegend = FALSE)
+fig
+
+```
+
+## Ejes 2,3 vs 4
+
+No realizamos una comparación entre ejes 1 y 4 dado a que, como la inercia de los ejes 3 y 4 es de 6.1% y 5.4% respectivamente, las diferencias entre ambos son muy bajas; particularmente porque la variable ***GASTOSNOP*** parece arrastrar toda la inercia del eje 4.
+
+::: columns
+::: {.column width="50%"}
+```{r}
+# Plano con los ejes 2 y 4
+fviz_pca_var(acp, axes=c(2,4), col.var="cos2",
+             gradient.cols = c("darkred", 
+                               "darkorange", 
+                               "darkgreen"))
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#plano con los ejes 3 y 4
+fviz_pca_var(acp, axes=c(3,4), col.var="cos2",
+             gradient.cols = c("darkred", 
+                               "darkorange", 
+                               "darkgreen"))
+```
+:::
+:::
+
+Entre ambos gráficos se observa que se mantiene el comportamiento de ambas ***INVPRO*** y ***GASTOSNOP*** en el que se muestran muy poco correlacionadas con las demás variables de estudio.
+
+### Gráfico Representativo en 3D (Ejes 2,3,4)
+
+```{r}
+# grafico en 3d
+G_df = as.data.frame(acp$co)
+fig <- plot_ly(G_df, x = ~Comp2, y = ~Comp3, z = ~Comp4)
+# Graficare como puntos pero sería mejor como flechas
+fig <- fig %>% add_markers() 
+fig <- fig %>% add_text(text = rownames(G_df))
+fig <- fig %>% add_markers(x = 0, y = 0, z = 0)
+
+sphere <- function(n = 100){
+  theta <- seq(0, pi, length.out = n)
+  phi <- seq(0, 2 * pi, length.out = n)
+  r <- 1
+  x <- r * outer(sin(theta), cos(phi))
+  y <- r * outer(sin(theta), sin(phi))
+  z <- r * outer(cos(theta), rep(1, length(phi)))
+  return(list(x = x, y = y, z = z))
+}
+s_c <- sphere()
+fig <- fig %>% add_trace(x = s_c$x, y = s_c$y, z = s_c$z, 
+                         type = 'surface', opacity = 0.2, 
+                         colorscale = "Greys", # cambiar por valor fijo
+                         showscale = FALSE)
+
+fig <- fig %>% layout(title = "Componentes 2,3 y 4",
+                      scene = list(xaxis = list(range = c(-1,1)),
+                                   yaxis = list(range = c(-1,1)),
+                                   zaxis = list(range = c(-1,1)),
+                                   aspectratio = list(x=1,y=1,z=1),
+                                   camera = list(eye = list(x=1,y=1,z=1))),
+                      showlegend = FALSE)
+fig
+
+```
+
+Cabe a resaltar que la agrupación de variables que se menciona desde el inicio del análisis parece mantenerse en este eje distinto. A continuación se realiza un análisis más detallado de lo encontrado.
+
+# Análisis de Agrupaciones
+
+## Agrupación 1:
+
+| **Identificador** | **Variable**                                          |
+|-------------------|-----------------------------------------------------|
+| CTOINS            | Costo de mercancía e insumos relacionados al comercio |
+| ROTACION          | Rotación de inventarios                               |
+| GASTOS            | Gastos operacionales                                  |
+| VENTA             | Ventas causadas en el año                             |
+
+Hay que resaltar como particularmente relevante que ***CTOINS*** *Total costos y gastos operacionales* y ***ROTACION**rotacion de inventarios* estén tan pegados que parecen un solo punto. Se podría entonces decir que en el sector empresarial de Colombia ambas variables implican casi siempre una correlación directa. Es una relación tan estrecha que se podría considerar que así realizáramos análisis marginales respecto a la clasificación CIIU a la que pertenezca la empresa, esta relación se mantuviera igual de estrecha.
+
+De paso se podría asumir, a partir de la fuerte correlacion qeu aparentan tener que podríamos considerar una medida o índice a partir de lo correlacioadas que se encuentren ambas variables. Para una revision mas exhaustiva tomamos en cuenta un análisis bivariado entre las dos:
+
+```{r}
+suppressWarnings({
+  
+  continuas<- data.frame(lapply(continuas, function(x) { x[is.na(x)] <- 1; return(x) }))
+  # pasamos a escala logarítmica
+  logcontinuas<-log(continuas[,2:17])
+  # interpretamos los -inf como ceros
+  for(i in seq_along(logcontinuas)) {logcontinuas[is.infinite(logcontinuas[, i]), i] <- 0}
+  logcontinuas<- data.frame(lapply(logcontinuas, function(x) { x[is.na(x)] <- 1; return(x) }))
+})
+
+n <- nrow(continuas$BRUTA) # n: número de individuos
+
+plotpairs(logcontinuas[, c(11,14)])
+```
+
+Toca resaltar que esta relación llega a parecer una relación lineal. Tocaría revisar si en el fondo una es combinacion lineal de la otra, dada la fuerte correlación mostrada. Aunque dado a que hay muchos datos alejados de esta "línea" en las mediciones, podría tratarse de una correlación interesante.
+
+## Agrupación 2:
+
+| **Identificador** | **Variable**                             |
+|-------------------|------------------------------------------|
+| SUEPLAN           | Sueldos de planta                        |
+| SUELDOS           | Total de sueldos en el año               |
+| TOTREM            | Total en remuneración en el año          |
+| COTIZA            | Cotizaciones patronales en el año        |
+| PRESTAC           | Total en prestaciones sociales en el año |
+| PREPLAN           | Prestaciones de planta                   |
+
+Esta agrupacion está menos unida que la otra, pero de todas formas es de resaltar su existencia. De antemano cualquiera pensaría que las seis van totalmente correlacionadas; aunque toca resaltar que la variable más importante, ***BRUTA*** *producción bruta*, parece verse arrastrada por la otra agrupación y tambien por las dos variables que mostraron ser casi ortogonales a la mayoría.
+
+## Baja Correlación de ***INVPRO*** y ***GASTOSNOP***
+
+Se podría suponer que, por parte de ***GASTOSNOP***, esta no se iba a encontrar tan relacionada a las demás dado que, como su descripción lo indica, es una variable suplementaria a ***GASTOS***. De todas formas tocaría hacer una revisión más exhaustiva de la misma , debido a que según parece, esto implicaría que los gastos ajenos a la operacion de las empresas no van de la mano con su tamaño. Revisemos el boxplot entre tamaño de la empresa y la variable en cuestión.
+
+```{r}
+boxplot(dataframelog$GASTOSNOP~dataframelog[, 14],las=1, xlab = "Tamaño Empresa", ylab = "Gastos no Operacionales", border = "darkblue", col = "lightblue")
+```
+
+Claramente se muestra que el tamaño de la empresa aumenta sus gastos no operacionales, a la vez de disminuye la varianza de los mismos.
+
+Respecto a la variable ***INVPRO*** hacemos un gráfico similar al anterior.
+
+```{r}
+boxplot(dataframelog$INVPRO~dataframelog[, 14],las=1, xlab = "Tamaño Empresa", ylab = "Inventario", border =  "darkred", col="lightcoral")
+```
+
+Se ve una relación similar, pero de todas formas no dice mucho el gráfico sobre por qué el inventario promedio de la empresa no va correlacionado con la producción bruta.
+
+Una suposición que no todas las empresas venden de la misma manera su inventario; por decir un ejemplo, Homecenter no es una empresa que siempre tiene que estar pendiente de la fecha de vencimiento de sus productos, así no se ven tan obligados a lanzar promociones al público como los almacenes Éxito. De esta manera las proyecciones de inventario difieren por factores totalmente relacionados con el sector de ventas que mantienen. A continuacion un Boxplot poniendo a prueba esta hipótesis:
+
+```{r}
+boxplot(dataframelog$INVPRO~dataframelog[, 1],las=1, xlab = "Tamaño Empresa", ylab = "Clasificación CIIU", border =  "darkgreen", col = "lightgreen")
+```
+
+Se puede observar que hay una variación tanto en media como en varianza de estos inventarios según la clasificación de la empresa. Aunque tocaría hacer un análisis mas profundo sobre el tema.
+
+# Variables suplementarias
+
+::: panel-tabset
+```{r}
+Ysupcat <- discretas
+#convertimos las variables en fatores
+Ysupcat[] <- lapply(Ysupcat, as.factor)
+sup <- supqual(acp, Ysupcat)
+#kable(cbind(wcat = sup$wcat, d2 = sup$dis2, sup$coor), digits = 3)
+#
+kable(cbind(sup$tv, sup$cos2), digits = 3)
+
+###
+Ysupcat <- discretas
+#convertimos las variables en fatores
+Ysupcat[] <- lapply(Ysupcat, as.factor)
+sup <- supqual(acp, Ysupcat)
+#kable(cbind(wcat = sup$wcat, d2 = sup$dis2, sup$coor), digits = 3)
+#
+#kable(cbind(sup$tv, sup$cos2), digits = 3)
+```
+
+### Gráfico Nube de individuos
+
+```{r}
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-3.2, 0.5), ylim = c(-1.2,1.2))
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+title(main = "Nube de individuos")
+```
+
+### Gráfico Tipo de empresa
+
+```{r}
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1.6, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#tipos de empresas
+points(sup$coor[1:16,], col = 2, pch = 16)
+text(sup$coor[1:16,], labels = rownames(sup$coor[1:16,]),
+     col = 2, pos = 1, font = 4)
+title(main = "Tipo de empresa")
+```
+
+### Gráfico Edad
+
+```{r}
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1.6, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#edad
+points(sup$coor[28:33,], col = 3, pch = 16)
+text(sup$coor[28:33,], labels = rownames(sup$coor[28:33,]),
+     col = 3, pos = 1, font = 2)
+title(main = "Edad")
+```
+
+### Gráfico Socios
+
+```{r}
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1.2, 0.6), ylim = c(-0.5, 0.5), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#socios hombres
+points(sup$coor[34:35,], col = 5, pch = 16)
+text(sup$coor[34:35,], labels = rownames(sup$coor[34:35,]),
+     col = 3, pos = 1, font = 4)
+#socios hombres
+points(sup$coor[36:37,], col = 4, pch = 16)
+text(sup$coor[36:37,], labels = rownames(sup$coor[36:37,]),
+     col = 4, pos = 1, font = 4)
+title(main = "Socios H y M")
+```
+
+### Gráfico Contratos Indefinidos
+
+```{r}
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1, 0.6), ylim = c(-0.5,0.5), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#indefinidos mujeres
+points(sup$coor[38:40,], col = 5, pch = 16)
+text(sup$coor[38:40,], labels = rownames(sup$coor[38:40,]),
+     col = 5, pos = 1, font = 4)
+#indefinidos hombres
+points(sup$coor[41:43,], col = 4, pch = 16)
+text(sup$coor[41:43,], labels = rownames(sup$coor[41:43,]),
+     col = 6, pos = 1, font = 4)
+title(main = "Contrato indefinidos H y M")
+
+```
+
+### Gráfico Contratos Temporales
+
+```{r}
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-1.3, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#temporal muejeres
+points(sup$coor[44:46,], col = 5, pch = 16)
+text(sup$coor[44:46,], labels = rownames(sup$coor[44:46,]),
+     col = 5, pos = 1, font = 4)
+#temporal hombres
+points(sup$coor[47:49,], col = 4, pch = 16)
+text(sup$coor[47:49,], labels = rownames(sup$coor[47:49,]),
+     col = 6, pos = 1, font = 4)
+title(main = "Contrato temporal H y M")
+```
+
+### Gráfico Agencias y Aprendices
+
+```{r}
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-23, 0.6), ylim = c(-0.5, 0.5), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#Contrato agencia
+points(sup$coor[50:52,], col = 7, pch = 16)
+text(sup$coor[50:52,], labels = rownames(sup$coor[50:52,]),
+     col = 7, pos = 1, font = 4)
+#tAprendices mujeres
+points(sup$coor[53:55,], col = 10, pch = 16)
+text(sup$coor[53:55,], labels = rownames(sup$coor[53:55,]),
+     col = 10, pos = 1, font = 4)
+#Aprendices hombres
+points(sup$coor[56:58,], col = 9, pch = 16)
+text(sup$coor[56:58,], labels = rownames(sup$coor[56:58,]),
+     col = 9, pos = 1, font = 4)
+title(main = "Contrato Agencias y Aprendices H y M")
+```
+
+### Gráfico 7 Publicidad
+
+```{r}
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-2, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#publicidad
+points(sup$coor[59:62,], col = 11, pch = 16)
+text(sup$coor[59:62,], labels = rownames(sup$coor[59:62,]),
+     col = 11, pos = 1, font = 4)
+title(main = "Publicidad")
+```
+
+### Gráfico 8 Tamaño de Empresa
+
+```{r}
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-13.5, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#publicidad
+points(sup$coor[63:66,], col = 12, pch = 16)
+text(sup$coor[63:66,], labels = rownames(sup$coor[63:66,]),
+     col = 12, pos = 1, font = 4)
+title(main = "Tamaño de Empresa")
+
+```
+:::
