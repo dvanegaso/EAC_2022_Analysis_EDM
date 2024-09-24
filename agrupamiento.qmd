@@ -285,7 +285,7 @@ kable(fc$ cluster)
 ```
 :::
 ::: {.callout collapse="true"}
-##Tamaños relativos de las clases
+### Tamaños relativos de las clases
 ```{r}
 ##Tamaños relativos de las clases
 round ( nk/ sum ( nk )* 100 ,1)
@@ -294,7 +294,7 @@ round ( nk/ sum ( nk )* 100 ,1)
 :::
 ::: {.callout collapse="true"}
 
-##Tamaños e inercia. Pongalo de relleno :v
+### Tamaños e inercia.
 ```{r}
 
 
@@ -304,7 +304,7 @@ fc$clus.summ[,1:4]
 ```
 :::
 
-##Grafico de clasificacion
+### Grafico de clasificacion
 
 ```{r}
 plotFactoClass(fc, x=1, y=2, cex.col=0.5,
