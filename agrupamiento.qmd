@@ -249,62 +249,110 @@ Tipempr[Tipempr %in% tipo3] <- 3
 Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos", "Comercio al por mayor", "Comercio al por menor"))
 discretas$CORRELA_16 <- Tipempr
 discretas[] <- lapply(discretas, as.factor)
-
-#Variables activas
-#Usaremos las mismas variables que en el acm
-Y = discretas[, 1:11]
-##1. Número de ejes para el ACM: Usaremos 2, esto basandonos en el criterio de benzecri
-##2. Número de ejes para la clasicación: Usando el criterio descrito en el libro, optamos por 4
-##3 Número de clases: Usaremos nuestro propio criterio basandonos en la proyeccion de los individuos. En este caso, 5 grupos.
-fc <- FactoClass(Y, dudi.acm,scanFC = FALSE, nf = 2, nfcl = 4, k.clust = 5)
-
 })
 ```
-## Tabla de Inercia
+## Introducción
+
+Se consideraron tres clasificaciones para los datos:
+
+1. Agrupamiento según Tamaño. (Siguiendo Criterios del Libro)
+2. Agrupamiento Según Proyección.
+
+Tambien se tomaron en cuenta las siguientes variables:
+
+::: {.callout collapse="true"}
+## Desplegar
+
+-   Años en Activo de la Empresa
+    -   Mas de 30
+    -   Entre 20 y 30
+    -   Entre 10 y 20
+    -   Menos de 10
+-   Personal Permanente
+    -   Ningún permanente
+    -   1 a 10 permanentes
+    -   Más de 10 permanententes
+-   Personal Contratado Directamente
+    -   Ninguno
+    -   1 a 10
+    -   Más de 10
+-   Personal Aprendiz
+    -   Ninguno
+    -   1 a 10 aprendices
+    -   Más de 10 aprendices
+-   Total hombres
+    -   Ninguno
+    -   1 a 10 hombres
+    -   Más de 10 hombres
+-   Total Mujeres
+    -   Ninguna
+    -   1 a 10 mujeres
+    -   Más de 10 mujeres
+-   NÚmero de Socios
+    -   Ninguno
+    -   Pocos (1 a 4)
+    -   Más de 4 socios
+-   Hombres Socios
+    -   No tiene
+    -   Si tiene
+-   Hombres Socios
+    -   No tiene
+    -   Si tiene
+-   Contratación por Agencia
+    -   Ningún empleado
+    -   1 a 10 empleados
+    -   Más de 10 empleados.
+-   Tipo de Empresa
+    -   Comercio de Vehículos
+    -   Comercio al por Mayor
+    -   Comercio al por Menor
+
+Ilustrativa (por bajo conteo en categorías)
+    
+-   Tamaño de Empresa
+    -   Microempresa
+    -   Pequeña
+    -   Mediana
+    -   Grande
+:::
+
+
+## Agrupamiento Según Tamaño
+
+Ejecutando el software del paquete FactoClass dentro del conjunto de variables tomadas, se nos da lo siguiente:
 ```{r}
-barplot(as.vector(fc$dudi$eig), col="darkblue", main ="Inercia")
-##Arbol de corte
+
+Y = discretas[ , c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17)]
+
+#numero de grupos
+n = 4
+fc <- FactoClass(Y, dudi.acm, scanFC = FALSE, nf = 2, nfcl = 10, k.clust = n)
+
 
 ```
+El número de ejes retenidos para el análisis factorial son dos, para el agrupamiento son cuatro. Se da la partición en cuatro agrupamientos.
 
-```{r}
+### Tamaño de los Grupos
 
-
-barplot(rev(tail(fc$indices$Indice,15)), horiz=TRUE, col="darkblue")
-
-```
-
+En la tabla de abajo se pueden revisar el tamaño relativo de cada agrupación:
 ```{r}
 summary ( fc$ cluster ) -> nk
-```
 
-::: {.callout collapse="true"}
-## Tabla Previa
-```{r}
-kable(fc$ cluster)
-```
-:::
-::: {.callout collapse="true"}
-### Tamaños relativos de las clases
-```{r}
 ##Tamaños relativos de las clases
 round ( nk/ sum ( nk )* 100 ,1)
-
 ```
-:::
+
 ::: {.callout collapse="true"}
 
-### Tamaños e inercia.
+## Inercia.
 ```{r}
 
-
-##Tamaños e inercia. Pongalo de relleno :v
-fc$clus.summ[,1:4]
+barplot(as.vector(fc$dudi$eig), col="darkblue")
 
 ```
 :::
 
-### Grafico de clasificacion
+### Gráfico de Agrupamiento
 
 ```{r}
 plotFactoClass(fc, x=1, y=2, cex.col=0.5,
@@ -312,18 +360,99 @@ plotFactoClass(fc, x=1, y=2, cex.col=0.5,
 
 ```
 
+```{r}
+#Organizar grupos
+n1 = data.frame(n = 1:n)
+lista = data.frame(tamaño = (fc$clus.summ$Bef.Size[1:n]), n = (n1))
+lista = lista[order(lista$tamaño, decreasing = TRUE), ]
+a = data.frame(n = round ( nk/ sum ( nk )* 100 ,1))
+a = a[order(a$n, decreasing = TRUE), ]
+
+```
+
+
+### Descripción de Agrupamientos
+
+#### Grupo 1: Microempresas
+
+Microempresas: Se caracterizan por tener poco personal. Donde la mayoría son a terminó indefinido. No invierten en publicidad, y son empresas con un solo dueño. Se dedican al comercio al por menor y son empresas jóvenes.
+
+:::{.callout collapse="true"}
+## Desplegar
+```{r}
+kable(fc$carac.cate[lista$n[1]])
+
+```
+:::
+
+
+#### Grupo 2: Empresas Consolidadas
+
+Son una combinación entre empresas medianas y pequeñas (65% medianas y 35% pequeñas). Contratan bastante personal a término indefinido, pero no contratan por prestación de servicios. Invierten de manera conservadora en publicidad, y se dedican en su mayoría al sector mayorista. Cabe resaltar que son empresas con cierta experiencia.
+
+:::{.callout collapse="true"}
+## Desplegar
+```{r}
+kable(fc$carac.cate[lista$n[2]])
+
+```
+:::
+
+#### Grupo 3: Empresas Pequeñas
+
+Tienen la característica de que solo contratan personal por prestación de servicios. Se dedican al sector minoritario, e invierten poco en publicidad. Tienen la particularidad, de que en su mayoría están conformadas por socios hombres.
+
+:::{.callout collapse="true"}
+## Desplegar
+```{r}
+
+kable(fc$carac.cate[lista$n[3]])
+
+```
+:::
+
+#### Grupo 4: Empresas Grandes
+
+Gran cantidad de empleados. Contratan de todas las formas posibles. Se dedican al sector de vehículos, se conforman por socios y tienen bastante años en la industria. Es importante señalar que la inversión por publicidad es alta.
+
+:::{.callout collapse="true"}
+## Desplegar
+```{r}
+
+kable(fc$carac.cate[lista$n[4]])
+
+```
+:::
 
 
 
-## Clasificación Alterna
+
+
+## Agrupamiento Según Proyección
 
 Como han podido notar, existe un patrón claro en los datos, lo que nos lleva a preguntarnos si existe otro tipo de clasificación. En este caso, realizamos una clasificación propia para poder comparar los resultados y evaluar cuál es la mejor clasificación posible. Incorporamos una clasificación personalizada.
 
 
+```{r}
+Y = discretas[ , c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)]
+
+n = 5
+fc <- FactoClass(Y, dudi.acm, scanFC = FALSE, nf = 2, nfcl = 10, k.clust = n)
+##Como han podido notar, existe un patron claro en los datos. Nos hace preguntar si exite ptro tipo de clasificacion
+##En este caso, realizamos una clasificaion porpia, para poder comparar los resultados y evaluar la mejor clasificaion posible.
+#Incorporamos una clasificacion propia
+
+
+```
+El número de ejes retenidos para el análisis factorial son dos, para el agrupamiento son diez. Se da la partición en cinco agrupamientos.
+
+### Tamaño de los Grupos
+
+En la tabla de abajo se pueden revisar el tamaño relativo de cada agrupación:
 
 ```{r}
-
 x = data.frame(fc$dudi$li)
+
 
 g1 = x[x[1] >1, ]
 g2 = x[x[1] >0.67 & x[1] <=1, ]
@@ -346,182 +475,89 @@ df = all_data[, c(3, 4)]
 df = as.factor(df[ ,1])
 
 fc$cluster = df
+summary ( fc$ cluster ) -> nk
+##Tamaños relativos de las clases
+round ( nk/ sum ( nk )* 100 ,1)
 
-#Grafico de clasificacion
-barplot(as.vector(fc$dudi$eig), col="darkblue")
+```
+
+
+### Gráfico de Agrupamiento
+```{r}
+
 plotFactoClass(fc, x=1, y=2, cex.col=0.5,
                roweti="", infaxes="no", cstar=0)
+
 ```
 
+### Descripción de Agrupamientos
 
+#### Grupo 1 Empresas Jóvenes
 
-A pesar de que, en teoría, se observa una mejor clasificación de los datos, en la práctica, el resultado es bastante deficiente.
+Se caracteriza por no tener personal permanente y tener poco personal temporal. Son empresas muy jóvenes. Tienen una tendencia a contratar más hombres, no invierten en publicidad y se dedican al comercio al por menor.
 
-Observemos el grupo 1:
-
-
-::: {.callout collapse="true"}
-## Desplegar
-```{r}
-fc$carac.cate[1]
-```
-:::
-Teniendo en cuenta que este grupo equivale al 70% de los individuos, no tiene sentido que esté compuesto en su mayoría por empresas con mucho personal, empresas antiguas y empresas dedicadas al comercio de vehículos. Es decir, la clasificación sugiere que el 70% de las empresas son grandes o medianas, lo cual contradice lo descrito en nuestro análisis descriptivo. Tenemos la hipótesis de que este comportamiento se debe a la influencia de los datos atípicos (empresas grandes).
-```{r}
-##Teniendo en cuenta que este grupo equivale al 70% de los individuos, no tiene sentido que contenga
-##en su mayoria a empresas con bastante personal, empresas antiguas, y empresas dedicadas al comercio de vehiculos
-##Es decir, la clasificacion afirma que el 70% de las empresas son gramdes o medianas, lo cual descrito en nuestro analisis descriptivo es una contradiccion
-##Tenemos la hipotesis, de que el comportamiento se debe a la influencia de los datos atipicos(Empresas grandes).
-# Establecer la semilla
-
-
-##Descripcion grupos
-```
-## Descripcion de los Grupos
-```{r}
-fc <- FactoClass(Y, dudi.acm,scanFC = FALSE, nf = 2, nfcl = 4, k.clust = 5)
-```
-
-### Grupo 1 (12.5%) Empresas jovenes
 ::: {.callout collapse="true"}
 ## Desplegar
 ```{r}
 ##Grupo 1 (12.5%) Empresas jovenes
 
-fc$carac.cate[1]
+kable(fc$carac.cate[1])
 ```
 :::
 
-Se caracteriza por no tener personal permanente y tener poco personal temporal. Son empresas muy jóvenes. Tienen una tendencia a contratar más hombres, no invierten en publicidad y se dedican al comercio al por menor.
-```{r}
-
-##Se caracteriza por no tener personal permanete, tener poco personal temporal. Empresas muy jovenes.
-## Tendencia a contratar mas hombres, no invertir en publicidad y dedicarse al comercio al por menor. 
-
-
-##Grupo 2 (29.6%) Empresas consolidadas
-
-## Bastante personal a termino indefindo, sin empleados con contrato temporal, publicidad moderada
-## Se dedican mayoritariamente al comercio al por mayor y de vehiculos. Son empresas ya consolidadas en el mercado
-## Cabe destacar la cantidad de aprendices y que son empresas con sociedades. 
-```
-
-### Grupo 2 (29.6%) Empresas consolidadas
-
-::: {.callout collapse="true"}
-## Desplegar
-```{r}
-fc$carac.cate[2]
-```
-:::
+#### Grupo 2: Empresas consolidadas
 
 Tienen bastante personal a término indefinido, sin empleados con contrato temporal y con publicidad moderada. Se dedican mayoritariamente al comercio al por mayor y de vehículos. Son empresas ya consolidadas en el mercado. Cabe destacar la cantidad de aprendices y que son empresas con estructuras societarias.
 
-
-### Grupo 3 (11.7%) Empresas Explotadoras
-```{r}
-##Grupo 3 (11.7%) Empresas Explotadoras
-
-##Empresas con bastante personal a contrato temporal. Sin personal a termino indefinido. Con bastantes aprendices, y personal contratado por agencia.
-## invierten poco en publicidad, tienen bastante tiempo en el mecado y  se dedican al comercio menor. 
-```
-
 ::: {.callout collapse="true"}
 ## Desplegar
 ```{r}
-fc$carac.cate[3]
+##Grupo 2 (29.6%) Empresas consolidadas
+kable(fc$carac.cate[2])
 ```
 :::
+
+
+#### Grupo 3: Empresas "Explotadoras"
 
 Son empresas con bastante personal a contrato temporal y sin personal a término indefinido. Tienen numerosos aprendices y personal contratado a través de agencias. Invierten poco en publicidad, tienen bastante tiempo en el mercado y se dedican al comercio al por menor.
 
-
-### Grupo 4 (15.3%) Tiendas al por Menor
-```{r}
-##Grupo 4 (15.3%) # Tiendas al por menor
-```
-
 ::: {.callout collapse="true"}
 ## Desplegar
 ```{r}
-fc$carac.cate[4]
+##Grupo 3 (11.7%) Empresas "Explotadoras"
+kable(fc$carac.cate[3])
 ```
 :::
+
+
+
+#### Grupo 4: Tiendas al por Menor
 
 Empresas sin socios, sin personal temporal y con poco personal a término indefinido. Se dedican al comercio al por menor y no invierten en publicidad.
-```{r}
-## Empresas sin socios, sin personal temporal y con poco personal a termino indefinido. 
-## Se dedican al comercio menor y no invierten en publicidad
-
-##Grupo 5 (30.8%) Microempresas
-
-## Empresas con poco personal permanente, sin personal indefinido. Empresas sin aprendices, con socios .
-##No invierten en publicidad, y son empresas muy jovenes
-```
-## Grupo 5 (30.8%) Microempresas
 
 ::: {.callout collapse="true"}
 ## Desplegar
 ```{r}
-fc$carac.cate[2]
+##Grupo 4 (15.3%) Tiendas al por Menor
+kable(fc$carac.cate[4])
 ```
 :::
 
+
+#### Grupo 5: Microempresas
+
 Son empresas con poco personal permanente, sin personal indefinido, sin aprendices y con socios. No invierten en publicidad y son empresas muy jóvenes.
-```{r}
 
-## Proyeccion grupos ACP
-```
-## Proyecciones de Grupos
-### Con ACP
+::: {.callout collapse="true"}
+## Desplegar
 ```{r}
-#Reclasificamos las nuevas variables
-grupos <- factor(fc$cluster, labels=c( "Jovenes", "Consolidadas","Explotadoras", "Tiendas", "Microempresas"))
-#Proyeccion sobre el acp
-Z <- continuas[, 2:17]
-# inercia usando  ade4 y FactoClass
-acp <- dudi.pca(Z, scannf = FALSE, nf = 4)
-valp <- t(inertia(acp)$tot.inertia) # valores propios
-#variables complementarias(grupos)
-Ysupcat <- grupos
-#convertimos las variables en fatores
-sup <- supqual(acp, Ysupcat)
+##Grupo 5 (30.8%) Microempresas
+kable(fc$carac.cate[5])
 ```
+:::
+
 
 ```{r}
-## Es evidente que las empresas explotadoras y consolidadas, 
-## tiene mejores ingresos. A diferencia de las otros tres grupos que se comportan de manera similar.
-## El de resaltar el caso de empresas explotadores, a pesar de lo poca calidad de empleo que ofrecen ,poseen los mayoress ingresos.
+# octavarium GOD
 ```
-Es evidente que las empresas explotadoras y consolidadas tienen mejores ingresos, a diferencia de los otros tres grupos que se comportan de manera similar. Cabe resaltar el caso de las empresas explotadoras, que, a pesar de la baja calidad del empleo que ofrecen, poseen los mayores ingresos.
-```{r}
-#Grafico 1
-plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
-     xlim = c(-1.3, 0.6), ylim = c(-0.6,0.6), col.row = 16)
-s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
-#Grupos
-points(sup$coor[1:5,], col = 2, pch = 16)
-text(sup$coor[1:5,], labels = rownames(sup$coor[1:5,]),
-     col = 2, pos = 1, font = 4)
-title(main = "Grupos proyectados en acp")
-
-
-##Proyeccion grupos ACM
-
-acm = MCA(Y, graph=FALSE)
-ilustrativas = data.frame(grupos, continuas$BRUTA)
-
-Ys <- cbind(ilustrativas, Y)
-
-res.mca <- MCA(Ys, graph=FALSE, quali.sup = 1, quanti.sup = 2)
-```
-### Con ACM
-```{r}
-##Muy poco a resaltar. Es la misma descripcion que se le dio a cada grupo. Solo es una descripcion grafica.
-```
-Hay muy poco que resaltar. Es la misma descripción que se le dio a cada grupo; solo se trata de una descripción gráfica.
-```{r}
-fviz_mca_var(res.mca, repel = TRUE, 
-             ggtheme= theme_minimal())
-```
-
