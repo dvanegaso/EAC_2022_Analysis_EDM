@@ -936,3 +936,513 @@ fviz_mca_var(res.mca, axes=c(1,3),
 
 ```
 :::
+
+::: {.callout collapse="true"}
+## ACS
+
+```{{r}}
+
+# #Visualisar todos los posibles graficos
+# n = ncol(discretas)
+# for (i in 1:n){
+#   for (j in 1:n){
+#     if (j !=i){
+#       k <- unclass(table(discretas[[i]], discretas[[j]]))
+#       acs <- dudi.coa(k, scannf=FALSE, nf=3)
+#       print(plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE))
+#       }
+#     }
+# }
+
+
+#Acp para el tamaño de la emresa y el tipo de empresa
+k <- unclass(table(discretas[[9]], discretas[[1]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Tipo de empresa")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Tipo de empresa")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Tipo de empresa")
+
+
+
+#Acp para el tamaño de la emresa y edad
+k <- unclass(table(discretas[[9]], discretas[[2]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Edad")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Edad")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Edad")
+
+
+
+#Acp para el tamaño de la emresa y Socios
+k <- unclass(table(discretas[[9]], discretas[[3]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Socios")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Socios")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Socios")
+
+
+
+#Acp para el tamaño de la emresa y indefinido
+k <- unclass(table(discretas[[9]], discretas[[4]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Personal indefinido")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Personal indefinido")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Personal indefinido")
+
+
+
+#Acp para el tamaño de la emresa y prestacion de servicios
+k <- unclass(table(discretas[[9]], discretas[[5]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Prestacion de Servicios")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Prestacion de Servicios")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Prestacion de Servicios")
+
+
+
+#Acp para el tamaño de la emresa y Total hombres
+k <- unclass(table(discretas[[9]], discretas[[6]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Total Hombres")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Total Hombres")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Total Hombres")
+
+
+
+#Acp para el tamaño de la emresa y Total mujeres
+k <- unclass(table(discretas[[9]], discretas[[7]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Total Mujeres")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Total Mujeres")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Total Mujeres")
+
+
+
+
+#Acp para el tamaño de la emresa y publicidad
+k <- unclass(table(discretas[[9]], discretas[[8]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tamañó - Publicidad")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tamañó - Publicidad")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamañó - Publicidad")
+
+
+
+
+#Acp para el publicidad y edad
+k <- unclass(table(discretas[[8]], discretas[[2]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Publicidad - Edad")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Publicidad - Edad")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Publicidad - Edad")
+
+
+
+#Acp para el publicidad y Tipo empresa
+k <- unclass(table(discretas[[8]], discretas[[1]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Publicidad - Tipo empresa")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Publicidad - Tipo empresa")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Publicidad - Tipo empresa")
+
+
+
+#Acp para tipo de empresa y contrato indefinido
+k <- unclass(table(discretas[[1]], discretas[[4]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tipo empresa - Personal indefinido")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tipo empresa - Personal indefinido")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tipo empresa - Personal indefinido")
+
+
+#Acp para tipo de empresa y contrato indefinido
+k <- unclass(table(discretas[[1]], discretas[[5]]))
+acs <- dudi.coa(k, scannf=FALSE, nf=3)
+# Tablas perfiles fila
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "col", col = colores[0:12], main = "Tipo empresa - Prestacion de Servicios")
+
+# Tablas perfiles columna
+colores <- rainbow(12, rev = TRUE)
+plotct(k, "row", col = colores[0:12], main = "Tipo empresa - Prestacion de Servicios")
+
+#Grafico ambos eje 1 y 2
+plot(acs, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tipo empresa - Prestacion de Servicios")
+
+
+```
+:::
+
+::: {.callout collapse="true"}
+## ACM
+
+```{{r}}
+
+#Reclasificamos algunas variables para poder tener categorias uniformes
+
+#Reclasificamos edad
+
+años <- as.integer(datos$IDAIO)
+años[años < 1992] <- 1
+años[años >= 1992 & años < 2002] <- 2
+años[años >= 2002 & años < 2012] <- 3
+años[años >= 2012 & años < 2024] <- 4
+
+años <- factor(años, labels=c( "Mas de 30", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
+discretas$IDAIO <- años
+
+#Reclasificamos al tipo de empresas
+
+Tipempr <- discretas$CORRELA_16
+tipo1 <- list(454, 451, 453)
+tipo2 <- list(462, 464, 465, 466)
+tipo3 <- list("4711-472", 4719, 473, "4741-4742", 4752, "4759-4761", "4771-4751", 4772, 4773)
+
+Tipempr[Tipempr %in% tipo1] <- 1
+Tipempr[Tipempr %in% tipo2] <- 2
+Tipempr[Tipempr %in% tipo3] <- 3
+
+Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos", "Comercio al por mayor", "Comercio al por menor"))
+discretas$CORRELA_16 <- Tipempr
+
+
+#Variables activas
+Y = discretas[, 1:11]
+
+Z <- acm.disjonctif(Y) # función de ade4
+
+
+#Tabla de Burt
+Z <- as.matrix(Z)
+#tabla de burt
+(B <- t(Z) %*% Z)
+
+acm <-dudi.acm (Y , scannf = FALSE )
+# numero de variables activas a evaluar
+s <- length(Y)
+# numero de vectores a utilizar segun el criterio de Benzécri
+eig = acm$eig[acm$eig >= 1/s]
+
+# recalcular tasas de inercia
+tau <-( s/(s -1))^2 *( eig -(1 /s ))^2
+ptau <-tau /sum( tau )* 100
+fviz_screeplot(acm, addlabels = TRUE, ylim = c(0, 20), main = "Inercia Original")
+
+# Variable temporal
+a = acm$eig
+acm$eig = ptau
+
+#inercia segun Benzécri
+fviz_screeplot(acm, addlabels = TRUE, ylim = c(0, 90), main = "Inercia usando Benzécri")
+
+#Grafico ACM
+plot(acm,Trow = FALSE, gg=TRUE,
+     cframe = 1.1, col.col="black", cex.global=0.8, main = "Categorias activas")
+#individuos
+fviz_mca_ind(acm, axes=c(1,2), geom="point", asp=1,
+             ggtheme=theme_minimal())
+acm$eig = a
+#Contribution a la dimension 1 
+fviz_contrib(acm, choice = "var", axes = 1, ylim = c(0, 30), xlim = c(1, 10))
+
+#Contribution a la dimension 2
+fviz_contrib(acm, choice = "var", axes = 2, ylim = c(0, 20), xlim = c(1, 12))
+
+acm$eig = ptau
+# Grafico ACM (mas bonito)
+fviz_mca_var(acm, col.var = "cos2", repel = TRUE, 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+             ggtheme = theme_minimal())
+
+acm = MCA(Y, graph=FALSE)
+
+#Grafico categorias iniciales
+fviz_mca_var(acm, axes = c(1, 2),
+             choice = "mca.cor", repel = TRUE, 
+             ggtheme = theme_minimal())
+
+options(max.print = 10000)
+# Variables ilustrativas, en este caso, tomaremos a tamaño de la meoresa y BRUTA.
+ilustrativas = data.frame(discretas[, 17:17], continuas$BRUTA)
+ilustrativas
+# para variables ilustrativas
+Ys <- cbind(ilustrativas, Y)
+
+
+
+res.mca <- MCA(Ys, graph=FALSE, quali.sup = 1, quanti.sup = 2)
+
+
+fviz_mca_var(res.mca, repel = TRUE, 
+             ggtheme= theme_minimal())
+
+#Variable cuantitativa (Bruta)
+fviz_mca_var(res.mca, axes=c(1,2), 
+             choice="quanti.sup",
+             ggtheme=theme_minimal())
+
+
+
+```
+:::
+
+::: {.callout collapse="true"}
+## Agrupamiento
+
+```{{r}}
+#Reclasificamos algunas variables para poder tener categorias uniformes
+#Reclasificamos edad
+
+años <- as.integer(datos$IDAIO)
+años[años < 1992] <- 1
+años[años >= 1992 & años < 2002] <- 2
+años[años >= 2002 & años < 2012] <- 3
+años[años >= 2012 & años < 2024] <- 4
+
+años <- factor(años, labels=c( "Mas de 30", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
+discretas$IDAIO <- años
+
+#Reclasificamos al tipo de empresas
+
+Tipempr <- discretas$CORRELA_16
+tipo1 <- list(454, 451, 453)
+tipo2 <- list(462, 464, 465, 466)
+tipo3 <- list("4711-472", 4719, 473, "4741-4742", 4752, "4759-4761", "4771-4751", 4772, 4773)
+
+Tipempr[Tipempr %in% tipo1] <- 1
+Tipempr[Tipempr %in% tipo2] <- 2
+Tipempr[Tipempr %in% tipo3] <- 3
+
+Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos", "Comercio al por mayor", "Comercio al por menor"))
+discretas$CORRELA_16 <- Tipempr
+
+#Variables activas
+#Usaremos las mismas variables que en el acm
+Y = discretas[ , c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17)]
+
+#numero de grupos
+n = 4
+fc <- FactoClass(Y, dudi.acm, scanFC = FALSE, nf = 2, nfcl = 10, k.clust = n)
+
+summary ( fc$ cluster ) -> nk
+
+##Tamaños relativos de las clases
+round ( nk/ sum ( nk )* 100 ,1)
+
+##inercia
+barplot(as.vector(fc$dudi$eig), col="darkblue", main ="Inercia")
+##Arbol de corte
+barplot(rev(tail(fc$indices$Indice,15)), horiz=TRUE, col="darkblue")
+
+#Grafico de clasificacion
+barplot(as.vector(fc$dudi$eig), col="darkblue")
+plotFactoClass(fc, x=1, y=2, cex.col=0.5,
+               roweti="", infaxes="no", cstar=0)
+#Organizar grupos
+n1 = data.frame(n = 1:n)
+lista = data.frame(tamaño = (fc$clus.summ$Bef.Size[1:n]), n = (n1))
+lista = lista[order(lista$tamaño, decreasing = TRUE), ]
+a = data.frame(n = round ( nk/ sum ( nk )* 100 ,1))
+a = a[order(a$n, decreasing = TRUE), ]
+
+##Descripcion grupos
+cat("Grupo 1 ",a[1],"%", "Microempresas") 
+fc$carac.cate[lista$n[1]]
+
+##Se caracteriza por no tener personal permanete, tener poco personal temporal. Empresas muy jovenes.
+## Tendencia a contratar mas hombres, no invertir en publicidad y dedicarse al comercio al por menor. 
+
+
+cat("Grupo 2 ",a[2],"%", "Empresas pequeñas") 
+fc$carac.cate[lista$n[2]]
+
+## Bastante personal a termino indefindo, sin empleados con contrato temporal, publicidad moderada
+## Se dedican mayoritariamente al comercio al por mayor y de vehiculos. Son empresas ya consolidadas en el mercado
+## Cabe destacar la cantidad de aprendices y que son empresas con sociedades.
+
+cat("Grupo 3 ",a[3],"%", "Empresas medianas") 
+fc$carac.cate[lista$n[3]]
+
+##Empresas con bastante personal a contrato temporal. Sin personal a termino indefinido. Con bastantes aprendices, y personal contratado por agencia.
+## invierten poco en publicidad, tienen bastante tiempo en el mecado y  se dedican al comercio menor. 
+
+cat("Grupo 4 ",a[4],"%", "Empresas Grandes") 
+fc$carac.cate[lista$n[4]]
+lista$n[4]
+## Empresas sin socios, sin personal temporal y con poco personal a termino indefinido. 
+## Se dedican al comercio menor y no invierten en publicidad
+
+
+## Proyeccion grupos ACP
+
+#Reclasificamos las nuevas variables
+descripcion = data.frame(a = c( "Microempresas", "Empresas pequeñas", "Empresas Medianas", "Empresas grandes"))
+grupos <- factor(fc$cluster, labels=c( descripcion[which(lista$n == 1, arr.ind = TRUE), ], descripcion[which(lista$n == 2, arr.ind = TRUE), ], descripcion[which(lista$n == 3, arr.ind = TRUE), ], descripcion[which(lista$n == 4, arr.ind = TRUE), ]))
+
+summary(grupos)
+#Proyeccion sobre el acp
+Z <- continuas[, 2:17]
+# inercia usando  ade4 y FactoClass
+acp <- dudi.pca(Z, scannf = FALSE, nf = 4)
+valp <- t(inertia(acp)$tot.inertia) # valores propios
+#variables complementarias(grupos)
+
+#convertimos las variables en fatores
+sup <- supqual(acp, grupos)
+
+## Es evidente que las empresas explotadoras y consolidadas, 
+## tiene mejores ingresos. A diferencia de las otros tres grupos que se comportan de manera similar.
+## El de resaltar el caso de empresas explotadores, a pesar de lo poca calidad de empleo que ofrecen ,poseen los mayoress ingresos.
+
+#Grafico 1
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-3.3, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#Grupos
+points(sup$coor[1:4,], col = 2, pch = 16)
+text(sup$coor[1:4,], labels = rownames(sup$coor[1:4,]),
+     col = 2, pos = 1, font = 4)
+
+title(main = "Grupos proyectados en acp")
+
+
+##Proyeccion grupos ACM
+acm = MCA(Y, graph=FALSE)
+ilustrativas = data.frame(grupos,  continuas$BRUTA)
+
+Ys <- cbind(ilustrativas, Y)
+
+res.mca <- MCA(Ys, graph=FALSE, quali.sup = 1, quanti.sup = 2)
+
+##Muy poco a resaltar. Es la misma descripcion que se le dio a cada grupo. Solo es una descripcion grafica.
+
+fviz_mca_var(res.mca, repel = TRUE, 
+             ggtheme= theme_minimal())
+
+
+##Otra posible clasificacion
+
+Y = discretas[ , c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)]
+
+#numero de grupos
+n = 5
+fc <- FactoClass(Y, dudi.acm, scanFC = FALSE, nf = 2, nfcl = 10, k.clust = n)
+##Como han podido notar, existe un patron claro en los datos. Nos hace preguntar si exite ptro tipo de clasificacion
+##En este caso, realizamos una clasificaion porpia, para poder comparar los resultados y evaluar la mejor clasificaion posible.
+#Incorporamos una clasificacion propia
+
+x = data.frame(fc$dudi$li)
+
+
+g1 = x[x[1] >1, ]
+g2 = x[x[1] >0.67 & x[1] <=1, ]
+g3 = x[x[1] >0.235 & x[1] <=0.67, ]
+g4 = x[x[1] >-0.146 & x[1] <=0.235, ]
+g5 = x[x[1] >-0.5 & x[1] <=-0.146, ]
+g1
+# Combinar todos los dataframes en uno solo, añadiendo una columna para identificar el grupo
+g1$source <- 5
+g2$source <- 4
+g3$source <- 3
+g4$source <- 2
+g5$source <- 1
+
+#creamos un vector de tipo factor que contenga las clasificaciones
+all_data <- rbind(g1, g2, g3, g4, g5)
+all_data$index = as.integer(rownames(all_data))
+all_data <- all_data[order(all_data$index), ]
+df = all_data[, c(3, 4)]
+df = as.factor(df[ ,1])
+
+fc$cluster = df
+
+summary ( fc$ cluster ) -> nk
+
+##Tamaños relativos de las clases
+round ( nk/ sum ( nk )* 100 ,1)
+
+#Grafico de clasificacion
+barplot(as.vector(fc$dudi$eig), col="darkblue")
+plotFactoClass(fc, x=1, y=2, cex.col=0.5,
+               roweti="", infaxes="no", cstar=0)
+
+fc$carac.cate
+```
+:::

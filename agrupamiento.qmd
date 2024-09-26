@@ -492,9 +492,10 @@ plotFactoClass(fc, x=1, y=2, cex.col=0.5,
 
 ### Descripción de Agrupamientos
 
-#### Grupo 1 Empresas Jóvenes
+#### Grupo 1 Pequeñas y medianas empresas
 
-Se caracteriza por no tener personal permanente y tener poco personal temporal. Son empresas muy jóvenes. Tienen una tendencia a contratar más hombres, no invierten en publicidad y se dedican al comercio al por menor.
+Reunen aproximadamente el 70% de los datos. Se caracterizan por su gran cantidad de personal temporal. No contratan personal indefinido, invierten en poca publicidad y contratan una gran variedad de aprendices. Se dedican mayoritariamente al sector minoritario.
+
 
 ::: {.callout collapse="true"}
 ## Desplegar
@@ -505,9 +506,9 @@ kable(fc$carac.cate[1])
 ```
 :::
 
-#### Grupo 2: Empresas consolidadas
-
-Tienen bastante personal a término indefinido, sin empleados con contrato temporal y con publicidad moderada. Se dedican mayoritariamente al comercio al por mayor y de vehículos. Son empresas ya consolidadas en el mercado. Cabe destacar la cantidad de aprendices y que son empresas con estructuras societarias.
+#### Grupo 2: Microemepresas
+ 
+Tienen la característica de que solo contratan personal por prestación de servicios. Se dedican al sector minoritario, e invierten poco en publicidad. No tienen una edad definida.
 
 ::: {.callout collapse="true"}
 ## Desplegar
@@ -518,9 +519,10 @@ kable(fc$carac.cate[2])
 :::
 
 
-#### Grupo 3: Empresas "Explotadoras"
+#### Grupo 3: Tiendas consolidadas
 
-Son empresas con bastante personal a contrato temporal y sin personal a término indefinido. Tienen numerosos aprendices y personal contratado a través de agencias. Invierten poco en publicidad, tienen bastante tiempo en el mercado y se dedican al comercio al por menor.
+Son empresas con un solo dueño, que solo contratan pocas a personas a término indefinido. Tienen bastantes años consolidados en la industria. No invierten en publicidad.
+
 
 ::: {.callout collapse="true"}
 ## Desplegar
@@ -532,9 +534,10 @@ kable(fc$carac.cate[3])
 
 
 
-#### Grupo 4: Tiendas al por Menor
+#### Grupo 4: Empresas Grandes
 
-Empresas sin socios, sin personal temporal y con poco personal a término indefinido. Se dedican al comercio al por menor y no invierten en publicidad.
+Tienen bastantes empleados y contratan todo tipo de personal. Se dedican al sector vehículos e invierten moderadamente en publicidad. Son conformadas en su mayoría por socios.
+
 
 ::: {.callout collapse="true"}
 ## Desplegar
@@ -545,9 +548,9 @@ kable(fc$carac.cate[4])
 :::
 
 
-#### Grupo 5: Microempresas
+#### Grupo 5: Empresas de Alta Rotación de Personal
 
-Son empresas con poco personal permanente, sin personal indefinido, sin aprendices y con socios. No invierten en publicidad y son empresas muy jóvenes.
+A pesar de tener mucho personal, solo contratan personal temporal. Estan conformadas por socios, y tienen edades entre 10 y 30 años. Ademas de contratar pocos aprendices.
 
 ::: {.callout collapse="true"}
 ## Desplegar
