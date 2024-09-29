@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -77,7 +77,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -118,7 +118,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -181,17 +181,20 @@ ul.task-list li input[type="checkbox"] {
 
 <p>Dado que la variable <strong>BRUTA</strong> demostró ser la más importante en el ACP, decicimos dos hacer comparaciones entre esta, usando la clasificación de <strong>Tamaño</strong> por empresas según sus ingresos brutos. Las variables que elegimos son las siguientes. - <strong>Tipo de Empresa</strong> - <strong>Edad de la Empresa</strong></p>
 <p>Tambien, para complementar la segunda realizamos una comparación entre <strong>Edad de la Empresa</strong> y <strong>Tipo de Empresa</strong>.</p>
-<div id="tip-example" class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Tip&nbsp;1: ¿Por qué no combinar categorías empresas grandes y medianas?
+¿Por qué no combinar categorías empresas grandes y medianas?
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>En los siguientes tres análisis se notará que no pegamos empresas grandes y medianas así el conteo relativo tan bajo de empresas de gran tamaño pueda afectar los ACS. Esto con el motivo de que en Colombia ambos grupos suelen ser tratados por separado; es común ver en el debate político, en informes económicos, y demás el uso del término PYMEs (Pequeñas y Medianas Empresas). Además al estar soportándonos de ayudas de interpretación y revisando constantemente que el conteo relativo no sea menor al 0.1%, consideramos que podemos mantener la calidad de los análisis sin hacer mayores cambios.</p>
+</div>
 </div>
 </div>
 <section id="tamaño-con-tipo-de-empresa" class="level2">
@@ -205,121 +208,43 @@ Tip&nbsp;1: ¿Por qué no combinar categorías empresas grandes y medianas?
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 7%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 7%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 8%">
-<col style="width: 4%">
-<col style="width: 8%">
-<col style="width: 8%">
-<col style="width: 4%">
-<col style="width: 4%">
+<col style="width: 12%">
+<col style="width: 26%">
+<col style="width: 30%">
+<col style="width: 30%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
-<th style="text-align: right;">451</th>
-<th style="text-align: right;">453</th>
-<th style="text-align: right;">454</th>
-<th style="text-align: right;">462</th>
-<th style="text-align: right;">464</th>
-<th style="text-align: right;">465</th>
-<th style="text-align: right;">466</th>
-<th style="text-align: right;">4711-472</th>
-<th style="text-align: right;">4719</th>
-<th style="text-align: right;">473</th>
-<th style="text-align: right;">4741-4742</th>
-<th style="text-align: right;">4752</th>
-<th style="text-align: right;">4759-4761</th>
-<th style="text-align: right;">4771-4751</th>
-<th style="text-align: right;">4772</th>
-<th style="text-align: right;">4773</th>
+<th style="text-align: right;">Comercio vehiculos</th>
+<th style="text-align: right;">Comercio al por mayor</th>
+<th style="text-align: right;">Comercio al por menor</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">MIcroe</td>
-<td style="text-align: right;">0.145</td>
-<td style="text-align: right;">1.827</td>
-<td style="text-align: right;">0.723</td>
-<td style="text-align: right;">5.162</td>
-<td style="text-align: right;">4.264</td>
-<td style="text-align: right;">2.746</td>
-<td style="text-align: right;">5.895</td>
-<td style="text-align: right;">5.018</td>
-<td style="text-align: right;">0.145</td>
-<td style="text-align: right;">5.843</td>
-<td style="text-align: right;">1.414</td>
-<td style="text-align: right;">2.013</td>
-<td style="text-align: right;">1.910</td>
-<td style="text-align: right;">1.817</td>
-<td style="text-align: right;">0.640</td>
-<td style="text-align: right;">1.528</td>
+<td style="text-align: right;">2.695</td>
+<td style="text-align: right;">18.07</td>
+<td style="text-align: right;">20.33</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">PQempr</td>
-<td style="text-align: right;">0.878</td>
-<td style="text-align: right;">2.633</td>
-<td style="text-align: right;">1.125</td>
-<td style="text-align: right;">7.753</td>
-<td style="text-align: right;">7.227</td>
-<td style="text-align: right;">6.628</td>
-<td style="text-align: right;">9.911</td>
-<td style="text-align: right;">2.839</td>
-<td style="text-align: right;">0.062</td>
-<td style="text-align: right;">3.324</td>
-<td style="text-align: right;">1.043</td>
-<td style="text-align: right;">0.630</td>
-<td style="text-align: right;">1.001</td>
-<td style="text-align: right;">1.311</td>
-<td style="text-align: right;">0.723</td>
-<td style="text-align: right;">0.981</td>
+<td style="text-align: right;">4.636</td>
+<td style="text-align: right;">31.52</td>
+<td style="text-align: right;">11.91</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">MEdempr</td>
-<td style="text-align: right;">0.785</td>
-<td style="text-align: right;">0.361</td>
-<td style="text-align: right;">0.103</td>
-<td style="text-align: right;">1.105</td>
-<td style="text-align: right;">1.652</td>
-<td style="text-align: right;">1.476</td>
-<td style="text-align: right;">1.838</td>
-<td style="text-align: right;">0.289</td>
-<td style="text-align: right;">0.010</td>
-<td style="text-align: right;">0.124</td>
-<td style="text-align: right;">0.206</td>
-<td style="text-align: right;">0.010</td>
-<td style="text-align: right;">0.145</td>
-<td style="text-align: right;">0.289</td>
-<td style="text-align: right;">0.134</td>
-<td style="text-align: right;">0.206</td>
+<td style="text-align: right;">1.249</td>
+<td style="text-align: right;">6.07</td>
+<td style="text-align: right;">1.41</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">EmprGran</td>
-<td style="text-align: right;">0.206</td>
-<td style="text-align: right;">0.031</td>
-<td style="text-align: right;">0.000</td>
-<td style="text-align: right;">0.227</td>
-<td style="text-align: right;">0.527</td>
-<td style="text-align: right;">0.176</td>
-<td style="text-align: right;">0.289</td>
-<td style="text-align: right;">0.165</td>
-<td style="text-align: right;">0.093</td>
-<td style="text-align: right;">0.041</td>
-<td style="text-align: right;">0.000</td>
-<td style="text-align: right;">0.062</td>
-<td style="text-align: right;">0.083</td>
-<td style="text-align: right;">0.072</td>
-<td style="text-align: right;">0.072</td>
-<td style="text-align: right;">0.062</td>
+<td style="text-align: right;">0.237</td>
+<td style="text-align: right;">1.22</td>
+<td style="text-align: right;">0.65</td>
 </tr>
 </tbody>
 </table>
@@ -1307,18 +1232,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1350,7 +1264,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -1358,7 +1294,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.555">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -77,7 +77,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -118,7 +118,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -128,7 +128,15 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#variables-originales" id="toc-variables-originales" class="nav-link active" data-scroll-target="#variables-originales">Variables Originales</a></li>
+  <li><a href="#variables-cualitativas" id="toc-variables-cualitativas" class="nav-link" data-scroll-target="#variables-cualitativas">Variables Cualitativas</a></li>
+  <li><a href="#variables-cuantitativas" id="toc-variables-cuantitativas" class="nav-link" data-scroll-target="#variables-cuantitativas">Variables Cuantitativas</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -154,16 +162,24 @@ ul.task-list li input[type="checkbox"] {
 
 <p>En caso de una consulta más detallada, visitar la información brindada por el <a href="https://microdatos.dane.gov.co/index.php/catalog/833">DANE</a></p>
 <p>Se muestran las variables originales con sus respectivas clasificaciones:</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Diccionario de Variables</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Cualitativas</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Cuantitativas</a></li></ul>
-<div class="tab-content">
-<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <section id="variables-originales" class="level2">
 <h2 class="anchored" data-anchor-id="variables-originales">Variables Originales</h2>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Desplegar
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <table class="caption-top table">
 <colgroup>
-<col style="width: 16%">
-<col style="width: 83%">
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -414,82 +430,408 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-<p>Porterior a la limpieza, clasificaremos los datos en 2 tipos de variables (discretas y continuas). Buscaremos variables que sean de nuestro interes, y que ademas no sean combinacion lineal de otras. Algunas variables con gran cantidad de ceros, seran clasificadas como variables discretas.</p>
+</div>
+</div>
+</div>
+<p>PoSterior a la limpieza de datos, clasificaremos los datos en 2 tipos de variables (discretas y continuas). Buscaremos variables que sean de nuestro interes, y que ademas no sean combinacion lineal de otras. Algunas variables con gran cantidad de ceros, seran clasificadas como variables discretas.</p>
 </section>
+<section id="variables-cualitativas" class="level2">
+<h2 class="anchored" data-anchor-id="variables-cualitativas">Variables Cualitativas</h2>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
 </div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="callout-title-container flex-fill">
+CORRELA_16
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>En la base de datos vienen las siguientes clasificaciones:</p>
+<ul>
+<li>451 Vehículos automotores</li>
+<li>453 Partes, piezas y accesorios para vehículos automotores.</li>
+<li>454 Mantenimiento y reparación de motocicletas y de sus partes, piezas y accesorios.</li>
+<li>462 Al por mayor de materias primas agropecuarias o animales vivos.</li>
+<li>464 Al por mayor de alimentos, bebidas y tabaco.</li>
+<li>465 Al por mayor de maquinaria y equipo.</li>
+<li>466 Al por mayor especializado de combustibles no convencionales, productos de construcción, químicos, metales y desperdicios.</li>
+<li>4711-472 Al por menor en establecimientos no especializados (excepto 4719).)</li>
+<li>4719 Al por menor de surtido en diferentes alimentos, bebidas alcohólicas y tabaco.</li>
+<li>473 Al por menor de productos para automotores.</li>
+<li>4741-4742 Al por menor de software y hardware de computadores y dispositivos audiovisuales.</li>
+<li>4752 Al por menor de artículos de ferretería, pintura y productos de vidrio.</li>
+<li>4759-4761 Al por menor de artículos domésticos de limpieza, papelería, cocina o emergencia.</li>
+<li>4771-4751 Al por menor de ropa o textiles.</li>
+<li>4772 Al por menor de calzado.</li>
+<li>4773 Al por menor de productos farmacéuticos.</li>
+</ul>
+<p>Para ACS decidimos seguir la siguiente clasificación:</p>
+<ul>
+<li>Comercio de Vehículos.</li>
+<li>Comercio al por Mayor.</li>
+<li>Comercio al por Menor</li>
+</ul>
+<p>Para ACM y Agrupamiento, por conteos bajos, se sigue la siguiente:</p>
+<ul>
+<li>Comercio al por Menor.</li>
+<li>Comercio al por Mayor o de Vehículos.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+IDOJI - Edad de la Empresa.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Menos de 10 Años.</li>
+<li>Entre 10 y 20 Años.</li>
+<li>Entre 20 y 30 Años.</li>
+<li>Más de 30 años.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+PROMUJ - La empresa tiene mujeres como socios comerciales.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Si.</li>
+<li>No.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+PROHOM - La empresa tiene hombres como socios comerciales.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Si.</li>
+<li>No.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+PERMUJ - Cantidad de mujeres contratadas de manera permanente.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Ninguna.</li>
+<li>Entre 1 y 10.</li>
+<li>Más de 10.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+PERHOM - Cantidad de hombres contratados de manera permanente.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Ninguno.</li>
+<li>Entre 1 y 10.</li>
+<li>Más de 10.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+DIRMUJ - Cantidad de mujeres contratadas de manera directa.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Ninguna.</li>
+<li>Entre 1 y 10.</li>
+<li>Más de 10.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+DIRHOM - Cantidad de hombres contratados de manera directa.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Ninguno.</li>
+<li>Entre 1 y 10.</li>
+<li>Más de 10.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+AGENCIA - La empresa tiene personal contratado mediante agencia.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Si.</li>
+<li>No.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+APRENDIZ - Cantidad de aprendices dentro de la empresa.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Ninguno.</li>
+<li>Entre 1 y 3.</li>
+<li>Más de 3.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+PUBLICI - Gastos relativos en publicidad.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Ninguno.</li>
+<li>Bajos.</li>
+<li>Moderados.</li>
+<li>Altos.</li>
+</ul>
+<p><em>Para ACM y agrupamiento se pegan altos y moderados</em></p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TMÑEMP - Tamaño de la Empresa
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Siguiendo la clasificación de <a href="https://www.bancoldex.com/es/sobre-bancoldex/quienes-somos/clasificacion-de-empresas-en-colombia">2022</a> según los ingresos brutos.</p>
+<ul>
+<li>Microempresa.</li>
+<li>Empresa Pequeña.</li>
+<li>Empresa Mediana.</li>
+<li>Empresa Grande.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>Las siguientes fueron usadas para el agrupamiento.</p>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+INVPRO - Inventario Promedio relativo a ingresos brutos.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bajo (Menos de 30%)</li>
+<li>Medio (de 30% a 60%)</li>
+<li>Alto (Más de 60%)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+VENTA - Percentil de las ventas causadas en el año relativas al promedio.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bajas (UVT menor a 431196)</li>
+<li>Medias (UVT entre 431196 y 1960692)</li>
+<li>Altas (UVT mayor a 1960692)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+SUELDOS - Percentil de los sueldos y salarios causados en el año relativos a ingresos brutos.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bajos (Menos de 10%)</li>
+<li>Medios (de 10% a 20%)</li>
+<li>Altos (Más de 20%)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+CONSUI - Percentil del consumo intermedio entre 1996 y 2006 relativo a los ingresos brutos.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bajos (Menos de 15%)</li>
+<li>Medios (de 15% a 25%)</li>
+<li>Altos (Más de 25%)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+GASTOS - Percentil de costos y gastos operacionales relativos a los ingresos brutos.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bajos (Menos de 15%)</li>
+<li>Medios (de 15% a 25%)</li>
+<li>Altos (Más a 25%)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-none no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+GASNOP - Percentil de costos y gastos no operacionales relativos a los ingresos brutos.
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>Bajos (Menos de 5%)</li>
+<li>Medios (de 5% a 10%)</li>
+<li>Altos (Más a 10%)</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="variables-cuantitativas" class="level2">
+<h2 class="anchored" data-anchor-id="variables-cuantitativas">Variables Cuantitativas</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 16%">
-<col style="width: 83%">
-</colgroup>
-<thead>
-<tr class="header">
-<th><strong>Identificador</strong></th>
-<th><strong>Descripción</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>CORRELA_16</td>
-<td>Clasificación CIIU.</td>
-</tr>
-<tr class="even">
-<td>IDOJI</td>
-<td>Organización jurídica.</td>
-</tr>
-<tr class="odd">
-<td>IDAIO</td>
-<td>Edad de la Empresa</td>
-</tr>
-<tr class="even">
-<td>PROMUJ</td>
-<td>La empresa cuenta con mujeres propietarias y socias.</td>
-</tr>
-<tr class="odd">
-<td>PERMUJ</td>
-<td>Porcentaje de mujeres como personal permanente.</td>
-</tr>
-<tr class="even">
-<td>PERHOM</td>
-<td>Porcentaje de hombres como personal permanente.</td>
-</tr>
-<tr class="odd">
-<td>DIRMUJ</td>
-<td>Porcentaje de mujeres como personal contratado de manera directa.</td>
-</tr>
-<tr class="even">
-<td>DIRHOM</td>
-<td>Porcentaje de hombres como personal contratado de manera directa.</td>
-</tr>
-<tr class="odd">
-<td>AGENCIA</td>
-<td>Porcentaje de mujeres y hombres contratados por medio de agencia.</td>
-</tr>
-<tr class="even">
-<td>APRENMUJ</td>
-<td>Porcentaje de mujeres aprendices.</td>
-</tr>
-<tr class="odd">
-<td>APRENHOM</td>
-<td>Porcentaje de hombres aprendices.</td>
-</tr>
-<tr class="even">
-<td>PUBLICI</td>
-<td>Gasto en publicidad relativo a producción bruta.</td>
-</tr>
-<tr class="odd">
-<td>TMÑEMP</td>
-<td>Tamaño de la empresa.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
-<table class="caption-top table">
-<colgroup>
-<col style="width: 16%">
-<col style="width: 83%">
+<col style="width: 50%">
+<col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -564,11 +906,9 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -606,18 +946,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -649,7 +978,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
       var filterRegex = new RegExp('/' + window.location.host + '/');
@@ -657,7 +1008,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
     // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
     for (var i=0; i<links.length; i++) {
       const link = links[i];
       if (!isInternal(link.href)) {
