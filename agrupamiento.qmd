@@ -2,111 +2,57 @@
 title: "Agrupamiento"
 format: html
 editor: visual
-theme: lux
+theme: flatly
 echo: false
 ---
 ```{r}
-
 suppressMessages({
-  # cambia idioma de la consola de R a español:
-  Sys.setenv(LANG="es")
-  
-  #Sin notacion cientifica y con 3 decimales
-  options(digits = 3, scipen = 999) 
-  
-  #Importamos Librerias
-  library(readxl)
-  library(FactoClass)
-  library(factoextra)
-  library(plotly)
-  library(knitr)
-  library(ggplot2)
-  library(dplyr)
-  library(Factoshiny)
-  library(DT) # para tablas interactivas
-  library(plotly) # para gráficos interactivos
-  
-  #Importamos la base de datos
-  setwd("C:/Users/thetr/OneDrive/Documentos/R/Proyecto EDM")
-  ruta_del_archivo <- "EAC_CIFRAS_2022_ANONIMIZADA_FINAL.csv"
-  datos_orig <- read.csv(ruta_del_archivo, sep = ";", dec = ",")
-  
-  #En nuestro estudio, tomaremos aquellas empresas Activas. POr lo que, no tomaremos encienta a empresas con produccion bruta = 0. 
-  #Asi que, eliminaremos aquellos datos que tengan produccion bruta =0 (Son alrededor de 200 datos).
-  datos <- datos_orig[!is.na(as.numeric(datos_orig$BRUTA)) & as.numeric(datos_orig$BRUTA) != 0, ]
-  
+
+#Importamos Librerias
+library(readxl)
+library(FactoClass)
+library(factoextra)
+library(plotly)
+library(knitr)
+library(ggplot2)
+library(dplyr)
+library(Factoshiny)
+library(DT) # para tablas interactivas
+library(plotly) # para gráficos interactivos
+
+#Importamos la base de datos
+setwd("C:/Users/thetr/OneDrive/Documentos/R/Proyecto EDM")
+ruta_del_archivo <- "EAC_CIFRAS_2022_ANONIMIZADA_FINAL.csv"
+datos_orig <- read.csv(ruta_del_archivo, sep = ";", dec = ",")
+#En nuestro estudio, tomaremos aquellas empresas Activas. POr lo que, no tomaremos encienta a empresas con produccion bruta = 0. 
+#Asi que, eliminaremos aquellos datos que tengan produccion bruta =0 (Son alrededor de 200 datos).
+datos <- datos_orig[!is.na(as.numeric(datos_orig$BRUTA)) & as.numeric(datos_orig$BRUTA) != 0, ]
 #Crearemos dos nuevas bases de datos, en este caso, para las variables discretas y continuas de nuestro interes.
 #IDOJ1
-discretas <- select(datos, CORRELA_16, IDAIO, PROMUJ, PROHOM, PERMUJ, PERHOM, DIRMUJ, DIRHOM, AGENCIA, APRENDIZ, PUBLICI, SOCIOS, PERSONOM, DIRECTO, TOTMUJ, TOTHOM)
+discretas <- select(datos, CORRELA_16, IDAIO, PROMUJ, PROHOM, PERMUJ, PERHOM, DIRMUJ, DIRHOM, AGENCIA, APRENDIZ, PUBLICI)
 continuas <- select(datos, BRUTA, CONSUI, SUELDOS, PRESTAC, VENTA, AGREGA, SUEPLAN, PREPLAN, COTIZA, TOTREM, ROTACION, INVPRO, CTO, CTOINS, GASTOS, GASTOSNOP)
-                                                                    
 # convertimos los datos a tipo numerico. 
 continuas <- data.frame(lapply(continuas, function(x) as.numeric(as.character(x))))
 # convertimos a sus respectivos valores en pesos colombianos
 continuas <-1000*continuas
-
 #Ahora agregamos nuevas variables a continuas
 Clasifemp <-discretas$CORRELA_16
 continuas <- cbind(Clasifemp, continuas)
-
 #asignamos a los NA el valor de cero
 continuas[is.na(continuas)] <- 0 
 
-# Ahora, clasificamos los datos de tipo discret
+# Clasificaciones para variables discretas.
 
-#Años empresa
-años <- as.integer(discretas$IDAIO)
-años[años < 1972] <- 1
-años[años >= 1972 & años < 1982] <- 2
-años[años >= 1982 & años < 1992] <- 3
-años[años >= 1992 & años < 2002] <- 4
-años[años >= 2002 & años < 2012] <- 5
-años[años >= 2012 & años < 2024] <- 6
-
-años <- factor(años, labels=c( "Mas de 50","Entre 40 y 50", "Entre 30 y 40", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
+años <- as.integer(datos$IDAIO)
+años[años < 1992] <- 1
+años[años >= 1992 & años < 2002] <- 2
+años[años >= 2002 & años < 2012] <- 3
+años[años >= 2012 & años < 2024] <- 4
+años <- factor(años, labels=c( "Mas de 30", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
 discretas$IDAIO <- años
-#personal permanete
-permanente <- as.integer(discretas$PERSONOM)
-permanente [permanente >= 1 & permanente < 10 ] <- 1
-permanente [permanente >= 10 ] <- 2
-permanente <- factor(permanente, labels=c("(0)PERM", "(1-10)PERM", "(>10)PERM"))
-discretas$PERSONOM <- permanente 
 
-# Personal DIRECTO
-directo <- as.integer(discretas$DIRECTO)
-directo[directo >= 1 & directo<= 10 ] <- 1
-directo[directo  > 10 ] <- 2
-directo <- factor(directo, labels=c("(0)DIREC", "(1-10)DIREC", "(>10)DIREC"))
-discretas$DIRECTO <- directo
-
-#Total hombres
-thombres <- as.integer(discretas$TOTHOM)
-thombres[is.na(thombres)] <- 0 #Asignarle el valor de cero a los nas
-thombres[thombres >= 1 & thombres<= 10 ] <- 1
-thombres[thombres  > 10 ] <- 2
-thombres <- factor(thombres, labels=c("(0)HOMBRES", "(1-10)HOMBRES", "(>10)HOMBRES"))
-discretas$TOTHOM <- thombres
-
-
-#Total Mujeres
-tmujeres <- as.integer(discretas$TOTMUJ)
-tmujeres[is.na(tmujeres)] <- 0 #Asignarle el valor de cero a los nas
-tmujeres[tmujeres >= 1 & tmujeres < 10 ] <- 1
-tmujeres[tmujeres >= 10 ] <- 2
-tmujeres <- factor(tmujeres, labels=c("(0)MUJERES", "(1-10)MUJERES", "(>10)MUJERES"))
-discretas$TOTMUJ <- tmujeres
-
-# numero de socios
-n_socios <- as.numeric(datos$SOCIOS)
-n_socios[n_socios == 0 ] <- 0 #Asignarle el valor de cero a los nas
-n_socios[n_socios > 0 & n_socios < 4] <- 1
-n_socios[n_socios >= 4 & n_socios<100] <- 2
-n_socios <- factor(n_socios, labels=c("No Registra","Pocos Socios", "Bastantes Socios"))
-discretas$SOCIOS <- n_socios
-
-#clasificamos las empresas segun su tamañó. Es este caso, basaremos la clasificaion "Decreto 957 de 2019".
 pbruta <- 1000*as.numeric(datos$BRUTA)
-#precio uvt añó 2022
+
 uvt22 = 38004
 TMÑEMP <- unlist(pbruta/uvt22)
 TMÑEMP[TMÑEMP <= 44769 ] <- 1
@@ -116,149 +62,135 @@ TMÑEMP[TMÑEMP > 2160692] <- 4
 TMÑEMP <- factor(TMÑEMP, labels=c("MIcroe", "PQempr", "MEdempr", "EmprGran"))
 discretas <- cbind(discretas, TMÑEMP)
 
-#Clasificamos publicidad, basandonos en el porcentaje gastado respecto a la produccion bruta.
 pbruta <- abs(pbruta/1000)
 publicidad <- as.numeric(discretas$PUBLICI)
 contador = as.integer(1)
 
 for(i in publicidad){
-  if (i/pbruta[contador] > 0 & i/pbruta[contador] <= 0.05){
+  if (i/pbruta[contador] > 0 & i/pbruta[contador] < 0.02){
     publicidad[contador] <- 1 
-  }else if (i/pbruta[contador] > 0.05 & i/pbruta[contador] <= 0.1) {
+  }else if (i/pbruta[contador] >= 0.02 ) {
     publicidad[contador] <- 2 
-  }else if (i/pbruta[contador] > 0.1) {
-    publicidad[contador] <- 3
   }
   contador <- contador+1
-  
 }
 
-publicidad <- factor(publicidad, labels=c("Nopub", "Pubbaja", "Pubmod", "Pubalta"))
+publicidad <- factor(publicidad, labels=c("Nopub", "Pubbaja", "PubAlta"))
 discretas$PUBLICI <- publicidad
 
-#OTRAS POSIBLES CLASIFICACIONES
-
-
-# #Socios Mujeres
 smujeres <- as.integer(discretas$PROMUJ)
 smujeres[smujeres >= 1 ] <- 1
 smujeres <- factor(smujeres, labels=c("SisociosM", "NosociosM"))
 discretas$PROMUJ<- smujeres
-# 
-#Socios Hombres
+
 shombres <- as.integer(discretas$PROHOM)
 shombres[shombres >= 1 ] <- 1
 shombres <- factor(shombres, labels=c("SisociosH", "NosociosH"))
 discretas$PROHOM<- shombres
 
-#personal permanete mujeres
 pmujeres <- as.integer(discretas$PERMUJ)
 pmujeres[pmujeres >= 1 & pmujeres < 10 ] <- 1
 pmujeres[pmujeres >= 10 ] <- 2
 pmujeres <- factor(pmujeres, labels=c("(0)PerM", "(1-10)PerM", "(>10)PerM"))
 discretas$PERMUJ <- pmujeres
 
-# Personal permanente Hombres
 phombres <- as.integer(discretas$PERHOM)
 phombres[phombres >= 1 & phombres<= 10 ] <- 1
 phombres[phombres  > 10 ] <- 2
 phombres <- factor(phombres, labels=c("(0)PerH", "(1-10)PerH", "(>10)PerH"))
 discretas$PERHOM <- phombres
-# 
-# Personal Temporal Mujeres
+
 tmujeres <- as.integer(discretas$DIRMUJ)
 tmujeres[tmujeres >= 1 & tmujeres < 10 ] <- 1
 tmujeres[tmujeres >= 10 ] <- 2
 tmujeres <- factor(tmujeres, labels=c("(0)tempM", "(1-10)tempM", "(>10)tempM"))
 discretas$DIRMUJ <- tmujeres
 
-# Personal Temporal Hombres
 thombres <- as.integer(discretas$DIRHOM)
 thombres[thombres >= 1 & thombres<= 10 ] <- 1
 thombres[thombres  > 10 ] <- 2
 thombres <- factor(thombres, labels=c("(0)tempH", "(1-10)tempH", "(>10)tempH"))
 discretas$DIRHOM <- thombres
-# 
-# Personal temporal cont a través de agencias
+
 ptagenc <- as.integer(discretas$AGENCIA)
-ptagenc[ptagenc >= 1 & ptagenc < 10 ] <- 1
-ptagenc[ptagenc >= 10 ] <- 2
-ptagenc <- factor(ptagenc, labels=c("(0)PTAgenc", "(1-10)PTAgenc", "(>10)PTAgenc"))
+ptagenc[ptagenc >= 1 ] <- 1
+ptagenc <- factor(ptagenc, labels=c("No Agencia", "Si Agencia" ))
 discretas$AGENCIA <- ptagenc
-# 
-# Aprendices
+
 aprendiz <- as.integer(discretas$APRENDIZ)
-aprendiz[aprendiz >= 1 & aprendiz<= 10 ] <- 1
-aprendiz[aprendiz  > 10 ] <- 2
-aprendiz <- factor(aprendiz, labels=c("(0)Apren", "(1-10)Apren", "(>10)Apren"))
+aprendiz[aprendiz >= 1 & aprendiz< 3 ] <- 1
+aprendiz[aprendiz  >= 3 ] <- 2
+aprendiz <- factor(aprendiz, labels=c("(0)Apren", "(1-3)Apren", "(>3)Apren"))
 discretas$APRENDIZ <- aprendiz
 
-
-
-
-
-#Reclasificamos al tipo de empresas
-
-# Tipempr <- discretas$CORRELA_16
-# tipo1 <- list(454, 451, 453)
-# tipo2 <- list(462, 464, 465, 466)
-# tipo3 <- list("4711-472", 4719, 473, "4741-4742", 4752, "4759-4761", "4771-4751", 4772, 4773)
-# 
-# Tipempr[Tipempr %in% tipo1] <- 1
-# Tipempr[Tipempr %in% tipo2] <- 2
-# Tipempr[Tipempr %in% tipo3] <- 3
-# 
-# Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos", "Comercio al por mayor", "Comercio al por menor"))
-# discretas$CORRELA_16 <- Tipempr
-# 
-# table(discretas$IDOJ1)
-# K <- unclass(table(discretas$TMÑEMP, discretas$CORRELA_16))
-# K_add <- addmargins(K)
-
-#PCAshiny(continuas)
-#res.PCA<-PCA(continuas,quali.sup=c(1),graph=FALSE)
-#plot.PCA(res.PCA,choix='var',cex=1.2,cex.main=1.2,cex.axis=1.2 )
-#plot.PCA(res.PCA,axes=c(1,3),choix='var')
-#plot.PCA(res.PCA,axes=c(2,3),choix='var')
-# Semilla
-set.seed(13)
-
-#Reclasificamos algunas variables para poder tener categorias uniformes
-#Reclasificamos edad
-
-años <- as.integer(datos$IDAIO)
-años[años < 1992] <- 1
-años[años >= 1992 & años < 2002] <- 2
-años[años >= 2002 & años < 2012] <- 3
-años[años >= 2012 & años < 2024] <- 4
-
-años <- factor(años, labels=c( "Mas de 30", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
-discretas$IDAIO <- años
-
-#Reclasificamos al tipo de empresas
-
 Tipempr <- discretas$CORRELA_16
-tipo1 <- list(454, 451, 453)
-tipo2 <- list(462, 464, 465, 466)
-tipo3 <- list("4711-472", 4719, 473, "4741-4742", 4752, "4759-4761", "4771-4751", 4772, 4773)
+tipo1 <- list(454, 451, 453, 462, 464, 465, 466)
+tipo2 <- list("4711-472", 4719, 473, "4741-4742", 4752, "4759-4761", "4771-4751", 4772, 4773)
 
 Tipempr[Tipempr %in% tipo1] <- 1
 Tipempr[Tipempr %in% tipo2] <- 2
-Tipempr[Tipempr %in% tipo3] <- 3
 
-Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos", "Comercio al por mayor", "Comercio al por menor"))
+Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos y al por mayor", "Comercio al por menor"))
 discretas$CORRELA_16 <- Tipempr
-discretas[] <- lapply(discretas, as.factor)
+
+bruta = unlist(continuas[2])
+
+gasnop = unlist(continuas[17])
+porcentaje = gasnop/bruta
+gasnop[porcentaje  <= 0.05 ] <- 1
+gasnop[porcentaje  > 0.05 & porcentaje  <= 0.1] <- 2
+gasnop[porcentaje  > 0.1] <- 3
+gasnop = factor(gasnop, labels=c("Gastonop-bajo", "Gastonop-medio", "Gastonop-alto"))
+discretas<- cbind(discretas,gasnop)
+
+gastos = unlist(continuas[16])
+porcentaje = bruta/gastos
+gastos[porcentaje <= 0.3 ] <- 1
+gastos[porcentaje  > 0.3 & porcentaje  <= 0.4] <- 2
+gastos[porcentaje  > 0.4] <- 3
+gastos = factor(gastos, labels=c("Gasto-bajo", "Gasto-medio", "Gasto-alto"))
+discretas<- cbind(discretas,gastos)
+
+invpro = unlist(continuas[13])
+porcentaje = invpro/bruta
+invpro[porcentaje <= 0.3 ] <- 1
+invpro[porcentaje  > 0.3 & porcentaje  <= 1] <- 2
+invpro[porcentaje  > 1] <- 3
+invpro = factor(invpro, labels=c("invpro-bajo", "invpro-medio", "invpro-alto"))
+discretas<- cbind(discretas,invpro)
+
+uvt22 = 38004
+venta = unlist(continuas[6])
+porcentaje = venta/ uvt22
+venta[porcentaje <= 431196 ] <- 1
+venta[porcentaje  > 431196 & porcentaje  <= 1960692] <- 2
+venta[porcentaje  > 1960692] <- 3
+
+venta = factor(venta, labels=c("venta-bajo", "venta-medio", "venta-alto"))
+discretas<- cbind(discretas,venta)
+
+
+sueldos = unlist(continuas[4])
+porcentaje = sueldos/bruta
+sueldos[porcentaje <= 0.2 ] <- 1
+sueldos[porcentaje  > 0.2 & porcentaje  <= 0.3] <- 2
+sueldos[porcentaje  > 0.3] <- 3
+sueldos = factor(sueldos, labels=c("sueldos-bajo", "sueldos-medio", "sueldos-alto"))
+discretas<- cbind(discretas,sueldos)
+
+consui = unlist(continuas[3])
+porcentaje = consui/bruta
+consui[porcentaje <= 0.15 ] <- 1
+consui[porcentaje  > 0.15 & porcentaje  <= 0.25] <- 2
+consui[porcentaje  > 0.25] <- 3
+consui = factor(consui, labels=c("consui-bajo", "consui-medio", "consui-alto"))
+discretas<- cbind(discretas,consui)
 })
 ```
 ## Introducción
 
-Se consideraron tres clasificaciones para los datos:
+En ACM se lograron varios resultados interesantes a la vez que se encontró un patrón. Siguiendo la recomendación del profesor, **decidimos implementar más variables al análisis**; variables que no tomamos en cuenta por no ir acordes a los objetivos del análisis. Debido a que buscamos dar con clasificaciones de empresas, en este punto consideramos como buena idea recabar la mayor cantidad de información posible.
 
-1. Agrupamiento según Tamaño. (Siguiendo Criterios del Libro)
-2. Agrupamiento Según Proyección.
-
-Tambien se tomaron en cuenta las siguientes variables:
 
 ::: {.callout collapse="true"}
 ## Desplegar
@@ -306,6 +238,47 @@ Tambien se tomaron en cuenta las siguientes variables:
     -   Comercio de Vehículos
     -   Comercio al por Mayor
     -   Comercio al por Menor
+- Hay personal contratado mediante agencia.
+    -   Si.
+    -   No.
+- Cantidad de aprendices dentro de la empresa.
+    -   Ninguno.
+    -   Entre 1 y 3.
+    -   Más de 3.
+- Gastos relativos en publicidad.
+    -   Ninguno.
+    -   Bajos.
+    -   Moderados.
+    -   Altos. 
+- Tamaño de la Empresa
+    -   Microempresa.
+    -   Empresa Pequeña.
+    -   Empresa Mediana.
+    -   Empresa Grande.
+- Inventario Promedio relativo a ingresos brutos.
+    -   Bajo (Menos de 30%)
+    -   Medio (de 30% a 60%)
+    -   Alto (Más de 60%)
+- Percentil de las ventas causadas en el año relativas al promedio.
+    -   Bajas (UVT menor a 431196)
+    -   Medias (UVT entre 431196 y 1960692)
+    -   Altas (UVT mayor a 1960692)
+- Percentil de los sueldos y salarios causados en el año relativos a ingresos brutos.
+    -   Bajos (Menos de 10%)
+    -   Medios (de 10% a 20%)
+    -   Altos (Más de 20%)
+- Percentil del consumo intermedio entre 1996 y 2006.
+    -   Bajos (Menos de 15%)
+    -   Medios (de 15% a 25%)
+    -   Altos (Más de 25%)
+- Percentil de costos y gastos operacionales.
+    -   Bajos (Menos de 15%)
+    -   Medios (de 15% a 25%)
+    -   Altos (Más a 25%)
+- Percentil de costos y gastos no operacionales.
+    -   Bajos (Menos de 5%)
+    -   Medios (de 5% a 10%)
+    -   Altos (Más a 10%)
 
 Ilustrativa (por bajo conteo en categorías)
     
@@ -314,34 +287,153 @@ Ilustrativa (por bajo conteo en categorías)
     -   Pequeña
     -   Mediana
     -   Grande
+
+:::
+
+## Objetivos
+
+- Como Colombia es un país con una gran variedad de contextos en los que se puede desarrollar una empresa, consideramos que en cierta forma clasificar empresas según lo que reporten en tributación puede estar dejando a un lado una gran cantidad de información relevante para el desarrollo de cada una, así consideramos que al tomar en cuenta la mayor cantidad posible de variables categóricas que no sean necesariamente dependientes de los ingresos brutos reportados, podríamos hallar agrupaciones de empresas nuevas.
+
+- Tomando en cuenta el ACP y sus conclusiones, donde se halló a **BRUTA** (ingresos brutos) como una variable representativa de la gran mayoría de variables cuantitativas, consideramos que debemos buscar relaciones entre estas agrupaciones y esta variable dada su importancia.
+
+- Tomar en cuenta las agrupaciones y revisar características particulares que puedan tener, esto a través de una proyección de ACM
+
+ 
+## ACM previo
+
+```{r}
+#Variables activas
+Y = discretas[, !(names(discretas) %in% "TMÑEMP")]
+
+Z <- acm.disjonctif(Y);# función de ade4
+# BAAAABYYY PLEASE DON'T GO
+#Tabla de Burt
+Z <- as.matrix(Z)
+#tabla de burt
+B <- t(Z) %*% Z
+#kable(B)
+
+acm <-dudi.acm (Y , scannf = FALSE )
+# numero de variables activas a evaluar
+s <- length(Y)
+# numero de vectores a utilizar segun el criterio de Benzécri
+eig = acm$eig[acm$eig >= 1/s]
+
+```
+
+::: {.callout collapse="true"}
+## Gráfico de Inercias Originales
+
+```{r}
+# recalcular tasas de inercia
+tau <-( s/(s -1))^2 *( eig -(1 /s ))^2
+ptau <-tau /sum( tau )* 100
+fviz_screeplot(acm, addlabels = TRUE, ylim = c(0, 20), main = "Inercia Original")
+```
 :::
 
 
+::: {.callout collapse="true"}
+## Gráfico de Inercias bajo Critero de Benzécri
+
+```{r}
+# Variable temporal
+a = acm$eig
+acm$eig = ptau
+#inercia segun Benzécri
+fviz_screeplot(acm, addlabels = TRUE, ylim = c(0, 90), main = "Inercia usando Benzécri")
+acm$eig = a
+```
+:::
+
+Así se puede ver que para recabar la grán cantidad de información, se necesitarán solamente los dos primeros ejes.
+
+## Resultados
+
+Mostramos contribuciones de los primeros dos ejes:
+
+::: {.callout collapse="true"}
+## Contribución a la dimensión 1
+
+```{r}
+##Contribution a la dimension 1 
+fviz_contrib(acm, choice = "var", axes = 1, ylim = c(0, 30), xlim = c(1, 10))
+```
+:::
+
+::: {.callout collapse="true"}
+## Contribución a la dimensión 2
+
+```{r}
+##Contribution a la dimension 2
+fviz_contrib(acm, choice = "var", axes = 2, ylim = c(0, 20), xlim = c(1, 12))
+```
+:::
+
+De esta manera se muestra la proyección de ambos ejes:
+
+::: {.callout collapse="true"}
+
+## Gráfico de ACM
+
+```{r}
+acm$eig = ptau
+# Grafico ACM (mas bonito)
+fviz_mca_var(acm, col.var = "cos2", repel = TRUE, 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+             ggtheme = theme_minimal())
+
+acm = MCA(Y, graph=FALSE)
+```
+:::
+
+::: {.callout collapse="false"}
+## Gráfico de Proyección con Individuos
+
+```{r}
+#individuos
+fviz_mca_ind(acm, axes=c(1,2), geom="point", asp=1,
+             ggtheme=theme_minimal())
+```
+:::
+
 ## Agrupamiento Según Tamaño
 
-Ejecutando el software del paquete FactoClass dentro del conjunto de variables tomadas, se nos da lo siguiente:
+Dada la gran cantidad de datos, asumimos que tocará hacer un kmeans de preagrupamiento. 
 ```{r}
 
-Y = discretas[ , c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17)]
+Y = discretas[, !(names(discretas) %in% "TMÑEMP")]
 
 #numero de grupos
-n = 4
-fc <- FactoClass(Y, dudi.acm, scanFC = FALSE, nf = 2, nfcl = 10, k.clust = n)
-
+n = 5
+fc <- FactoClass(Y, dudi.acm, scanFC = FALSE, nf = 18, nfcl = 10, k.clust = n,)
 
 ```
-El número de ejes retenidos para el análisis factorial son dos, para el agrupamiento son cuatro. Se da la partición en cuatro agrupamientos.
+El número de ejes retenidos para el análisis factorial son 19, para el agrupamiento son diez. Se da la partición en cinco agrupamientos.
 
-### Tamaño de los Grupos
+Revisamos el árbol de corte:
+
+:::{.callout collapse="true"}
+## Árbol de C
+```{r}
+##Arbol de corte
+barplot(rev(tail(fc$indices$Indice,15)), horiz=TRUE, col="darkblue")
+
+```
+
+:::
+
+Pero revisando cada uno, notamos que quedarían grupos muy poco caracterizados. Luego al intentarlo con cinco, este problema se resolvió; así que decidimos realizar un agrupamiento de cinco grupos.
+
+## Tamaño de los Grupos
 
 En la tabla de abajo se pueden revisar el tamaño relativo de cada agrupación:
 ```{r}
-summary ( fc$ cluster ) -> nk
+nk<-summary(fc$cluster)
 
 ##Tamaños relativos de las clases
-round ( nk/ sum ( nk )* 100 ,1)
+round (nk/sum(nk)*100,1)
 ```
-
 ::: {.callout collapse="true"}
 
 ## Inercia.
@@ -352,7 +444,19 @@ barplot(as.vector(fc$dudi$eig), col="darkblue")
 ```
 :::
 
-### Gráfico de Agrupamiento
+::: {.callout collapse="true"}
+
+## Gráfico de Corte (Dendrograma de la Agrupación)
+
+```{r}
+ca <- dudi.coa(discretas,scannf=FALSE,nf=19)
+HW <- ward.cluster( dista= dist(ca$li), peso=ca$lw ,h.clust = 1)
+plot(HW)
+rect.hclust(HW, k=5, border="blue")
+```
+:::
+
+## Gráfico de Agrupamiento
 
 ```{r}
 plotFactoClass(fc, x=1, y=2, cex.col=0.5,
@@ -371,11 +475,13 @@ a = a[order(a$n, decreasing = TRUE), ]
 ```
 
 
-### Descripción de Agrupamientos
+## Descripción de Agrupamientos
 
-#### Grupo 1: Microempresas
 
-Microempresas: Se caracterizan por tener poco personal. Donde la mayoría son a terminó indefinido. No invierten en publicidad, y son empresas con un solo dueño. Se dedican al comercio al por menor y son empresas jóvenes.
+
+### Grupo 1
+
+Empresas con pocos empleados contratados de manera permanente, sin contratación directa, no contratan aprendices y suelen tener ventas bajas. Se desarrollan en comercios al por menor y suelen ser empresas jóvenes.
 
 :::{.callout collapse="true"}
 ## Desplegar
@@ -386,9 +492,9 @@ kable(fc$carac.cate[lista$n[1]])
 :::
 
 
-#### Grupo 2: Empresas Consolidadas
+### Grupo 2
 
-Son una combinación entre empresas medianas y pequeñas (65% medianas y 35% pequeñas). Contratan bastante personal a término indefinido, pero no contratan por prestación de servicios. Invierten de manera conservadora en publicidad, y se dedican en su mayoría al sector mayorista. Cabe resaltar que son empresas con cierta experiencia.
+Suelen tener gran cantidad de empleados permanentes pero parecen tener bajo conteo de empleados. Realizan una cantidad promedio de ventas sobre todo al sector al por mayor o de vehículos. No realizan inversiones fuertes de publicidad y su edad no las caracteriza de manera particular.
 
 :::{.callout collapse="true"}
 ## Desplegar
@@ -398,9 +504,9 @@ kable(fc$carac.cate[lista$n[2]])
 ```
 :::
 
-#### Grupo 3: Empresas Pequeñas
+### Grupo 3
 
-Tienen la característica de que solo contratan personal por prestación de servicios. Se dedican al sector minoritario, e invierten poco en publicidad. Tienen la particularidad, de que en su mayoría están conformadas por socios hombres.
+Empresas con contratación directa pero no permanente que suelen tener aprendices dentro de sus filas, se dedican al comercio al por menor pero tambien ocupan poco el comercio al por mayor o de vehículos.
 
 :::{.callout collapse="true"}
 ## Desplegar
@@ -411,9 +517,9 @@ kable(fc$carac.cate[lista$n[3]])
 ```
 :::
 
-#### Grupo 4: Empresas Grandes
+### Grupo 4
 
-Gran cantidad de empleados. Contratan de todas las formas posibles. Se dedican al sector de vehículos, se conforman por socios y tienen bastante años en la industria. Es importante señalar que la inversión por publicidad es alta.
+Empresas con bajo conteo de socios y dueños, con casi nulos empleados permanentes o aprendices. Suelen tener bajas ventas y no invierten en publicidad, comúnmente empresas jóvenes con menos de 10 años.
 
 :::{.callout collapse="true"}
 ## Desplegar
@@ -424,143 +530,100 @@ kable(fc$carac.cate[lista$n[4]])
 ```
 :::
 
+### Grupo 5
 
+Empresas con alta cantidad de empleados, de altas ventas, que contratan artos aprendices, realizan inversiones considerables en publicidad, son longevas con mas de 20 años, se dedican al comercio de vehículos o al por mayor, pero suelen tener sueldos bajos. 
 
-
-
-## Agrupamiento Según Proyección
-
-Como han podido notar, existe un patrón claro en los datos, lo que nos lleva a preguntarnos si existe otro tipo de clasificación. En este caso, realizamos una clasificación propia para poder comparar los resultados y evaluar cuál es la mejor clasificación posible. Incorporamos una clasificación personalizada.
-
-
-```{r}
-Y = discretas[ , c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)]
-
-n = 5
-fc <- FactoClass(Y, dudi.acm, scanFC = FALSE, nf = 2, nfcl = 10, k.clust = n)
-##Como han podido notar, existe un patron claro en los datos. Nos hace preguntar si exite ptro tipo de clasificacion
-##En este caso, realizamos una clasificaion porpia, para poder comparar los resultados y evaluar la mejor clasificaion posible.
-#Incorporamos una clasificacion propia
-
-
-```
-El número de ejes retenidos para el análisis factorial son dos, para el agrupamiento son diez. Se da la partición en cinco agrupamientos.
-
-### Tamaño de los Grupos
-
-En la tabla de abajo se pueden revisar el tamaño relativo de cada agrupación:
-
-```{r}
-x = data.frame(fc$dudi$li)
-
-
-g1 = x[x[1] >1, ]
-g2 = x[x[1] >0.67 & x[1] <=1, ]
-g3 = x[x[1] >0.235 & x[1] <=0.67, ]
-g4 = x[x[1] >-0.146 & x[1] <=0.235, ]
-g5 = x[x[1] >-0.5 & x[1] <=-0.146, ]
-
-# Combinar todos los dataframes en uno solo, añadiendo una columna para identificar el grupo
-g1$source <- 5
-g2$source <- 4
-g3$source <- 3
-g4$source <- 2
-g5$source <- 1
-
-#creamos un vector de tipo factor que contenga las clasificaciones
-all_data <- rbind(g1, g2, g3, g4, g5)
-all_data$index = as.integer(rownames(all_data))
-all_data <- all_data[order(all_data$index), ]
-df = all_data[, c(3, 4)]
-df = as.factor(df[ ,1])
-
-fc$cluster = df
-summary ( fc$ cluster ) -> nk
-##Tamaños relativos de las clases
-round ( nk/ sum ( nk )* 100 ,1)
-
-```
-
-
-### Gráfico de Agrupamiento
-```{r}
-
-plotFactoClass(fc, x=1, y=2, cex.col=0.5,
-               roweti="", infaxes="no", cstar=0)
-
-```
-
-### Descripción de Agrupamientos
-
-#### Grupo 1 Pequeñas y medianas empresas
-
-Reunen aproximadamente el 70% de los datos. Se caracterizan por su gran cantidad de personal temporal. No contratan personal indefinido, invierten en poca publicidad y contratan una gran variedad de aprendices. Se dedican mayoritariamente al sector minoritario.
-
-
-::: {.callout collapse="true"}
+:::{.callout collapse="true"}
 ## Desplegar
 ```{r}
-##Grupo 1 (12.5%) Empresas jovenes
 
-kable(fc$carac.cate[1])
+kable(fc$carac.cate[lista$n[5]])
+
 ```
 :::
 
-#### Grupo 2: Microemepresas
- 
-Tienen la característica de que solo contratan personal por prestación de servicios. Se dedican al sector minoritario, e invierten poco en publicidad. No tienen una edad definida.
+## Proyección Sobre Ejes Factoriales
 
-::: {.callout collapse="true"}
-## Desplegar
+### Proyección en el ACP 
 ```{r}
-##Grupo 2 (29.6%) Empresas consolidadas
-kable(fc$carac.cate[2])
+grupos <- factor(fc$cluster,labels =c( "Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4", "Grupo 5"))
+
+
+
+#Proyeccion sobre el acp
+Z <- continuas[, 2:17]
+# inercia usando  ade4 y FactoClass
+acp <- dudi.pca(Z, scannf = FALSE, nf = 4)
+valp <- t(inertia(acp)$tot.inertia) # valores propios
+#variables complementarias(grupos)
+#convertimos las variables en fatores
+sup <- supqual(acp, grupos)
+
+
+#Grafico 1
+plot(acp, Tcol = FALSE, ucal = 10, cex.row = 0.00001,
+     xlim = c(-3.3, 0.6), ylim = c(-0.6,0.6), col.row = 16)
+s.arrow(acp$co[c(1, 2, 3, 5, 12, 16), ], add.plot = TRUE, boxes = FALSE)
+#Grupos
+points(sup$coor[1:5,], col = 2, pch = 16)
+text(sup$coor[1:5,], labels = rownames(sup$coor[1:5,]),
+     col = 2, pos = 1, font = 4)
+
+title(main = "Grupos proyectados en acp")
+
+
+
 ```
-:::
 
+Se puede ver que el grupo 5 es el que más se relaciona con empresas de alta cantidad de ingresos. De esta manera podríamos concluir que empresas con alta cantidad de empleados, de altas ventas, artos aprendices, con inversiones considerables en publicidad, longevas con mas de 20 años, en de vehículos o al por mayor, y con sueldos bajos, son las que mayores cantidad de ingresos dan.
 
-#### Grupo 3: Tiendas consolidadas
+De esta manera se podría insinuar que en Colombia estas empresas manejan grandes cantidades de ingresos pero no pagan de manera "justa" a sus empleados, así ya estén posicionados en el mercado dada su edad.
 
-Son empresas con un solo dueño, que solo contratan pocas a personas a término indefinido. Tienen bastantes años consolidados en la industria. No invierten en publicidad.
-
-
-::: {.callout collapse="true"}
-## Desplegar
+### Proyección en el ACP 
 ```{r}
-##Grupo 3 (11.7%) Empresas "Explotadoras"
-kable(fc$carac.cate[3])
+
+
+
+#Proyeccion sobre Acm
+Y = cbind(discretas[ , 1:11])
+acm <-dudi.acm (Y , scannf = FALSE )
+ilustrativas = data.frame(grupos, continuas$BRUTA)
+
+# para variables ilustrativas
+Ys <- cbind(ilustrativas, Y)
+
+res.mca <- MCA(Ys, graph=FALSE, quali.sup = 1, quanti.sup = 2)
+
+
+fviz_mca_var(res.mca, repel = TRUE, 
+             ggtheme= theme_minimal())
+
 ```
-:::
+No se podrían dar muchas mas conclusiones a partir de este gráfico mas allá de las logradas con cada conclusión de agrupación.
+
+## Conclusiones
+
+Como conclusiones preferimos colocar las siguientes agrupaciones con un nombre propuesto por nosotros:
+
+- Grupo 1: Empresas Pequeñas y Jóvenes
+
+El grupo 1 incluye a empresas con pocos empleados permanentes, sin contratación directa ni aprendices, y con ventas bajas. Estas empresas se desarrollan principalmente en el comercio al por menor y suelen ser jóvenes, lo cual puede indicar que están en una fase temprana de desarrollo. Al tener una estructura más pequeña y menos inversión en personal, es posible que se enfrenten a retos significativos en términos de crecimiento y competitividad en el mercado.
+
+- Grupo 2: Empresas de Ventas Promedio y Sin Publicidad
+
+El grupo 2 está compuesto por empresas con una cantidad notable de empleados permanentes, aunque el número total de empleados parece ser bajo. Realizan ventas en niveles promedio, sobre todo en los sectores de comercio al por mayor o de vehículos, pero no destacan por realizar grandes inversiones en publicidad. Además, la edad de estas empresas no parece ser un factor determinante en su perfil. Esto sugiere que son compañías que operan de manera estable, pero sin grandes estrategias de expansión o visibilidad pública.
+
+- Grupo 3: Empresas con Contratación No Permanente
+
+Las empresas del grupo 3 tienden a tener una estructura de contratación directa pero no permanente, y suelen incluir aprendices en sus filas. Su enfoque está en el comercio al por menor, aunque también participan en menor medida en el comercio al por mayor y en la venta de vehículos. Estas empresas parecen tener una estructura flexible y posiblemente recurren a contratos temporales o a corto plazo, lo cual podría indicar una estrategia de reducción de costos operativos.
+
+- Grupo 4: Empresas Jóvenes y de Bajo Impacto
+
+El grupo 4 está compuesto por empresas pequeñas con bajo número de socios y dueños. Estas compañías cuentan con casi nulos empleados permanentes o aprendices, y suelen registrar ventas bajas. Además, no invierten en publicidad y, en general, son empresas jóvenes con menos de 10 años en el mercado. Esto podría indicar que están en una fase de consolidación o crecimiento, pero sin una estructura sólida de personal o inversión en estrategias de marketing para expandir su influencia.
+
+- Grupo 5: Empresas de Alto Desempeño y Contradicciones Laborales
+
+El grupo 5 se destaca como el que más se relaciona con empresas de altos ingresos. Estas empresas suelen ser grandes, con una considerable cantidad de empleados y altas ventas. Además, invierten significativamente en publicidad y contratan una gran cantidad de aprendices. Se caracterizan por su longevidad, con más de 20 años de existencia, y operan principalmente en sectores como el comercio de vehículos o al por mayor. Sin embargo, un aspecto contradictorio es que, a pesar de su éxito financiero y estabilidad, estas empresas tienden a ofrecer sueldos bajos a sus empleados. Esto sugiere una posible tendencia en Colombia: empresas establecidas y rentables pueden aprovechar su posición en el mercado para mantener costos laborales bajos, lo cual puede reflejar prácticas que no siempre se alinean con la equidad salarial.
 
 
-
-#### Grupo 4: Empresas Grandes
-
-Tienen bastantes empleados y contratan todo tipo de personal. Se dedican al sector vehículos e invierten moderadamente en publicidad. Son conformadas en su mayoría por socios.
-
-
-::: {.callout collapse="true"}
-## Desplegar
-```{r}
-##Grupo 4 (15.3%) Tiendas al por Menor
-kable(fc$carac.cate[4])
-```
-:::
-
-
-#### Grupo 5: Empresas de Alta Rotación de Personal
-
-A pesar de tener mucho personal, solo contratan personal temporal. Estan conformadas por socios, y tienen edades entre 10 y 30 años. Ademas de contratar pocos aprendices.
-
-::: {.callout collapse="true"}
-## Desplegar
-```{r}
-##Grupo 5 (30.8%) Microempresas
-kable(fc$carac.cate[5])
-```
-:::
-
-
-```{r}
-# octavarium GOD
-```

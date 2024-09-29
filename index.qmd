@@ -56,7 +56,7 @@ Una vez halladas estas relaciones, se va a buscar, a partir de una revisión exh
 
 ## Palabras Clave
 
-::: columns
+::::: columns
 ::: {.column width="50%"}
 -   Comercio.
 -   Sector Económico.
@@ -77,8 +77,7 @@ Una vez halladas estas relaciones, se va a buscar, a partir de una revisión exh
 -   Mantenimiento.
 -   Outsourcing.
 :::
-:::
-
+:::::
 
 ### Filtrado o modificación de datos
 
@@ -90,5 +89,7 @@ Otro problema recurrente en las variables fue el exceso de ceros, que, siguiendo
 
 -   (DANE), D. A. (1 de 12 de 2022). Clasificancion industrial internacional uniforme de todas las actividades economicas. Obtenido de <https://www.dane.gov.co/files/sen/nomenclatura/ciiu/CIIU_Rev_4_AC2022.pdf>
 -   DIMPE, D. d. (6 de 06 de 2022). Encuesta Anual de Comercio - EAC . DANE. Obtenido de <https://microdatos.dane.gov.co/index.php/catalog/798/study-description>
--   Pardo, C. (2020). Estadística descriptiva multivariada. Universidad Nacional de Colombia.
-
+-   Pardo, C. (2020). Estadística Descriptiva Multivariada. Universidad Nacional de Colombia.
+<https://repositorio.unal.edu.co/handle/unal/79914>
+-   Torres, C. (2023). Estadística Descriptiva Multivariada. Universidad Nacional de Colombia.
+<https://cjtorresj.quarto.pub/edm/>

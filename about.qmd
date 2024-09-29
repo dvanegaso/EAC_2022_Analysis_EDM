@@ -2,128 +2,310 @@
 title: "Tabla de Datos"
 format: html
 editor: visual
-theme: lux
+theme: flatly
 ---
 
 En caso de una consulta más detallada, visitar la información brindada por el [DANE](https://microdatos.dane.gov.co/index.php/catalog/833)
 
 Se muestran las variables originales con sus respectivas clasificaciones:
 
-
-::: panel-tabset
-
-### Diccionario de Variables
-
 ## Variables Originales
 
-| **Identificador** | **Descripción**                                                                               |
-|-------------------|-----------------------------------------------------------------------------------------------|
-| CORRELA_16        | Clasificación CIIU.                                                                           |
-| CORRE_9           | Grupo CIIU.                                                                                   |
-| IDOJI             | Organización jurídica.                                                                        |
-| IDAIO             | Año de inicio de operaciones.                                                                 |
-| REGALA            | Regalías causadas.                                                                            |
-| OUTSOURCING       | Costos y gastos por servicios contratados con terceros (outsoursing).                         |
-| PERREMUN          | Personal remunerado.                                                                          |
-| SOCIOS            | Propietarios, socios y familiares. Total sin remuneración.                                    |
-| PERSONOM          | Total de personal permanente.                                                                 |
-| DIRECTO           | Total de personal temporal contratado de manera directa.                                      |
-| AGENCIA           | Total de personal temporal contratado a través de agencias.                                   |
-| APRENDIZ          | Total de aprendices.                                                                          |
-| TOTPERSO          | Total de personal.                                                                            |
-| PROMUJ            | Total de mujeres propietarias y socias.                                                       |
-| PROHOM            | Total de hombres propietarios y socios.                                                       |
-| PERMUJ            | Total de mujeres que sean personal permanente.                                                |
-| PERHOM            | Total de hombres que sean personal permanente.                                                |
-| DIRMUJ            | Total de mujeres que sean personal temporal contratadas de manera directa.                    |
-| DIRHOM            | TOtal de hombres que sean personal temporal contratados de manera directa.                    |
-| AGEMUJ            | Total de mujeres en personal temporal contratadas a través de agencias.                       |
-| AGEHOM            | Total de hombres en personal temporal contratados a través de agencias.                       |
-| APRENMUJ          | Número de aprendices mujeres.                                                                 |
-| APRENHOM          | Número de aprendices hombres.                                                                 |
-| TOTMUJ            | Personal de mujeres total.                                                                    |
-| TOTHOM            | Personal de hombres total.                                                                    |
-| CIMREP            | Costo de insumos respecto a ingresos por ventas.                                              |
-| BRUTA             | Producción bruta de la empresa.                                                               |
-| CONSUI            | Consumo intermedio entre 1996 y 2006.                                                         |
-| GAS               | Gasto en gas natural.                                                                         |
-| EMPAQUE           | Gasto en Empaques y embalajes.                                                                |
-| HONORA            | Gasto en Honorarios y servicios técnicos.                                                     |
-| COMISION          | Gastos de ventas por comisión a terceros.                                                     |
-| ARRIENDO          | Gasto en Arrendamiento de bienes inmuebles y muebles.                                         |
-| SEGURO            | Gasto en Seguros,excepto los de prestaciones.                                                 |
-| ASEO              | Gasto en Aseo y vigilancia.                                                                   |
-| ENERGIA           | Gasto en Energía eléctrica comprada.                                                          |
-| COMUNICA          | Gasto en Comunicaciones.                                                                      |
-| PUBLICO           | Gasto en Otros servicios públicos.                                                            |
-| FLETES            | Gasto en Transporte, fletes y acarreos.                                                       |
-| PUBLICI           | Gasto en Propaganda y publicidad.                                                             |
-| ADECUA            | Gasto en Mantenimiento, reparaciones.                                                         |
-| OTROS             | Otros gastos inherentes a la actividad comercial.                                             |
-| SUELDOS           | Total de sueldos y salarios causados en el año.                                               |
-| PRESTAC           | Total en prestaciones sociales causadas en el año.                                            |
-| VENTA             | Ventas causadas en el año.                                                                    |
-| AGREGA            | Valor Agregado.                                                                               |
-| SUEPLAN           | Sueldos de planta.                                                                            |
-| PREPLAN           | Prestaciones de planta.                                                                       |
-| REMPLAN           | Remuneración de planta.                                                                       |
-| COTIZA            | Cotizaciones patronales obligatorias causadas en el año.                                      |
-| RENTEMP           | Gastos causados por el personal temporal suministrado por agencias de empleo.                 |
-| TOTREM            | Total en Remuneración.                                                                        |
-| INVINI            | Valor en Existencias desde el 31 de diciembre de 2005.                                        |
-| INVFIN            | Valor en Existencias desde el 31 de diciembre de 2006.                                        |
-| ROTACION          | Rotación de Inventarios.                                                                      |
-| INVPRO            | Inventario Promedio.                                                                          |
-| CTO               | Costo de mercancia vendida.                                                                   |
-| CTOINS            | Total costo de la mercancía más costo de insumos de actividades relacionadas con el comercio. |
-| GASTOS            | Total costos y gastos operacionales.                                                          |
-| GASTOSNOP         | Subtotal Gastos no operacionales.                                                             |
+:::{.callout collapse="true"}
+## Desplegar
+
+| **Identificador** | **Descripción** |
+|------------------------------------|------------------------------------|
+| CORRELA_16 | Clasificación CIIU. |
+| CORRE_9 | Grupo CIIU. |
+| IDOJI | Organización jurídica. |
+| IDAIO | Año de inicio de operaciones. |
+| REGALA | Regalías causadas. |
+| OUTSOURCING | Costos y gastos por servicios contratados con terceros (outsoursing). |
+| PERREMUN | Personal remunerado. |
+| SOCIOS | Propietarios, socios y familiares. Total sin remuneración. |
+| PERSONOM | Total de personal permanente. |
+| DIRECTO | Total de personal temporal contratado de manera directa. |
+| AGENCIA | Total de personal temporal contratado a través de agencias. |
+| APRENDIZ | Total de aprendices. |
+| TOTPERSO | Total de personal. |
+| PROMUJ | Total de mujeres propietarias y socias. |
+| PROHOM | Total de hombres propietarios y socios. |
+| PERMUJ | Total de mujeres que sean personal permanente. |
+| PERHOM | Total de hombres que sean personal permanente. |
+| DIRMUJ | Total de mujeres que sean personal temporal contratadas de manera directa. |
+| DIRHOM | TOtal de hombres que sean personal temporal contratados de manera directa. |
+| AGEMUJ | Total de mujeres en personal temporal contratadas a través de agencias. |
+| AGEHOM | Total de hombres en personal temporal contratados a través de agencias. |
+| APRENMUJ | Número de aprendices mujeres. |
+| APRENHOM | Número de aprendices hombres. |
+| TOTMUJ | Personal de mujeres total. |
+| TOTHOM | Personal de hombres total. |
+| CIMREP | Costo de insumos respecto a ingresos por ventas. |
+| BRUTA | Producción bruta de la empresa. |
+| CONSUI | Consumo intermedio entre 1996 y 2006. |
+| GAS | Gasto en gas natural. |
+| EMPAQUE | Gasto en Empaques y embalajes. |
+| HONORA | Gasto en Honorarios y servicios técnicos. |
+| COMISION | Gastos de ventas por comisión a terceros. |
+| ARRIENDO | Gasto en Arrendamiento de bienes inmuebles y muebles. |
+| SEGURO | Gasto en Seguros,excepto los de prestaciones. |
+| ASEO | Gasto en Aseo y vigilancia. |
+| ENERGIA | Gasto en Energía eléctrica comprada. |
+| COMUNICA | Gasto en Comunicaciones. |
+| PUBLICO | Gasto en Otros servicios públicos. |
+| FLETES | Gasto en Transporte, fletes y acarreos. |
+| PUBLICI | Gasto en Propaganda y publicidad. |
+| ADECUA | Gasto en Mantenimiento, reparaciones. |
+| OTROS | Otros gastos inherentes a la actividad comercial. |
+| SUELDOS | Total de sueldos y salarios causados en el año. |
+| PRESTAC | Total en prestaciones sociales causadas en el año. |
+| VENTA | Ventas causadas en el año. |
+| AGREGA | Valor Agregado. |
+| SUEPLAN | Sueldos de planta. |
+| PREPLAN | Prestaciones de planta. |
+| REMPLAN | Remuneración de planta. |
+| COTIZA | Cotizaciones patronales obligatorias causadas en el año. |
+| RENTEMP | Gastos causados por el personal temporal suministrado por agencias de empleo. |
+| TOTREM | Total en Remuneración. |
+| INVINI | Valor en Existencias desde el 31 de diciembre de 2005. |
+| INVFIN | Valor en Existencias desde el 31 de diciembre de 2006. |
+| ROTACION | Rotación de Inventarios. |
+| INVPRO | Inventario Promedio. |
+| CTO | Costo de mercancia vendida. |
+| CTOINS | Total costo de la mercancía más costo de insumos de actividades relacionadas con el comercio. |
+| GASTOS | Total costos y gastos operacionales. |
+| GASTOSNOP | Subtotal Gastos no operacionales. |
+
+:::
+
+PoSterior a la limpieza de datos, clasificaremos los datos en 2 tipos de variables (discretas y continuas). Buscaremos variables que sean de nuestro interes, y que ademas no sean combinacion lineal de otras. Algunas variables con gran cantidad de ceros, seran clasificadas como variables discretas.
 
 
-
-Porterior a la limpieza, clasificaremos los datos en 2 tipos de variables (discretas y continuas). Buscaremos variables que sean de nuestro interes, y que ademas no sean combinacion lineal de otras. Algunas variables con gran cantidad de ceros, seran clasificadas como variables discretas.
-
-### Cualitativas
-
-| **Identificador** | **Descripción**                                                                               |
-|-------------------|-----------------------------------------------------------------------------------------------|
-| CORRELA_16        | Clasificación CIIU.                                                                           |
-| IDOJI             | Organización jurídica.                                                                        |
-| IDAIO             | Edad de la Empresa                                                                            |
-| PROMUJ            | La empresa cuenta con mujeres propietarias y socias.                                          |
-| PERMUJ            | Porcentaje de mujeres como personal permanente.                                               |
-| PERHOM            | Porcentaje de hombres como personal permanente.                                               |
-| DIRMUJ            | Porcentaje de mujeres como personal contratado de manera directa.                             |
-| DIRHOM            | Porcentaje de hombres como personal contratado de manera directa.                             |
-| AGENCIA           | Porcentaje de mujeres y hombres contratados por medio de agencia.                             |
-| APRENMUJ          | Porcentaje de mujeres aprendices.                                                             |
-| APRENHOM          | Porcentaje de hombres aprendices.                                                             |
-| PUBLICI           | Gasto en publicidad relativo a producción bruta.                                              |
-| TMÑEMP            | Tamaño de la empresa.                                                                         |
+## Variables Cualitativas
 
 
+:::{.callout collapse="true"}
+## CORRELA_16
 
-### Cuantitativas
+En la base de datos vienen las siguientes clasificaciones:
 
-| **Identificador** | **Descripción**                                                                               |
-|-------------------|-----------------------------------------------------------------------------------------------|
-| BRUTA             | Producción bruta de la empresa.                                                               |
-| CONSUI            | Consumo intermedio entre 1996 y 2006.                                                         |
-| SUELDOS           | Total de sueldos y salarios causados en el año.                                               |
-| PRESTAC           | Total en prestaciones sociales causadas en el año.                                            |
-| VENTA             | Ventas causadas en el año.                                                                    |
-| AGREGA            | Valor Agregado.                                                                               |
-| SUEPLAN           | Sueldos de planta.                                                                            |
-| PREPLAN           | Prestaciones de planta.                                                                       |
-| COTIZA            | Cotizaciones patronales obligatorias causadas en el año.                                      |
-| TOTREM            | Total en Remuneración.                                                                        |
-| ROTACION          | Rotación de Inventarios.                                                                      |
-| INVPRO            | Inventario Promedio.                                                                          |
-| CTO               | Costo de mercancia vendida.                                                                   |
-| CTOINS            | Total costo de la mercancía más costo de insumos de actividades relacionadas con el comercio. |
-| GASTOS            | Total costos y gastos operacionales.                                                          |
-| GASTOSNOP         | Subtotal Gastos no operacionales.                                                             |
+- 451	Vehículos automotores
+- 453	Partes, piezas y accesorios para vehículos automotores.
+- 454	Mantenimiento y reparación de motocicletas y de sus partes, piezas y accesorios.
+- 462	Al por mayor de materias primas agropecuarias o animales vivos.
+- 464	Al por mayor de alimentos, bebidas y tabaco.
+- 465	Al por mayor de maquinaria y equipo.
+- 466	Al por mayor especializado de combustibles no convencionales, productos de construcción, químicos, metales y desperdicios.
+- 4711-472	Al por menor en establecimientos no especializados (excepto 4719).)
+- 4719	Al por menor de surtido en diferentes alimentos, bebidas alcohólicas y tabaco.
+- 473	Al por menor de productos para automotores.
+- 4741-4742	Al por menor de software y hardware de computadores y dispositivos audiovisuales.
+- 4752	Al por menor de artículos de ferretería, pintura y productos de vidrio.
+- 4759-4761	Al por menor de artículos domésticos de limpieza, papelería, cocina o emergencia.
+- 4771-4751	Al por menor de ropa o textiles.
+- 4772	Al por menor de calzado.
+- 4773	Al por menor de productos farmacéuticos.
+
+Para ACS decidimos seguir la siguiente clasificación:
+
+- Comercio de Vehículos.
+- Comercio al por Mayor.
+- Comercio al por Menor
+
+Para ACM y Agrupamiento, por conteos bajos, se sigue la siguiente:
+
+- Comercio al por Menor.
+- Comercio al por Mayor o de Vehículos.
+
+:::
+
+:::{.callout collapse="true"}
+## IDOJI - Edad de la Empresa.
+
+- Menos de 10 Años.
+- Entre 10 y 20 Años.
+- Entre 20 y 30 Años.
+- Más de 30 años.
 
 :::
 
 
+:::{.callout collapse="true"}
+## PROMUJ - La empresa tiene mujeres como socios comerciales.
+
+- Si.
+- No.
+
+:::
+
+:::{.callout collapse="true"}
+## PROHOM - La empresa tiene hombres como socios comerciales.
+
+- Si.
+- No.
+
+:::
+
+
+:::{.callout collapse="true"}
+## PERMUJ - Cantidad de mujeres contratadas de manera permanente.
+
+- Ninguna.
+- Entre 1 y 10.
+- Más de 10.
+
+:::
+
+:::{.callout collapse="true"}
+## PERHOM -  Cantidad de hombres contratados de manera permanente.
+
+- Ninguno.
+- Entre 1 y 10.
+- Más de 10.
+
+:::
+
+:::{.callout collapse="true"}
+## DIRMUJ - Cantidad de mujeres contratadas de manera directa.
+
+- Ninguna.
+- Entre 1 y 10.
+- Más de 10.
+
+:::
+
+:::{.callout collapse="true"}
+## DIRHOM - Cantidad de hombres contratados de manera directa.
+
+- Ninguno.
+- Entre 1 y 10.
+- Más de 10.
+
+:::
+
+
+:::{.callout collapse="true"}
+## AGENCIA - La empresa tiene personal contratado mediante agencia.
+
+- Si.
+- No.
+
+:::
+
+
+
+:::{.callout collapse="true"}
+## APRENDIZ - Cantidad de aprendices dentro de la empresa.
+
+- Ninguno.
+- Entre 1 y 3.
+- Más de 3.
+
+:::
+
+:::{.callout collapse="true"}
+## PUBLICI - Gastos relativos en publicidad.
+
+- Ninguno.
+- Bajos.
+- Moderados.
+- Altos. 
+
+*Para ACM y agrupamiento se pegan altos y moderados*
+:::
+
+
+:::{.callout collapse="true"}
+## TMÑEMP - Tamaño de la Empresa
+
+Siguiendo la clasificación de [2022](https://www.bancoldex.com/es/sobre-bancoldex/quienes-somos/clasificacion-de-empresas-en-colombia) según los ingresos brutos.
+
+- Microempresa.
+- Empresa Pequeña.
+- Empresa Mediana.
+- Empresa Grande.
+
+:::
+
+Las siguientes fueron usadas para el agrupamiento.
+
+:::{.callout collapse="true"}
+## INVPRO - Inventario Promedio relativo a ingresos brutos.
+
+- Bajo (Menos de 30%)
+- Medio (de 30% a 60%)
+- Alto (Más de 60%)
+ 
+:::
+
+:::{.callout collapse="true"}
+## VENTA - Percentil de las ventas causadas en el año relativas al promedio.
+
+- Bajas (UVT menor a 431196)
+- Medias (UVT entre 431196 y 1960692)
+- Altas (UVT mayor a 1960692)
+
+:::
+
+:::{.callout collapse="true"}
+## SUELDOS - Percentil de los sueldos y salarios causados en el año relativos a ingresos brutos.
+
+- Bajos (Menos de 10%)
+- Medios (de 10% a 20%)
+- Altos (Más de 20%)
+
+:::
+
+:::{.callout collapse="true"}
+## CONSUI - Percentil del consumo intermedio entre 1996 y 2006 relativo a los ingresos brutos.
+
+- Bajos (Menos de 15%)
+- Medios (de 15% a 25%)
+- Altos (Más de 25%)
+
+:::
+
+
+
+:::{.callout collapse="true"}
+## GASTOS - Percentil de costos y gastos operacionales relativos a los ingresos brutos.
+
+- Bajos (Menos de 15%)
+- Medios (de 15% a 25%)
+- Altos (Más a 25%)
+
+
+:::
+
+
+:::{.callout collapse="true"}
+## GASNOP - Percentil de costos y gastos no operacionales relativos a los ingresos brutos.
+
+- Bajos (Menos de 5%)
+- Medios (de 5% a 10%)
+- Altos (Más a 10%)
+
+:::
+
+
+## Variables Cuantitativas
+
+| **Identificador** | **Descripción** |
+|------------------------------------|------------------------------------|
+| BRUTA | Producción bruta de la empresa. |
+| CONSUI | Consumo intermedio entre 1996 y 2006. |
+| SUELDOS | Total de sueldos y salarios causados en el año. |
+| PRESTAC | Total en prestaciones sociales causadas en el año. |
+| VENTA | Ventas causadas en el año. |
+| AGREGA | Valor Agregado. |
+| SUEPLAN | Sueldos de planta. |
+| PREPLAN | Prestaciones de planta. |
+| COTIZA | Cotizaciones patronales obligatorias causadas en el año. |
+| TOTREM | Total en Remuneración. |
+| ROTACION | Rotación de Inventarios. |
+| INVPRO | Inventario Promedio. |
+| CTO | Costo de mercancia vendida. |
+| CTOINS | Total costo de la mercancía más costo de insumos de actividades relacionadas con el comercio. |
+| GASTOS | Total costos y gastos operacionales. |
+| GASTOSNOP | Subtotal Gastos no operacionales. |

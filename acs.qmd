@@ -2,9 +2,10 @@
 title: "Análisis de Correspondencias Simples"
 format: html
 editor: visual
-theme: lux
+theme: flatly
 echo: false
 ---
+
 ```{r}
 suppressMessages({
 # cambia idioma de la consola de R a español:
@@ -37,71 +38,18 @@ datos <- datos_orig[!is.na(as.numeric(datos_orig$BRUTA)) & as.numeric(datos_orig
 #Crearemos dos nuevas bases de datos, en este caso, para las variables discretas y continuas de nuestro interes.
 #IDOJ1
 discretas <- select(datos, CORRELA_16, IDAIO, PROMUJ, PROHOM, PERMUJ, PERHOM, DIRMUJ, DIRHOM, AGENCIA, APRENDIZ, PUBLICI, SOCIOS, PERSONOM, DIRECTO, TOTMUJ, TOTHOM)
-continuas <- select(datos, BRUTA, CONSUI, SUELDOS, PRESTAC, VENTA, AGREGA, SUEPLAN, PREPLAN, COTIZA, TOTREM, ROTACION, INVPRO, CTO, CTOINS, GASTOS, GASTOSNOP)
-                                                                    
-# convertimos los datos a tipo numerico. 
-continuas <- data.frame(lapply(continuas, function(x) as.numeric(as.character(x))))
-# convertimos a sus respectivos valores en pesos colombianos
-continuas <-1000*continuas
 
-#Ahora agregamos nuevas variables a continuas
-Clasifemp <-discretas$CORRELA_16
-continuas <- cbind(Clasifemp, continuas)
-
-#asignamos a los NA el valor de cero
-continuas[is.na(continuas)] <- 0 
-
-# Ahora, clasificamos los datos de tipo discret
-
-#Años empresa
-años <- as.integer(discretas$IDAIO)
-años[años < 1972] <- 1
-años[años >= 1972 & años < 1982] <- 2
-años[años >= 1982 & años < 1992] <- 3
-años[años >= 1992 & años < 2002] <- 4
-años[años >= 2002 & años < 2012] <- 5
-años[años >= 2012 & años < 2024] <- 6
-
-años <- factor(años, labels=c( "Mas de 50","Entre 40 y 50", "Entre 30 y 40", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
-discretas$IDAIO <- años
-#personal permanete
-permanente <- as.integer(discretas$PERSONOM)
-permanente [permanente >= 1 & permanente < 10 ] <- 1
-permanente [permanente >= 10 ] <- 2
-permanente <- factor(permanente, labels=c("(0)PERM", "(1-10)PERM", "(>10)PERM"))
-discretas$PERSONOM <- permanente 
-
-# Personal DIRECTO
-directo <- as.integer(discretas$DIRECTO)
-directo[directo >= 1 & directo<= 10 ] <- 1
-directo[directo  > 10 ] <- 2
-directo <- factor(directo, labels=c("(0)DIREC", "(1-10)DIREC", "(>10)DIREC"))
-discretas$DIRECTO <- directo
-
-#Total hombres
-thombres <- as.integer(discretas$TOTHOM)
-thombres[is.na(thombres)] <- 0 #Asignarle el valor de cero a los nas
-thombres[thombres >= 1 & thombres<= 10 ] <- 1
-thombres[thombres  > 10 ] <- 2
-thombres <- factor(thombres, labels=c("(0)HOMBRES", "(1-10)HOMBRES", "(>10)HOMBRES"))
-discretas$TOTHOM <- thombres
-
-
-#Total Mujeres
-tmujeres <- as.integer(discretas$TOTMUJ)
-tmujeres[is.na(tmujeres)] <- 0 #Asignarle el valor de cero a los nas
-tmujeres[tmujeres >= 1 & tmujeres < 10 ] <- 1
-tmujeres[tmujeres >= 10 ] <- 2
-tmujeres <- factor(tmujeres, labels=c("(0)MUJERES", "(1-10)MUJERES", "(>10)MUJERES"))
-discretas$TOTMUJ <- tmujeres
-
-# numero de socios
-n_socios <- as.numeric(datos$SOCIOS)
-n_socios[n_socios == 0 ] <- 0 #Asignarle el valor de cero a los nas
-n_socios[n_socios > 0 & n_socios < 4] <- 1
-n_socios[n_socios >= 4 & n_socios<100] <- 2
-n_socios <- factor(n_socios, labels=c("No Registra","Pocos Socios", "Bastantes Socios"))
-discretas$SOCIOS <- n_socios
+Tipempr <- discretas$CORRELA_16
+tipo1 <- list(454, 451, 453)
+tipo2 <- list(462, 464, 465, 466)
+tipo3 <- list("4711-472", 4719, 473, "4741-4742", 4752, "4759-4761", "4771-4751", 4772, 4773)
+# 
+Tipempr[Tipempr %in% tipo1] <- 1
+Tipempr[Tipempr %in% tipo2] <- 2
+Tipempr[Tipempr %in% tipo3] <- 3
+# 
+Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos", "Comercio al por mayor", "Comercio al por menor"))
+discretas$CORRELA_16 <- Tipempr
 
 #clasificamos las empresas segun su tamañó. Es este caso, basaremos la clasificaion "Decreto 957 de 2019".
 pbruta <- 1000*as.numeric(datos$BRUTA)
@@ -115,114 +63,6 @@ TMÑEMP[TMÑEMP > 2160692] <- 4
 TMÑEMP <- factor(TMÑEMP, labels=c("MIcroe", "PQempr", "MEdempr", "EmprGran"))
 discretas <- cbind(discretas, TMÑEMP)
 
-#Clasificamos publicidad, basandonos en el porcentaje gastado respecto a la produccion bruta.
-pbruta <- abs(pbruta/1000)
-publicidad <- as.numeric(discretas$PUBLICI)
-contador = as.integer(1)
-
-for(i in publicidad){
-  if (i/pbruta[contador] > 0 & i/pbruta[contador] <= 0.05){
-    publicidad[contador] <- 1 
-  }else if (i/pbruta[contador] > 0.05 & i/pbruta[contador] <= 0.1) {
-    publicidad[contador] <- 2 
-  }else if (i/pbruta[contador] > 0.1) {
-    publicidad[contador] <- 3
-  }
-  contador <- contador+1
-  
-}
-
-publicidad <- factor(publicidad, labels=c("Nopub", "Pubbaja", "Pubmod", "Pubalta"))
-discretas$PUBLICI <- publicidad
-
-#OTRAS POSIBLES CLASIFICACIONES
-
-
-# #Socios Mujeres
-smujeres <- as.integer(discretas$PROMUJ)
-smujeres[smujeres >= 1 ] <- 1
-smujeres <- factor(smujeres, labels=c("SisociosM", "NosociosM"))
-discretas$PROMUJ<- smujeres
-# 
-#Socios Hombres
-shombres <- as.integer(discretas$PROHOM)
-shombres[shombres >= 1 ] <- 1
-shombres <- factor(shombres, labels=c("SisociosH", "NosociosH"))
-discretas$PROHOM<- shombres
-
-#personal permanete mujeres
-pmujeres <- as.integer(discretas$PERMUJ)
-pmujeres[pmujeres >= 1 & pmujeres < 10 ] <- 1
-pmujeres[pmujeres >= 10 ] <- 2
-pmujeres <- factor(pmujeres, labels=c("(0)PerM", "(1-10)PerM", "(>10)PerM"))
-discretas$PERMUJ <- pmujeres
-
-# Personal permanente Hombres
-phombres <- as.integer(discretas$PERHOM)
-phombres[phombres >= 1 & phombres<= 10 ] <- 1
-phombres[phombres  > 10 ] <- 2
-phombres <- factor(phombres, labels=c("(0)PerH", "(1-10)PerH", "(>10)PerH"))
-discretas$PERHOM <- phombres
-# 
-# Personal Temporal Mujeres
-tmujeres <- as.integer(discretas$DIRMUJ)
-tmujeres[tmujeres >= 1 & tmujeres < 10 ] <- 1
-tmujeres[tmujeres >= 10 ] <- 2
-tmujeres <- factor(tmujeres, labels=c("(0)tempM", "(1-10)tempM", "(>10)tempM"))
-discretas$DIRMUJ <- tmujeres
-
-# Personal Temporal Hombres
-thombres <- as.integer(discretas$DIRHOM)
-thombres[thombres >= 1 & thombres<= 10 ] <- 1
-thombres[thombres  > 10 ] <- 2
-thombres <- factor(thombres, labels=c("(0)tempH", "(1-10)tempH", "(>10)tempH"))
-discretas$DIRHOM <- thombres
-# 
-# Personal temporal cont a través de agencias
-ptagenc <- as.integer(discretas$AGENCIA)
-ptagenc[ptagenc >= 1 & ptagenc < 10 ] <- 1
-ptagenc[ptagenc >= 10 ] <- 2
-ptagenc <- factor(ptagenc, labels=c("(0)PTAgenc", "(1-10)PTAgenc", "(>10)PTAgenc"))
-discretas$AGENCIA <- ptagenc
-# 
-# Aprendices
-aprendiz <- as.integer(discretas$APRENDIZ)
-aprendiz[aprendiz >= 1 & aprendiz<= 10 ] <- 1
-aprendiz[aprendiz  > 10 ] <- 2
-aprendiz <- factor(aprendiz, labels=c("(0)Apren", "(1-10)Apren", "(>10)Apren"))
-discretas$APRENDIZ <- aprendiz
-
-
-
-
-
-#Reclasificamos al tipo de empresas
-
-# Tipempr <- discretas$CORRELA_16
-# tipo1 <- list(454, 451, 453)
-# tipo2 <- list(462, 464, 465, 466)
-# tipo3 <- list("4711-472", 4719, 473, "4741-4742", 4752, "4759-4761", "4771-4751", 4772, 4773)
-# 
-# Tipempr[Tipempr %in% tipo1] <- 1
-# Tipempr[Tipempr %in% tipo2] <- 2
-# Tipempr[Tipempr %in% tipo3] <- 3
-# 
-# Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos", "Comercio al por mayor", "Comercio al por menor"))
-# discretas$CORRELA_16 <- Tipempr
-# 
-# table(discretas$IDOJ1)
-# K <- unclass(table(discretas$TMÑEMP, discretas$CORRELA_16))
-# K_add <- addmargins(K)
-
-#PCAshiny(continuas)
-#res.PCA<-PCA(continuas,quali.sup=c(1),graph=FALSE)
-#plot.PCA(res.PCA,choix='var',cex=1.2,cex.main=1.2,cex.axis=1.2 )
-#plot.PCA(res.PCA,axes=c(1,3),choix='var')
-#plot.PCA(res.PCA,axes=c(2,3),choix='var')
-#Reclasificamos algunas variables para poder tener categorias uniformes
-
-#Reclasificamos edad
-
 años <- as.integer(datos$IDAIO)
 años[años < 1992] <- 1
 años[años >= 1992 & años < 2002] <- 2
@@ -235,16 +75,15 @@ discretas$IDAIO <- años
 #Reclasificamos al tipo de empresas
 
 ```
-Dado que la variable **BRUTA** demostró ser la más importante en el ACP, decicimos dos hacer comparaciones entre esta, usando la clasificación de **Tamaño** por empresas según sus ingresos brutos. Las variables que elegimos son las siguientes.
-- **Tipo de Empresa**
-- **Edad de la Empresa**
+
+Dado que la variable **BRUTA** demostró ser la más importante en el ACP, decicimos dos hacer comparaciones entre esta, usando la clasificación de **Tamaño** por empresas según sus ingresos brutos. Las variables que elegimos son las siguientes. - **Tipo de Empresa** - **Edad de la Empresa**
 
 Tambien, para complementar la segunda realizamos una comparación entre **Edad de la Empresa** y **Tipo de Empresa**.
 
-::: {#tip-example .callout-tip}
+::: {.callout-tip collapse="true"} 
 ## ¿Por qué no combinar categorías empresas grandes y medianas?
 
-En los siguientes tres análisis se notará que no pegamos empresas grandes y medianas así el conteo relativo tan bajo de empresas de gran tamaño pueda afectar los ACS. Esto con el motivo de que en Colombia ambos grupos suelen ser tratados por separado; es común ver en el debate político, en informes económicos, y demás el uso del término PYMEs (Pequeñas y Medianas Empresas). Además al estar soportándonos de ayudas de interpretación y revisando constantemente que el conteo relativo no sea menor al 0.1%, consideramos que podemos mantener la calidad de los análisis sin hacer mayores cambios.
+En los siguientes tres análisis se notará que no pegamos empresas grandes y medianas así el conteo relativo tan bajo de empresas de gran tamaño pueda afectar los ACS. Esto con el motivo de que en Colombia ambos grupos suelen ser tratados por separado; es común ver en el debate político, en informes económicos, y demás el uso del término PYMEs (Pequeñas y Medianas Empresas). Además al estar soportándonos de ayudas de interpretación y revisando constantemente que el conteo relativo no sea menor al 0.1%, consideramos que podemos mantener la calidad de los análisis sin hacer mayores cambios. 
 
 :::
 
@@ -255,7 +94,6 @@ ACS entre las variables **Tamaño** (cuatro categorías) y **CIIU** (tres catego
 ### Objetivos
 
 Queremos analizar la pertenencia a un sector comercial con el tamaño de las empresas. Al ser CIIU cuantitativa esto no sería posible en ACP. Además vemos útil poder conocer la composición de cada mercado censado en la EAC.
-
 
 De esta manera, primero notemos que no va a ser posible usar la clasificación completa de CIIU debido al bajo conteo de frecuencias relativas que podrán dañar el ACS:
 
@@ -269,16 +107,15 @@ kable(rel_freq1)
 Así, decidimos aplicar la siguiente reclasificación:
 
 ::: {.callout collapse="false"}
-
 ## Reclasificación
 
-  -   Comercio de Vehículos
-  -   Comercio al por Mayor
-  -   Comercio al por Menor
-  
+-   Comercio de Vehículos
+-   Comercio al por Mayor
+-   Comercio al por Menor
 :::
 
 Nos quedan la siguientes tablas:
+
 ```{r}
 suppressWarnings({
   
@@ -300,6 +137,7 @@ rel_freq1<-prop.table(freq1)*100})
 
 ::: {.callout collapse="true"}
 ## Freq Absolutas
+
 ```{r}
 kable(freq1)
 ```
@@ -307,12 +145,11 @@ kable(freq1)
 
 ::: {.callout collapse="false"}
 ## Freq Relativas
+
 ```{r}
 kable(rel_freq1)
 ```
 :::
-
-
 
 Así se muestre una categoría de conteo bajo en empresas grandes, se mantiene coherente realizar el análisis.
 
@@ -320,10 +157,10 @@ Así se muestre una categoría de conteo bajo en empresas grandes, se mantiene c
 
 Como ayudas a la futura interpretación mostramos ambas tablas de perfiles:
 
-::: columns
-
+:::::: columns
 ::: {.column width="49%"}
 #### Perfil Fila (Tamaño)
+
 ```{r}
 colores <- rainbow(12, rev = TRUE)
 K1<-unclass(table(discretas$TMÑEMP,discretas$CORRELA_1));
@@ -336,27 +173,23 @@ K1<-unclass(table(discretas$TMÑEMP,discretas$CORRELA_1));
 kable(tabs1[3]);
 ```
 
-
 ```{r}
 plotct(K1, "row", col = colores[1:7])
 ```
-
 :::
 
 ::: {.column width="2%"}
-
 :::
 
 ::: {.column width="49%"}
 #### Perfil Columna (Tipo)
+
 ```{r}
 kable(tabs1[2])
 plotct(K1, "col", col = colores[9:12])
 ```
 :::
-
-:::
-
+::::::
 
 ### Resultados
 
@@ -366,24 +199,24 @@ Ahora se realiza el ACS tomando en cuenta todas las categorías (así sea riesgo
  acs1<-dudi.coa(K1,scannf=FALSE)
 plot(acs1, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamaño - Tipo de empresa")
 ```
+
 Así se pueden encontrar relaciones cuasi-baricéntricas entre la distribucion que siguen los comercios.
 
 ### Conclusiones
 
 Analizando el gráfico y las ayudas de interpretación, se llega a las siguientes conclusiones:
 
-- El comercio al por menor, según el ACS, está muy ligado a la microempresa; se puede ver en el gráfico de columnas es el que más se diferencia a la distribución marginal. Nótese que va mucho más relacionado al área de la microempresa, donde esta es más de la mitad.
+-   El comercio al por menor, según el ACS, está muy ligado a la microempresa; se puede ver en el gráfico de columnas es el que más se diferencia a la distribución marginal. Nótese que va mucho más relacionado al área de la microempresa, donde esta es más de la mitad.
 
-- EL ACS tambien señala relación entre pequeña empresa y comercio al por mayor, pero nótese que en el gráfico marginal columnas no hay una marcada diferencia entre la cantidad marginal de pequeña empresa con la cantidad al por mayor, cuando en cambio si hay una diferencia mas marcada en la microempresa.
+-   EL ACS tambien señala relación entre pequeña empresa y comercio al por mayor, pero nótese que en el gráfico marginal columnas no hay una marcada diferencia entre la cantidad marginal de pequeña empresa con la cantidad al por mayor, cuando en cambio si hay una diferencia mas marcada en la microempresa.
 
-- A su vez, el ACS señala una relación, menos marcada, entre comercio de vehiculos y empresas grandes o medianas. Si analizamos el gráfico marginal de filas, se notará que ambos tamaños de empresas son mayores al "promedio", pero es con la mediana empresa que se muestra una relación marcada; en cambio con la empresa grande esta relación no se diferencia particularmente de la marginal y es similar a la distribución de empresas pequeñas orientadas al comercio de vehículos.
+-   A su vez, el ACS señala una relación, menos marcada, entre comercio de vehiculos y empresas grandes o medianas. Si analizamos el gráfico marginal de filas, se notará que ambos tamaños de empresas son mayores al "promedio", pero es con la mediana empresa que se muestra una relación marcada; en cambio con la empresa grande esta relación no se diferencia particularmente de la marginal y es similar a la distribución de empresas pequeñas orientadas al comercio de vehículos.
 
-- Se podría concluir a partir de la discribución de la microempresa, al ser de por sí conocida por no tener comúnmente los recursos para hacer inversiones de alto calibre, que el mercado vehicular implica tener una cantidad de activos considerable.
+-   Se podría concluir a partir de la discribución de la microempresa, al ser de por sí conocida por no tener comúnmente los recursos para hacer inversiones de alto calibre, que el mercado vehicular implica tener una cantidad de activos considerable.
 
-- Tambien hay que resaltar la baja tendencia de empresas medianas y pequeñas a enfocarse en mercados al por menor; aunque es entendible, dado que comúnmente en colombia no encontramos un intermedio entre grandes cadenas de víveres al por menor, con tiendas de barrio enfocadas en el mismo mercado.
+-   Tambien hay que resaltar la baja tendencia de empresas medianas y pequeñas a enfocarse en mercados al por menor; aunque es entendible, dado que comúnmente en colombia no encontramos un intermedio entre grandes cadenas de víveres al por menor, con tiendas de barrio enfocadas en el mismo mercado.
 
 ## Tamaño con Edad
-
 
 ACS entre las variables **Tamaño** (cuatro categorías) y **Edad** (seis categorías).
 
@@ -393,12 +226,12 @@ Verificar si el tamaño de las de empresas va relacionado con su edad. Este es p
 
 ::: {.callout collapse="true"}
 ## Freq Absolutas
+
 ```{r}
 freq2<-table(discretas$TMÑEMP,discretas$IDAIO)
 rel_freq2<-prop.table(freq2)*100
 kable(freq2)
 ```
-
 :::
 
 ::: {.callout collapse="false"}
@@ -411,15 +244,14 @@ kable(rel_freq2)
 
 Se ve que nuevamente hay un muy bajo conteo de empresas grandes. Lo que seguramente será un problema dada la importancia que tendrán los datos, de todas formas al tenerse las ayudas de interpretación y los conteos no ser tan lejanos de un 1%, se tendrá en cuenta la variable.
 
-
 ### Perfiles Fila y Columna
 
 Como ayudas a la futura interpretación mostramos ambas tablas de perfiles:
 
-::: columns
-
+:::::: columns
 ::: {.column width="49%"}
 #### Perfil Fila (Tamaño)
+
 ```{r}
 colores <- rainbow(12, rev = TRUE)
 K2<-unclass(table(discretas$TMÑEMP,discretas$IDAIO));
@@ -432,27 +264,23 @@ K2<-unclass(table(discretas$TMÑEMP,discretas$IDAIO));
 kable(tabs2[3]);
 ```
 
-
 ```{r}
 plotct(K2, "row", col = colores[1:7])
 ```
-
 :::
 
 ::: {.column width="2%"}
-
 :::
 
 ::: {.column width="49%"}
 #### Perfil Columna (Edad)
+
 ```{r}
 kable(tabs2[2])
 plotct(K2, "col", col = colores[9:12])
 ```
 :::
-
-:::
-
+::::::
 
 ### Resultados
 
@@ -463,18 +291,15 @@ Ahora se realiza el ACS tomando en cuenta todas las categorías. A pesar del baj
 plot(acs2, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Tamaño - Edad de la Empresa")
 ```
 
-
 ### Conclusiones
 
-- Se puede ver una relación entre microempresas o empresas pequeñas y edades menores o iguales a 20 años. Nótese que si tomamos en cuenta ambas, en el conteo de microempresas, efectivamente en el gráfico marginal se divisa esta distribución; aunque cabe a resaltar que este tamaño de empresa es casi igual al promedio. Es entendible dado a que el conteo de microempresas y empresas pequeñas corresponde a aproximadamente el 90% de todas las empresas censadas.
+-   Se puede ver una relación entre microempresas o empresas pequeñas y edades menores o iguales a 20 años. Nótese que si tomamos en cuenta ambas, en el conteo de microempresas, efectivamente en el gráfico marginal se divisa esta distribución; aunque cabe a resaltar que este tamaño de empresa es casi igual al promedio. Es entendible dado a que el conteo de microempresas y empresas pequeñas corresponde a aproximadamente el 90% de todas las empresas censadas.
 
-- Las empresas grandes en el gráfico de proyecciones se muestran con una longitud alta; esto es entendible dado el bajo conteo de las empresas. De todas formas están en una dirección parecida a las empresas de 30 o más años de existencia; revisando el gráfico de filas, se puede comprender este comportamiento; debido a que las empresas grandes se diferencian de la distribución marginal particularmente en la categoría de 30 años.
+-   Las empresas grandes en el gráfico de proyecciones se muestran con una longitud alta; esto es entendible dado el bajo conteo de las empresas. De todas formas están en una dirección parecida a las empresas de 30 o más años de existencia; revisando el gráfico de filas, se puede comprender este comportamiento; debido a que las empresas grandes se diferencian de la distribución marginal particularmente en la categoría de 30 años.
 
-- Se puede apreciar en el ACS que la distancia entre empresas de 10 a 20 años aumenta según eñ tamaño que tengan. Este comportamiento se confirma en la tabla de filas; tambien se muestra un comportamiento similar según las empresas con 30 o más años. Es interesante que este comportamiento no lo siguen las clasificaciones de "Menos de 10" y "Entre 20 y 30". De esta manera, se podría suponer una relación a revisar entre las primeras dos clasificaciones de edades.
-
+-   Se puede apreciar en el ACS que la distancia entre empresas de 10 a 20 años aumenta según eñ tamaño que tengan. Este comportamiento se confirma en la tabla de filas; tambien se muestra un comportamiento similar según las empresas con 30 o más años. Es interesante que este comportamiento no lo siguen las clasificaciones de "Menos de 10" y "Entre 20 y 30". De esta manera, se podría suponer una relación a revisar entre las primeras dos clasificaciones de edades.
 
 ## Edad con Tipo de Empresa
-
 
 ACS entre las variables **Edad de la Empresa** (cuatro categorías) y **Tipo de Empresa** (tres categorías).
 
@@ -484,12 +309,12 @@ Para complementar el análisis anterior, realizaremos la comparación entre esta
 
 ::: {.callout collapse="true"}
 ## Freq Absolutas
+
 ```{r}
 freq3<-table(discretas$IDAIO,discretas$CORRELA_16)
 rel_freq3<-prop.table(freq3)*100
 kable(freq3)
 ```
-
 :::
 
 ::: {.callout collapse="false"}
@@ -500,16 +325,16 @@ kable(rel_freq3)
 ```
 :::
 
-Nótese 
+Nótese
 
 ### Perfiles Fila y Columna
 
 Como ayudas a la futura interpretación mostramos ambas tablas de perfiles:
 
-::: columns
-
+:::::: columns
 ::: {.column width="49%"}
 #### Perfil Fila (Tamaño)
+
 ```{r}
 colores <- rainbow(12, rev = TRUE)
 K3<-unclass(table(discretas$IDAIO,discretas$CORRELA_16));
@@ -522,61 +347,57 @@ K3<-unclass(table(discretas$IDAIO,discretas$CORRELA_16));
 kable(tabs3[3]);
 ```
 
-
 ```{r}
 plotct(K3, "row", col = colores[1:7])
 ```
-
 :::
 
 ::: {.column width="2%"}
-
 :::
 
 ::: {.column width="49%"}
 #### Perfil Columna (Edad)
+
 ```{r}
 kable(tabs3[2])
 plotct(K3, "col", col = colores[9:12])
 ```
 :::
-
-:::
-
+::::::
 
 ### Resultados
-
 
 ```{r}
 
 ```
 
 Mostradas las gráficas, a continuación mostramos el gráfico de ACS; que contiene más del 99% de la información.
+
 ```{r}
  acs3<-dudi.coa(K3,scannf=FALSE)
 plot(acs3, ex=1, ey=2, asp=1, cframe=1, gg=TRUE, main = "Edad con Tipo de Empresa")
 ```
+
 ### Conclusiones
 
-- Se muestra que en la dirección de comercio al por menor se arrastran particularmente las categorías de empresas con menos de 10 años; seguidas de las de entre 20 y 10 años que se ven menos relacionadas y pueden estar mas distribuidas al comercio al por mayor; este último poco correlacionado al Eje 1. Se puede confirmar en la gráfica de columnas que las empresas de menos de 10 años se diferencian ligeramente de la media.
+-   Se muestra que en la dirección de comercio al por menor se arrastran particularmente las categorías de empresas con menos de 10 años; seguidas de las de entre 20 y 10 años que se ven menos relacionadas y pueden estar mas distribuidas al comercio al por mayor; este último poco correlacionado al Eje 1. Se puede confirmar en la gráfica de columnas que las empresas de menos de 10 años se diferencian ligeramente de la media.
 
-- Tambien se puede notar, que el comercio al por menor se aleja según la categoría jerárquica de edad; esto se confirma en la gráfica de filas donde se muestra que las empresas, mientras mayor edad tengan, menos tienden a manejarse en mercados al por menor. De todas formas este comportamiento parece ser difícil de confirmar debido a la reducción de conteo de empresas según su edad.
+-   Tambien se puede notar, que el comercio al por menor se aleja según la categoría jerárquica de edad; esto se confirma en la gráfica de filas donde se muestra que las empresas, mientras mayor edad tengan, menos tienden a manejarse en mercados al por menor. De todas formas este comportamiento parece ser difícil de confirmar debido a la reducción de conteo de empresas según su edad.
 
-- Se podría decir que estas tres clasificaciones se muestran bastante homogéneas segun la edad (no hay relación entre la edad de una empresa y el mercado donde se desarrolle) debido a que, así las empresas al por menor se distribuyan principalmente entre "Menos de 10" y "Entre 20 y 10", es de notarse la longitud de la proyección y particularmente que este comportamiento no se presenta tan fuerte en demás secciones del gráfico. Tambien revisando la gráfica de columnas se ve que no se diferencian tanto como se esperaría al verse una relación entre ambas.
+-   Se podría decir que estas tres clasificaciones se muestran bastante homogéneas segun la edad (no hay relación entre la edad de una empresa y el mercado donde se desarrolle) debido a que, así las empresas al por menor se distribuyan principalmente entre "Menos de 10" y "Entre 20 y 10", es de notarse la longitud de la proyección y particularmente que este comportamiento no se presenta tan fuerte en demás secciones del gráfico. Tambien revisando la gráfica de columnas se ve que no se diferencian tanto como se esperaría al verse una relación entre ambas.
 
 ## Conclusiones Generales
 
-- Se podría decir que en Colombia todos los comercios tienen una gran variedad de inversiones en creación de empresa, donde las de gran tamaño no suelen irse a empresas de comercio al por menor; esto en cierta forma podría explicarse con que ya de por sí en el país contamos con una gran variedad de empresas grandes de este tipo, así podría ser considerado en estudios de mercado como un tipo de comercio al que es bastante complicado de adentrarse con inversiones grandes, tal vez al punto de declarársele monopolio.
+-   Se podría decir que en Colombia todos los comercios tienen una gran variedad de inversiones en creación de empresa, donde las de gran tamaño no suelen irse a empresas de comercio al por menor; esto en cierta forma podría explicarse con que ya de por sí en el país contamos con una gran variedad de empresas grandes de este tipo, así podría ser considerado en estudios de mercado como un tipo de comercio al que es bastante complicado de adentrarse con inversiones grandes, tal vez al punto de declarársele monopolio.
 
-- Las empresas más jóvenes (menos de 10 años) se inclinan hacia el comercio al por menor, mientras que las más antiguas (más de 20 años) tienden hacia el comercio al por mayor. Sin embargo, las diferencias en la distribución de empresas según su edad no son tan pronunciadas.
+-   Las empresas más jóvenes (menos de 10 años) se inclinan hacia el comercio al por menor, mientras que las más antiguas (más de 20 años) tienden hacia el comercio al por mayor. Sin embargo, las diferencias en la distribución de empresas según su edad no son tan pronunciadas.
 
-- Las microempresas tienen una fuerte relación con el comercio al por menor, destacándose en la distribución marginal, mientras que las pequeñas empresas no muestran una variación significativa en este aspecto.
+-   Las microempresas tienen una fuerte relación con el comercio al por menor, destacándose en la distribución marginal, mientras que las pequeñas empresas no muestran una variación significativa en este aspecto.
 
-- El comercio de vehículos está más vinculado a empresas medianas que a grandes, y estas últimas no se diferencian notablemente de la distribución promedio en este sector.
+-   El comercio de vehículos está más vinculado a empresas medianas que a grandes, y estas últimas no se diferencian notablemente de la distribución promedio en este sector.
 
-- El mercado vehicular requiere recursos considerables, lo que explica la baja participación de microempresas en este mercado.
+-   El mercado vehicular requiere recursos considerables, lo que explica la baja participación de microempresas en este mercado.
 
-- Existe una relación entre empresas de entre 10 y 20 años y su tamaño, especialmente en las microempresas y pequeñas empresas, que representan alrededor del 90% de todas las empresas censadas.
+-   Existe una relación entre empresas de entre 10 y 20 años y su tamaño, especialmente en las microempresas y pequeñas empresas, que representan alrededor del 90% de todas las empresas censadas.
 
-- Las empresas medianas y pequeñas muestran una baja tendencia a operar en mercados al por menor, lo cual refleja una estructura empresarial en Colombia donde predominan grandes cadenas y tiendas de barrio.
-
+-   Las empresas medianas y pequeñas muestran una baja tendencia a operar en mercados al por menor, lo cual refleja una estructura empresarial en Colombia donde predominan grandes cadenas y tiendas de barrio.

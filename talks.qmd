@@ -15,15 +15,7 @@ En este código se sigue el proceso de reclasificación de distintas variables, 
 
 ```{{r}}
 
-#Importamos Librerias
-library(readxl)
-library(FactoClass)
 library(plotly)
-library(knitr)
-library(ggplot2)
-library(dplyr)
-
-#Importamos la base de datos
 setwd("C:/Users/thetr/OneDrive/Documentos/R/Proyecto EDM")
 ruta_del_archivo <- "EAC_CIFRAS_2022_ANONIMIZADA_FINAL.csv"
 datos_orig <- read.csv(ruta_del_archivo, sep = ";", dec = ",")
@@ -32,31 +24,70 @@ datos_orig <- read.csv(ruta_del_archivo, sep = ";", dec = ",")
 #Asi que, eliminaremos aquellos datos que tengan produccion bruta =0 (Son alrededor de 200 datos).
 datos <- datos_orig[!is.na(as.numeric(datos_orig$BRUTA)) & as.numeric(datos_orig$BRUTA) != 0, ]
 
-#usaremos la Libreria dplyr crear dos nuevas bases de datos, en este caso, para las variables discretas y continuas de nuestro interes.
-discretas <- select(datos, CORRELA_16, IDOJ1, IDAIO, PROMUJ, PROHOM, PERMUJ, PERHOM, DIRMUJ, DIRHOM, AGENCIA, APRENMUJ, APRENHOM, PUBLICI)
+#Crearemos dos nuevas bases de datos, en este caso, para las variables discretas y continuas de nuestro interes.
+#IDOJ1
+discretas <- select(datos, CORRELA_16, IDAIO, PROMUJ, PROHOM, PERMUJ, PERHOM, DIRMUJ, DIRHOM, AGENCIA, APRENDIZ, PUBLICI)
 continuas <- select(datos, BRUTA, CONSUI, SUELDOS, PRESTAC, VENTA, AGREGA, SUEPLAN, PREPLAN, COTIZA, TOTREM, ROTACION, INVPRO, CTO, CTOINS, GASTOS, GASTOSNOP)
-
+                                                                    
 # convertimos los datos a tipo numerico. 
 continuas <- data.frame(lapply(continuas, function(x) as.numeric(as.character(x))))
 # convertimos a sus respectivos valores en pesos colombianos
 continuas <-1000*continuas
-# Ahora, clasificamos los datos de tipo discreto.
 
-#Años empresa
-años <- as.integer(discretas$IDAIO)
-años[años < 1973] <- 1
-años[años >= 1973 & años < 2003] <- 2
-años[años >= 2003 & años < 2013] <- 3
-años[años >= 2013 & años < 2024] <- 4
-años <- factor(años, labels=c(">30 ", "20-30", "10-20", "<10 "))
+#Ahora agregamos nuevas variables a continuas
+Clasifemp <-discretas$CORRELA_16
+continuas <- cbind(Clasifemp, continuas)
+
+#asignamos a los NA el valor de cero
+continuas[is.na(continuas)] <- 0 
+
+# Ahora, clasificamos los datos de tipo discret
+
+#Reclasificamos edad
+años <- as.integer(datos$IDAIO)
+años[años < 1992] <- 1
+años[años >= 1992 & años < 2002] <- 2
+años[años >= 2002 & años < 2012] <- 3
+años[años >= 2012 & años < 2024] <- 4
+años <- factor(años, labels=c( "Mas de 30", "Entre 30 y 20", "Entre 20 y 10", "Menos de 10"))
 discretas$IDAIO <- años
 
-#Socios Mujeres
+#clasificamos las empresas segun su tamañó. Es este caso, basaremos la clasificaion "Decreto 957 de 2019".
+pbruta <- 1000*as.numeric(datos$BRUTA)
+#precio uvt añó 2022
+uvt22 = 38004
+TMÑEMP <- unlist(pbruta/uvt22)
+TMÑEMP[TMÑEMP <= 44769 ] <- 1
+TMÑEMP[TMÑEMP > 44769 & TMÑEMP <= 431196] <- 2
+TMÑEMP[TMÑEMP > 431196 & TMÑEMP <= 2160692] <- 3
+TMÑEMP[TMÑEMP > 2160692] <- 4
+TMÑEMP <- factor(TMÑEMP, labels=c("MIcroe", "PQempr", "MEdempr", "EmprGran"))
+discretas <- cbind(discretas, TMÑEMP)
+
+#Clasificamos publicidad, basandonos en el porcentaje gastado respecto a la produccion bruta.
+pbruta <- abs(pbruta/1000)
+publicidad <- as.numeric(discretas$PUBLICI)
+contador = as.integer(1)
+
+for(i in publicidad){
+  if (i/pbruta[contador] > 0 & i/pbruta[contador] < 0.02){
+    publicidad[contador] <- 1 
+  }else if (i/pbruta[contador] >= 0.02 ) {
+    publicidad[contador] <- 2 
+  }
+  contador <- contador+1
+  
+}
+
+publicidad <- factor(publicidad, labels=c("Nopub", "Pubbaja", "Pubmod"))
+discretas$PUBLICI <- publicidad
+
+# #Socios Mujeres
 smujeres <- as.integer(discretas$PROMUJ)
 smujeres[smujeres >= 1 ] <- 1
 smujeres <- factor(smujeres, labels=c("SisociosM", "NosociosM"))
 discretas$PROMUJ<- smujeres
-
+ 
 #Socios Hombres
 shombres <- as.integer(discretas$PROHOM)
 shombres[shombres >= 1 ] <- 1
@@ -91,58 +122,82 @@ thombres[thombres  > 10 ] <- 2
 thombres <- factor(thombres, labels=c("(0)tempH", "(1-10)tempH", "(>10)tempH"))
 discretas$DIRHOM <- thombres
 
-# Personal temporal cont a través de agencias - Mujeres
+# Personal temporal cont a través de agencias
 ptagenc <- as.integer(discretas$AGENCIA)
-ptagenc[ptagenc >= 1 & ptagenc < 10 ] <- 1
-ptagenc[ptagenc >= 10 ] <- 2
-ptagenc <- factor(ptagenc, labels=c("(0)PTAgenc", "(1-10)PTAgenc", "(>10)PTAgenc"))
+ptagenc[ptagenc >= 1 ] <- 1
+ptagenc <- factor(ptagenc, labels=c("NoperAgencia", "SiperAgencia" ))
 discretas$AGENCIA <- ptagenc
 
-# Aprendices Mujeres
-amujeres <- as.integer(discretas$APRENMUJ)
-amujeres[amujeres >= 1 & amujeres < 10 ] <- 1
-amujeres[amujeres >= 10 ] <- 2
-amujeres <- factor(amujeres, labels=c("(0)AprenM", "(1-10)AprenM", "(>10)AprenpM"))
-discretas$APRENMUJ <- amujeres
+# Aprendices
+aprendiz <- as.integer(discretas$APRENDIZ)
+aprendiz[aprendiz >= 1 & aprendiz< 3 ] <- 1
+aprendiz[aprendiz  >= 3 ] <- 2
+aprendiz <- factor(aprendiz, labels=c("(0)Apren", "(1-3)Apren", "(>3)Apren"))
+discretas$APRENDIZ <- aprendiz
 
-# Aprendices Hombres
-ahombres <- as.integer(discretas$APRENHOM)
-ahombres[ahombres >= 1 & ahombres<= 10 ] <- 1
-ahombres[ahombres  > 10 ] <- 2
-ahombres <- factor(ahombres, labels=c("(0)AprenH", "(1-10)AprenH", "(>10)AprenH"))
-discretas$APRENHOM <- ahombres
+Tipempr <- discretas$CORRELA_16
+tipo1 <- list(454, 451, 453, 462, 464, 465, 466)
+tipo2 <- list("4711-472", 4719, 473, "4741-4742", 4752, "4759-4761", "4771-4751", 4772, 4773)
 
-#clasificamos las empresas segun su tamañó. Es este caso, basaremos la clasificaion "Decreto 957 de 2019".
-pbruta <- as.numeric(continuas$BRUTA)
-#precio uvt añó 2022
+Tipempr[Tipempr %in% tipo1] <- 1
+Tipempr[Tipempr %in% tipo2] <- 2
+
+Tipempr <- factor(as.integer(Tipempr), labels=c("Comercio vehiculos y al por mayor", "Comercio al por menor"))
+discretas$CORRELA_16 <- Tipempr
+
+bruta = unlist(continuas[2])
+
+gasnop = unlist(continuas[17])
+porcentaje = gasnop/bruta
+gasnop[porcentaje  <= 0.05 ] <- 1
+gasnop[porcentaje  > 0.05 & porcentaje  <= 0.1] <- 2
+gasnop[porcentaje  > 0.1] <- 3
+gasnop = factor(gasnop, labels=c("Gastonop-bajo", "Gastonop-medio", "Gastonop-alto"))
+discretas<- cbind(discretas,gasnop)
+
+gastos = unlist(continuas[16])
+porcentaje = bruta/gastos
+gastos[porcentaje <= 0.3 ] <- 1
+gastos[porcentaje  > 0.3 & porcentaje  <= 0.4] <- 2
+gastos[porcentaje  > 0.4] <- 3
+gastos = factor(gastos, labels=c("Gasto-bajo", "Gasto-medio", "Gasto-alto"))
+discretas<- cbind(discretas,gastos)
+
+invpro = unlist(continuas[13])
+porcentaje = invpro/bruta
+invpro[porcentaje <= 0.3 ] <- 1
+invpro[porcentaje  > 0.3 & porcentaje  <= 1] <- 2
+invpro[porcentaje  > 1] <- 3
+invpro = factor(invpro, labels=c("invpro-bajo", "invpro-medio", "invpro-alto"))
+discretas<- cbind(discretas,invpro)
+
 uvt22 = 38004
-TMÑEMP <- unlist(pbruta/uvt22)
-TMÑEMP[TMÑEMP <= 44769 ] <- 1
-TMÑEMP[TMÑEMP > 44769 & TMÑEMP <= 431196] <- 2
-TMÑEMP[TMÑEMP > 431196 & TMÑEMP <= 2160692] <- 3
-TMÑEMP[TMÑEMP > 2160692] <- 4
-TMÑEMP <- factor(TMÑEMP, labels=c("MIcroe", "PQempr", "MEdempr", "EmprGran"))
-discretas <- cbind(discretas, TMÑEMP)
-#Clasificamos publicidad, basandonos en el porcentaje gastado respecto a la produccion bruta.
+venta = unlist(continuas[6])
+porcentaje = venta/ uvt22
+venta[porcentaje <= 431196 ] <- 1
+venta[porcentaje  > 431196 & porcentaje  <= 1960692] <- 2
+venta[porcentaje  > 1960692] <- 3
 
-pbruta <- abs(pbruta/1000)
-publicidad <- as.numeric(discretas$PUBLICI)
-contador = as.integer(1)
+venta = factor(venta, labels=c("venta-bajo", "venta-medio", "venta-alto"))
+discretas<- cbind(discretas,venta)
 
-for(i in publicidad){
-  if (i/pbruta[contador] > 0 & i/pbruta[contador] <= 0.05){
-    publicidad[contador] <- 1 
-  }else if (i/pbruta[contador] > 0.05 & i/pbruta[contador] <= 0.1) {
-    publicidad[contador] <- 2 
-  }else if (i/pbruta[contador] > 0.1) {
-    publicidad[contador] <- 3
-  }
-  contador <- contador+1
-  
-}
+#Sueldos 
+sueldos = unlist(continuas[4])
+porcentaje = sueldos/bruta
+sueldos[porcentaje <= 0.2 ] <- 1
+sueldos[porcentaje  > 0.2 & porcentaje  <= 0.3] <- 2
+sueldos[porcentaje  > 0.3] <- 3
+sueldos = factor(sueldos, labels=c("sueldos-bajo", "sueldos-medio", "sueldos-alto"))
+discretas<- cbind(discretas,sueldos)
 
-publicidad <- factor(publicidad, labels=c("Nopub", "Pubbaja", "Pubmod", "Pubalta"))
-discretas$PUBLICI <- publicidad
+#Consumo intermedio años 1996-2006
+consui = unlist(continuas[3])
+porcentaje = consui/bruta
+consui[porcentaje <= 0.15 ] <- 1
+consui[porcentaje  > 0.15 & porcentaje  <= 0.25] <- 2
+consui[porcentaje  > 0.25] <- 3
+consui = factor(consui, labels=c("consui-bajo", "consui-medio", "consui-alto"))
+discretas<- cbind(discretas,consui)
 
 ```
 :::
