@@ -180,7 +180,7 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="introducción" class="level2">
 <h2 class="anchored" data-anchor-id="introducción">Introducción</h2>
-<p>En ACM se lograron varios resultados interesantes a la vez que se encontró un patrón. Siguiendo la recomendación del profesor, <strong>decidimos implementar más variables al análisis</strong>; variables que no tomamos en cuenta por no ir acordes a los objetivos del análisis. Debido a que buscamos dar con clasificaciones de empresas, en este punto consideramos como buena idea recabar la mayor cantidad de información posible.</p>
+<p>En ACM se lograron varios resultados interesantes a la vez que se encontró un patrón. Siguiendo la recomendación del profesor, <strong>decidimos implementar más variables al análisis</strong>, incorporando las 6 variables continuas mas importantes descritas en el ACP. Esta variables fueron discretizadas para poder desarrollar el análisis. Debido a que buscamos dar con clasificaciones de empresas, en este punto consideramos como buena idea recabar la mayor cantidad de información posible.</p>
 <div class="callout callout-style-simple callout-none no-icon callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -339,8 +339,7 @@ Desplegar
 <h2 class="anchored" data-anchor-id="objetivos">Objetivos</h2>
 <ul>
 <li><p>Como Colombia es un país con una gran variedad de contextos en los que se puede desarrollar una empresa, consideramos que en cierta forma clasificar empresas según lo que reporten en tributación puede estar dejando a un lado una gran cantidad de información relevante para el desarrollo de cada una, así consideramos que al tomar en cuenta la mayor cantidad posible de variables categóricas que no sean necesariamente dependientes de los ingresos brutos reportados, podríamos hallar agrupaciones de empresas nuevas.</p></li>
-<li><p>Tomando en cuenta el ACP y sus conclusiones, donde se halló a <strong>BRUTA</strong> (ingresos brutos) como una variable representativa de la gran mayoría de variables cuantitativas, consideramos que debemos buscar relaciones entre estas agrupaciones y esta variable dada su importancia.</p></li>
-<li><p>Tomar en cuenta las agrupaciones y revisar características particulares que puedan tener, esto a través de una proyección de ACM</p></li>
+<li><p>Tomar en cuenta las agrupaciones y revisar características particulares que puedan tener, esto a través de una proyección de ACP y ACM.</p></li>
 </ul>
 </section>
 <section id="acm-previo" class="level2">
@@ -510,7 +509,7 @@ The number of axes for clustering is  10 </code></pre>
 Partition in  5  clusters</code></pre>
 </div>
 </div>
-<p>El número de ejes retenidos para el análisis factorial son 19, para el agrupamiento son diez. Se da la partición en cinco agrupamientos.</p>
+<p>Decidimos tomar 18 ejes retenidos para el análisis factorial, esto porque la potencia computacional lo permitía, y no queríamos perder información. En el segundo criterio  no encontramos diferencias significativas entre poner mas o menos ejes, por lo que tomamos el numero propuesto por Facto Class. Por ultimo, observando el árbol de corte, nos indicaba hacer el corte en 5 grupos.</p>
 <p>Revisamos el árbol de corte:</p>
 <div class="callout callout-style-simple callout-none no-icon callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
